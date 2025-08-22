@@ -1,0 +1,32 @@
+
+.swal2-container {
+    z-index: 99999 !important;
+  }
+  
+  /* Кастомный стиль для всех твоих тостов */
+.swal2-popup.modern-toast {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  .swal2-popup.modern-toast .swal2-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #4CAF50; /* Зеленый для успешного сообщения */
+    margin: 0 0 4px 0;
+  }
+  
+  .swal2-popup.modern-toast .swal2-html-container {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  
+  .swal2-popup.modern-toast .swal2-timer-progress-bar {
+    background: #4CAF50;
+  }

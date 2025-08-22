@@ -1,0 +1,38 @@
+:root {
+    --primary-color: color(display-p3 0.39 0.3725 0.9725);
+    --primary-color-contrast: color(display-p3 0.365 0.353 0.785);
+    --primary-color-opacity: rgb(221, 220, 228);
+    --primary-color-medium-opacity: rgba(161, 150, 230, 0.181);
+}
+.drop-invalid {
+    position: relative;
+    background-color: #fee2e2 !important;
+    cursor: not-allowed;
+  }
+  
+  .drop-invalid::after {
+    content: '⛔ Cancel';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ef4444;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 2000;
+  }
+  
+  .drop-invalid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed #ef4444;
+    border-radius: 0.5rem;
+    pointer-events: none;
+  }

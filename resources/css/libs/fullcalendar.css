@@ -1,0 +1,698 @@
+
+.fc-event.fc-event-draggable.fc-event-resizable.fc-timegrid-event.fc-v-event {
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    background-color: #f3f4f6 !important;
+    transition: .3s;
+  }
+  .fc-event.fc-event-draggable.fc-event-resizable.fc-timegrid-event.fc-v-event:hover {
+    background-color: #fff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .fc-event-main{
+    overflow: hidden;
+  }
+  .fc-event-main .fc-event-title {
+    font-size: 0.9rem;
+    color: #333;
+  }
+  .fc-event {
+    cursor: pointer;
+  }
+
+  .calendar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .calendar-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+  .calendar-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .toggle-weekends {
+    padding: 8px 15px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .toggle-weekends.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    border-radius: 14px;
+  }
+  .calendar-wrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  .custom-calendar {
+    height: 600px;
+  }
+  .event-content {
+    display: flex;
+    align-items: center;
+    padding: 2px 5px;
+  }
+  .event-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .event-text {
+    overflow: hidden;
+  }
+  .event-title {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.85rem;
+    padding: 1px 8px 3px 10px;
+    border-radius: 10px;
+  }
+  .event-time {
+    font-size: 0.75rem;
+    color: #7cbe0b;
+    }
+  .calendar-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events{
+    overflow-x: scroll;
+  }
+  .modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    overflow-y: auto;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #7f8c8d;
+  }
+  .modal-content h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  .modal-section {
+    margin-bottom: 20px;
+  }
+  .modal-section h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+  .info-row {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  .info-label {
+    font-weight: 500;
+    min-width: 120px;
+    color: #7f8c8d;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-edit {
+    background: #3498db;
+    color: white;
+  }
+  .btn-decline {
+    background: #e74c3c;
+    color: white;
+  }
+  .btn-confirm {
+    background: #2ecc71;
+    color: white;
+  }
+  @media (max-width: 768px) {
+    .calendar-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .calendar-controls {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .modal-actions {
+      flex-direction: column;
+    }
+    .btn {
+      width: 100%;
+    }
+  }
+  .todays-appointments {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+.section-title {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.appointment-group {
+  margin-bottom: 20px;
+}
+
+.group-title {
+  font-size: 1rem;
+  color: #4a5568;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fc-list-event-graphic{
+  display: none !important;
+}
+
+.appointment-item {
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.more-items {
+  padding: 8px 15px;
+  color: #4a6fa5;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.more-items:hover {
+  background-color: #f0f4f8;
+}
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+        .todays-appointments {
+            padding: 15px;
+        }
+        
+        .appointment-item {
+            padding: 10px;
+        }
+    }
+    .fc-daygrid-day-bottom {
+      text-align: center !important;
+      float: none !important;
+      margin-top: 10px !important;
+    }
+    .fc-daygrid-day-bottom a {
+      width: 100% !important;
+      display: inline-block !important;
+      transition: 0.2s;
+    }
+    .fc-daygrid-day-bottom a:hover {
+      background-color: var(--primary-color) !important;
+      color: #FFF !important;
+    }
+    .fc-daygrid-day-frame.fc-scrollgrid-sync-inner {
+      padding: 5px 2px 15px 3px;
+    }
+    .fc-daygrid-day-top a {
+      padding-right: 20px !important;
+    }
+    .fc-day {
+      border: 2px solid var(--primary-color-opacity) !important;
+      background: rgba(222, 222, 222, 0);
+    }
+    .fc-scrollgrid.fc-scrollgrid-liquid{
+      border: none !important;
+    }
+    .fc-daygrid-more-link.fc-more-link {
+      float: none;
+      border: 1px solid var(--primary-color);
+      border-radius: 14px;
+      padding: 2px 5px 3px 5px;
+      color: var(--primary-color);
+    }
+    .fc .fc-daygrid-day.fc-day-today {
+      background-color: color(display-p3 0.507 0.504 0.7 / 0.22);
+    }
+    td.fc-day-sat, td.fc-day-sun a.fc-daygrid-day-number {
+      color: rgb(255, 34, 0) !important;
+    }
+    .fc-button-group {
+      background: rgb(242, 242, 242);
+      border-radius: 14px;
+      align-items: center;
+    }
+    .fc-button.fc-button-primary.fc-button-active {
+      background: #fff !important;
+      border-color: #fff !important;
+      color: #222 !important;
+      border-radius: 11px !important;
+      padding: 2px 15px 3px 15px !important;
+      height: fit-content;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .fc-button.fc-button-primary {
+      box-shadow: none;
+      color: #222;
+      text-align: center;
+      vertical-align: middle;
+      margin: 0 0.5rem;
+      border-color: transparent;
+      background: transparent;
+      transition: .2s;
+    }
+    .fc-button.fc-button-primary:hover:not(.fc-today-button) {
+      background: #fff !important;
+      border-color: #fff !important;
+      color: #222 !important;
+      border-radius: 11px !important;
+      padding: 2px 15px 3px 15px !important;
+      height: fit-content;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .fc-today-button:enabled {
+      background: transparent !important;
+      border-color: transparent !important;
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+      cursor: pointer;
+    }
+    .fc-toolbar-title {
+      text-transform: capitalize;
+    }
+    .fc-today-button:enabled:hover {
+      background: #fff !important;
+      border-color: #fff !important;
+      color: #222 !important;
+      border-radius: 11px !important;
+      padding: 2px 15px 3px 15px !important;
+      height: fit-content;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .fc-today-button:disabled{
+      display: none !important;
+      visibility: hidden !important;
+    }
+    @media screen and (max-width: 960px) {
+      .fc .fc-toolbar {
+        flex-direction: column-reverse;
+        }
+    }
+
+
+.fc .fc-daygrid-day-frame {
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 20px;
+}
+
+/* Добавьте в ваш CSS */
+.fc-timegrid-now-indicator-line {
+  border-color: rgb(255, 0, 60) !important;
+  border-width: 1px !important;
+}
+.fc-daygrid-view .fc-timegrid-now-indicator-line,
+.fc-daygrid-view .fc-timegrid-now-indicator-arrow {
+  display: none !important;
+}
+.fc-event.fc-timegrid-event::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.817), rgba(255, 0, 60, 0), rgba(255, 0, 60, 0), rgba(255, 0, 60, 0));
+  z-index: 999;
+  display: block;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+/* Custom header styles */
+.fc .fc-toolbar-title {
+  background-color: #f3f4f6; /* gray background */
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 1.1em;
+  margin: 0 4px;
+}
+
+.fc .fc-button {
+  background-color: #f3f4f6; /* gray background for buttons */
+  border: none;
+  color: #4b5563;
+  padding: 6px 12px;
+}
+
+.fc .fc-button:hover {
+  background-color: #e5e7eb;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.fc .fc-today-button {
+  background-color: #f3f4f6;
+  border: none;
+  color: #4b5563;
+  padding: 6px 12px;
+}
+
+.fc .fc-today-button:hover {
+  background-color: #e5e7eb;
+}
+.fc-toolbar-chunk {
+  display: inline-flex;
+  background: rgb(242, 242, 242);
+  border-radius: 14px;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.month-picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn .6s ease;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-header button:hover {
+  color: #333;
+}
+
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+
+.months-grid button {
+  padding: 12px 8px;
+  border: 1px solid #e0e0e0;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.months-grid button:hover {
+  background-color: #f8f8f8;
+  border-color: #d0d0d0;
+  transform: translateY(-2px);
+}
+
+.months-grid button.active {
+  background-color:  var(--primary-color);
+  color: white;
+  border-color:  var(--primary-color);
+  font-weight: 500;
+}
+
+.year-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.year-selector span {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 15px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.year-selector button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 5px 15px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.year-selector button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+  }
+  
+  .months-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 15px;
+  }
+  
+  .months-grid button {
+    padding: 10px 5px;
+    font-size: 0.85rem;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .year-selector {
+    padding: 10px 15px;
+  }
+}
+
+/* Темная тема (опционально) */
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+    background-color: #2d2d2d;
+  }
+  
+  .modal-header h3 {
+    color: #f0f0f0;
+  }
+  
+  .months-grid button {
+    border-color: #444;
+    color: #ddd;
+    background-color: #3a3a3a;
+  }
+  
+  .months-grid button:hover {
+    background-color: #444;
+  }
+  
+  .months-grid button.active {
+    background-color:  var(--primary-color);
+    color: white;
+  }
+  
+  .year-selector span {
+    color: #f0f0f0;
+  }
+  
+  .year-selector button {
+    color: #aaa;
+  }
+  
+  .year-selector button:hover {
+    background-color: #444;
+    color: #f0f0f0;
+  }
+  
+  .modal-header button {
+    color: #aaa;
+  }
+  
+  .modal-header button:hover {
+    color: #f0f0f0;
+  }
+}
+.fc-popover {
+  max-width: 600px;
+  overflow: hidden;
+}
+/* Основной цвет фона для сегодняшнего дня */
+.fc-day-today {
+  background-color: var(--primary-color-medium-opacity) !important;
+}
+
+/* Если нужно убрать стандартный желтый фон */
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: transparent;
+}
+
+/* Цвет текста даты (сегодняшний день) */
+.fc-day-today .fc-daygrid-day-number {
+  color: var(--primary-color) !important;
+  font-weight: bold;
+}
+
+/* Для временной сетки (TimeGrid) */
+.fc-timegrid-col.fc-day-today {
+  background-color: var(--primary-color-medium-opacity) !important;
+}

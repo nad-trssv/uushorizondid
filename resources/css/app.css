@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+@import './libs/fullcalendar.css';
+@import './libs/swal.css';
+@import './libs/naive.css';
+@import './main.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    /* white-space: nowrap; */
+    word-break: keep-all;
+}

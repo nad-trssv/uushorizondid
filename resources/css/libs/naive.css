@@ -1,0 +1,12 @@
+.n-card {
+  border-radius: 0.5rem;
+}
+.n-card--bordered {
+    border-radius: 0.5rem;
+}
+.n-button, .n-tag {
+  border-radius: 0.5rem;
+}
+.aspect-square img {
+  aspect-ratio: 1 / 1 !important;
+}
