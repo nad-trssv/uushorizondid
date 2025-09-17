@@ -13,6 +13,11 @@ class IndexController extends Controller
 
     public function index()
     {
-        return view('main.front');
+        return view('main.home');
+    }
+    
+    public function blog()
+    {
+        return view('main.blog');
     }
 }
