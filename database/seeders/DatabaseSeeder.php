@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             AppointmentsSeeder::class,
             ServiceMasterSeeder::class,
+            LanguageSeeder::class,
         ]);
     }
 }

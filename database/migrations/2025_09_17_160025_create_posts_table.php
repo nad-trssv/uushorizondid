@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
-            $table->enum('type', ['online', 'offline', 'hybrid']);
-            $table->string('location')->nullable();
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at')->nullable();
-            $table->boolean('all_day')->default(false);
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
         
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('posts');
     }
 };

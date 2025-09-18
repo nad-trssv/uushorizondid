@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Event extends Model
+class Post extends Model
 {
-    protected $fillable = [
-        'slug', 'type', 'location', 'starts_at', 'ends_at', 'created_by', 'all_day'
-    ];
+    protected $fillable = ['slug', 'user_id', 'published_at'];
 
     public function translations()
     {
-        return $this->hasMany(EventTranslation::class);
+        return $this->hasMany(PostTranslation::class);
     }
 
     public function translation($langCode = 'en')
@@ -22,12 +21,18 @@ class Event extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class);
     }
 
+    public function seo()
+    {
+        return $this->hasOne(PostSeo::class);
+    }
+    
     public function gallery()
     {
         return $this->morphMany(Gallery::class, 'galleryable');
     }
+
 }
 

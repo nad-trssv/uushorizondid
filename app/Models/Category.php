@@ -142,4 +142,10 @@ class Category extends Model
         $this->save();
     }
 
+    public function gallery()
+    {
+        return $this->morphMany(Gallery::class, 'galleryable');
+    }
+
+
 }
