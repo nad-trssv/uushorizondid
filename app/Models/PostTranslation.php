@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class PostTranslation extends Model
 {
+    public $timestamps = false;
     protected $fillable = ['post_id', 'language_id', 'title', 'description'];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     public function post()
     {

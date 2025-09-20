@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SiteSettingController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\WorkTimeExceptionController;
+use App\Http\Controllers\Api\V1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,10 @@ Route::group(['prefix' => 'v1'], function () {
             Route::group(['prefix' => 'users'], function () {
                 Route::get('/masters', [UserController::class, 'masters'])
                     ->name('api.users.masters');
+            });
+            Route::group(['prefix' => 'posts'], function () {
+                Route::get('/', [PostController::class, 'index'])
+                    ->name('api.posts.index');
             });
         });
     });

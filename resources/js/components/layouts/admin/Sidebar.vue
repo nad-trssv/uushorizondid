@@ -240,6 +240,11 @@ export default {
             }
           ],
         },
+        {
+          label: this.$t('msg.menu.blog'),
+          key: 'admin.blog.index',
+          iconClass: 'fas fa-newspaper text-indigo-500',
+        },
       ];
     }
   },

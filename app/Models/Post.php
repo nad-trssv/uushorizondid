@@ -7,16 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['slug', 'user_id', 'published_at'];
+    protected $fillable = ['slug', 'user_id', 'published_at', 'status', 'image'];
 
     public function translations()
     {
         return $this->hasMany(PostTranslation::class);
     }
 
-    public function translation($langCode = 'en')
+    public function translation($locale = null)
     {
-        return $this->translations()->whereHas('language', fn($q) => $q->where('code', $langCode))->first();
+        $locale = $locale ?? app()->getLocale();
+        return $this->translations->where('language_id', $locale)->first();
     }
 
     public function user()

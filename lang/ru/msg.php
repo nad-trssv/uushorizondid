@@ -55,6 +55,7 @@ return [
         'systemUpdateAvailable' => "Доступно обновление системы",
         'viewAllNotifications' => "Посмотреть все уведомления",
         'calendar' => 'Календарь',
+        'blog' => 'Новости',
     ],
     'label' => [
         'title' => 'Заголовок',

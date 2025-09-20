@@ -55,6 +55,7 @@ return [
         'systemUpdateAvailable' => "Pieejams sistēmas atjauninājums",
         'viewAllNotifications' => "Skatīt visus paziņojumus",
         'calendar' => 'Kalendārs',
+        'blog' => 'Jaunumi',
     ],
     'label' => [
         'title' => 'Nosaukums',

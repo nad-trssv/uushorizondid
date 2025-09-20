@@ -132,6 +132,27 @@ export default [
                         },
                     },
                 ]
+            },
+            {
+                path: 'blog',
+                name: 'admin.blog',
+                redirect: {name: 'admin.blog.posts'},   
+                meta: {
+                    auth: true,
+                    breadcrumb: 'blog',
+                },
+                children: [
+                    {
+
+                        path: '',
+                        name: 'admin.blog.index',
+                        component: () => import('../../pages/Blog/Index.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: '',
+                        },
+                    },
+                ]
             }
         ]
     },

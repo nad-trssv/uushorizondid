@@ -1,19 +1,38 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Services\PostService;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
 
 class PostController extends Controller
 {
+    use HandlesLocale;
+
+    protected $post;
+
+    public function __construct(PostService $post)
+    {
+        $this->post = $post;
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $locale = $this->setAndGetLocale($request);
+            $posts = $this->post->listPaginated();
+            return PostResource::collection($posts);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch posts', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

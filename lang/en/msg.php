@@ -55,6 +55,7 @@ return [
         'systemUpdateAvailable' => "System update available",
         'viewAllNotifications' => "View all notifications",
         'calendar' => 'Calendar',
+        'blog' => 'News',
     ],
     'label' => [
         'title' => 'Title',

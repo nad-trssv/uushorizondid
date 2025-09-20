@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Post;
 use App\Models\SiteSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Queue\Worker;
@@ -24,6 +25,7 @@ class DatabaseSeeder extends Seeder
             AppointmentsSeeder::class,
             ServiceMasterSeeder::class,
             LanguageSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

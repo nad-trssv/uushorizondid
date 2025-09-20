@@ -55,6 +55,7 @@ return [
         'systemUpdateAvailable' => "Süsteemi uuendus saadaval",
         'viewAllNotifications' => "Vaata kõiki teavitusi",
         'calendar' => 'Kalender',
+        'blog' => 'Uudised',
     ],
     'label' => [
         'title' => 'Pealkiri',
