@@ -41,6 +41,7 @@ class PostResource extends JsonResource
             ],
             'translations' => $this->translations->map(fn($t) => [
                 'language' => $t->language->code,
+                'default' => $t->language->code === config('app.fallback_locale'),
                 'title' => $t->title,
                 'description' => $t->description,
             ]),
