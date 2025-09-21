@@ -127,6 +127,11 @@
                     <i class="fas fa-comment text-purple-500 text-xs"></i>
                     <span class="text-xs text-gray-600">{{ post.comments_count }}</span>
                   </div>
+                  <!-- Количество просмотров -->
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-eye text-green-500 text-xs"></i>
+                    <span class="text-xs text-gray-600">{{ post.views }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -204,6 +209,10 @@
                     <i class="fas fa-comment text-purple-500"></i>
                     <span>{{ post.comments_count }}</span>
                   </div>
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-eye text-green-500"></i>
+                    <span>{{ post.views }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,25 +224,39 @@
           <table class="w-full">
             <thead>
               <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Изображение</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Заголовок</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Рейтинг</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Фото</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Комменты</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Изображение</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Детали</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Рейтинг</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Дата</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
               <tr v-for="post in processedPosts" :key="post.id" class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <img
-                    :src="post.image ? post.image : '/assets/images/noimg.jpg'"
-                    alt="Post Image"
-                    class="w-12 h-12 object-cover rounded"
-                    @error="event.target.src = '/assets/images/noimg.jpg'"
-                  />
+                  <div class="flex">
+                    <img
+                      :src="post.image ? post.image : '/assets/images/noimg.jpg'"
+                      alt="Post Image"
+                      class="w-12 h-12 object-cover rounded"
+                      @error="event.target.src = '/assets/images/noimg.jpg'"
+                    />
+                    <div class="ml-4 flex flex-col justify-center text-sm text-gray-900">
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-image text-blue-500 text-xs"></i>
+                        <span class="text-xs" v-if="post.gallery">{{ post.gallery.length }}</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-comment text-purple-500 text-xs"></i>
+                        <span class="text-xs">{{ post.comments_count }}</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-eye text-green-500 text-xs"></i>
+                        <span class="text-xs">{{ post.views }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 <td class="px-6 py-4">
                   <div class="text-sm font-medium text-gray-900">{{ post.displayTitle }}</div>
@@ -258,18 +281,6 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {{ formatDate(post.published_at) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center gap-1 text-sm text-gray-900" v-if="post.gallery">
-                    <i class="fas fa-image text-blue-500"></i>
-                    {{ post.gallery.length }}
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center gap-1 text-sm text-gray-900">
-                    <i class="fas fa-comment text-purple-500"></i>
-                    {{ post.comments_count }}
-                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex gap-1">
