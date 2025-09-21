@@ -25,9 +25,10 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
+            $this->setAndGetLocale($request);
             $posts = PostResource::collection($this->post->listPaginated());
             $stats = new PostStatResource($this->post->getStat());
             return response()->json([

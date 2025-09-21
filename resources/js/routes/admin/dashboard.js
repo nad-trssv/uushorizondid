@@ -143,13 +143,21 @@ export default [
                 },
                 children: [
                     {
-
                         path: '',
-                        name: 'admin.blog.index',
-                        component: () => import('../../pages/Blog/Index.vue'),
+                        name: 'admin.blog.stats',
+                        component: () => import('../../pages/Blog/Stats.vue'),
                         meta: {
                             auth: true,
                             breadcrumb: '',
+                        },
+                    },
+                    {
+                        path: 'list',
+                        name: 'admin.blog.list',
+                        component: () => import('../../pages/Blog/List.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_list',
                         },
                     },
                 ]

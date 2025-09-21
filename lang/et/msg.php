@@ -56,6 +56,8 @@ return [
         'viewAllNotifications' => "Vaata kõiki teavitusi",
         'calendar' => 'Kalender',
         'blog' => 'Uudised',
+        'blog_list' => 'Nimekiri',
+        'blog_stats' => 'Statistika',
     ],
     'label' => [
         'title' => 'Pealkiri',

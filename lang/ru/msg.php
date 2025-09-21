@@ -56,6 +56,8 @@ return [
         'viewAllNotifications' => "Посмотреть все уведомления",
         'calendar' => 'Календарь',
         'blog' => 'Новости',
+        'blog_list' => 'Список',
+        'blog_stats' => 'Статистика',
     ],
     'label' => [
         'title' => 'Заголовок',

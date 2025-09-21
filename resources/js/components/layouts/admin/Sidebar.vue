@@ -242,8 +242,18 @@ export default {
         },
         {
           label: this.$t('msg.menu.blog'),
-          key: 'admin.blog.index',
+          key: 'admin.blog.parent',
           iconClass: 'fas fa-newspaper text-indigo-500',
+          children: [
+            {
+              label: this.$t('msg.menu.blog_stats'),
+              key: 'admin.blog.stats',
+            },
+            {
+              label: this.$t('msg.menu.blog_list'),
+              key: 'admin.blog.list',
+            }
+          ],
         },
       ];
     }

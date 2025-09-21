@@ -56,6 +56,8 @@ return [
         'viewAllNotifications' => "View all notifications",
         'calendar' => 'Calendar',
         'blog' => 'News',
+        'blog_list' => 'List',
+        'blog_stats' => 'Statistics',
     ],
     'label' => [
         'title' => 'Title',
