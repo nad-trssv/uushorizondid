@@ -306,87 +306,24 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center mt-8">
-        <div class="flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-xl p-2">
-          <!-- Кнопка "Предыдущая" -->
-          <button
-            @click="changePage(page - 1)"
-            :disabled="page === 1"
-            class="p-2 rounded-lg transition-all flex items-center justify-center"
-            :class="{
-              'bg-white/20 text-gray-800 cursor-pointer hover:bg-white/30': page > 1,
-              'text-gray-400 cursor-not-allowed': page === 1
-            }"
-            title="Предыдущая страница"
-          >
-            <i class="fas fa-chevron-left text-xs"></i>
-          </button>
-
-          <!-- Первая страница с многоточием если нужно -->
-          <button
-            v-if="page > 3 && totalPages > 5"
-            @click="changePage(1)"
-            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
-            :class="{
-              'bg-blue-500 text-white': page === 1,
-              'bg-white/10 text-gray-700 hover:bg-white/20': page !== 1
-            }"
-          >
-            1
-          </button>
-          <span v-if="page > 3 && totalPages > 5" class="text-gray-500 px-1">...</span>
-
-          <!-- Страницы вокруг текущей -->
-          <button
-            v-for="pageNumber in visiblePages"
-            :key="pageNumber"
-            @click="changePage(pageNumber)"
-            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
-            :class="{
-              'bg-blue-500 text-white': page === pageNumber,
-              'bg-white/10 text-gray-700 hover:bg-white/20': page !== pageNumber
-            }"
-          >
-            {{ pageNumber }}
-          </button>
-
-          <!-- Многоточие и последняя страница если нужно -->
-          <span v-if="page < totalPages - 2 && totalPages > 5" class="text-gray-500 px-1">...</span>
-          <button
-            v-if="page < totalPages - 2 && totalPages > 5"
-            @click="changePage(totalPages)"
-            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
-            :class="{
-              'bg-blue-500 text-white': page === totalPages,
-              'bg-white/10 text-gray-700 hover:bg-white/20': page !== totalPages
-            }"
-          >
-            {{ totalPages }}
-          </button>
-
-          <!-- Кнопка "Следующая" -->
-          <button
-            @click="changePage(page + 1)"
-            :disabled="page === totalPages"
-            class="p-2 rounded-lg transition-all flex items-center justify-center"
-            :class="{
-              'bg-white/20 text-gray-800 cursor-pointer hover:bg-white/30': page < totalPages,
-              'text-gray-400 cursor-not-allowed': page === totalPages
-            }"
-            title="Следующая страница"
-          >
-            <i class="fas fa-chevron-right text-xs"></i>
-          </button>
-        </div>
-      </div>
+      <paginate
+        :total-pages="totalPages"
+        :current-page="page"
+        :visible-pages="visiblePages"
+        @page-changed="changePage"
+      />
        
     </div>
   </template>
   
   <script>
+  import Paginate from '@/components/layouts/admin/Pagination.vue';
 
   export default {
     name: 'List',
+    components: {
+      Paginate
+    },
     data() {
       return {
         viewMode: 'grid'
