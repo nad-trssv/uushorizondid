@@ -156,6 +156,7 @@ class PostSeeder extends Seeder
                 'slug' => $postData['slug'],
                 'user_id' => 1,
                 'status' => 'published',
+                'views' => rand(10, 100),
                 'published_at' => now(),
             ]);
 

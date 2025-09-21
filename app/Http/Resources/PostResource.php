@@ -45,6 +45,15 @@ class PostResource extends JsonResource
                 'title' => $t->title,
                 'description' => $t->description,
             ]),
+            'comments_count' => $this->commentsCount(),
+            'comments' => $this->comments()->where('approved', true)->get()->map(fn($comment) => [
+                'id' => $comment->id,
+                'name' => $comment->name,
+                'rating' => $comment->rating,
+                'content' => $comment->content,
+                'created_at' => $comment->created_at->toDateTimeString(),
+            ]),
+            'averageRating' => round($this->averageRating(), 1),
         ];
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $fillable = ['slug', 'user_id', 'published_at', 'status', 'image'];
+    protected $fillable = ['slug', 'user_id', 'published_at', 'status', 'image', 'views'];
 
     public function translations()
     {
@@ -34,6 +33,20 @@ class Post extends Model
     {
         return $this->morphMany(Gallery::class, 'galleryable');
     }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function commentsCount()
+    {
+        return $this->comments()->count();
+    }
+    public function averageRating()
+    {
+        return $this->comments()->avg('rating');
+    }
+
 
 }
 

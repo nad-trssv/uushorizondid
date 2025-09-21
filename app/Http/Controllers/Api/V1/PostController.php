@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
+use App\Http\Resources\PostStatResource;
 
 class PostController extends Controller
 {
@@ -24,12 +25,16 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $locale = $this->setAndGetLocale($request);
-            $posts = $this->post->listPaginated();
-            return PostResource::collection($posts);
+            $posts = PostResource::collection($this->post->listPaginated());
+            $stats = new PostStatResource($this->post->getStat());
+            return response()->json([
+                'posts' => $posts,
+                'stats' => $stats,
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch posts', 'message' => $e->getMessage()], 500);
         }

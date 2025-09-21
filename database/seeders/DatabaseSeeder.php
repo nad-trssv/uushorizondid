@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ServiceMasterSeeder::class,
             LanguageSeeder::class,
             PostSeeder::class,
+            CommentSeeder::class,
         ]);
     }
 }

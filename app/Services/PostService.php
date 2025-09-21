@@ -22,6 +22,12 @@ class PostService {
         return $this->post->listPaginated();
     }
 
+    public function getStat(): array
+    {
+        $stats = $this->post->getStat();
+        return $stats;
+    }
+
     public function getPostById($id) {
         return $this->post->find($id);
     }
