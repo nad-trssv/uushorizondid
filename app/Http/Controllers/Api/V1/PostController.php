@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
+use App\Http\Resources\PaginateResource;
 use App\Http\Resources\PostStatResource;
 
 class PostController extends Controller
@@ -28,11 +29,12 @@ class PostController extends Controller
     public function index(Request $request)
     {
         try {
-            $this->setAndGetLocale($request);
-            $posts = PostResource::collection($this->post->listPaginated());
+            $locale = $this->setAndGetLocale($request);
+            $posts = PostResource::collection($this->post->getAll($locale, $request));
             $stats = new PostStatResource($this->post->getStat());
+            $paginatedData = PaginateResource::make($posts, PostResource::class);
             return response()->json([
-                'posts' => $posts,
+                'posts' => $paginatedData,
                 'stats' => $stats,
             ], 200);
 

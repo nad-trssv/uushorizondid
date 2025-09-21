@@ -17,9 +17,15 @@ class PostRepository
     {
         return $this->model->all();
     }
-    public function listPaginated()
+    public function getAll($locale, $request): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return $this->model->paginate(5);
+        $query = $this->model;
+        // ===== Пагинация =====
+        $perPage = $request->input('perPage', 2);
+        $page = $request->input('page', 1);
+
+        $posts = $query->paginate($perPage, ['*'], 'page', $page);
+        return $posts;
     }
 
     public function getStat($locale = null)

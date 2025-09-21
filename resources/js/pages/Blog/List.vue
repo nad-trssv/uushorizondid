@@ -304,10 +304,87 @@
       <div v-else>
         <p class="text-center text-gray-500 py-8">No posts available.</p>
       </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center mt-8">
+        <div class="flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-xl p-2">
+          <!-- Кнопка "Предыдущая" -->
+          <button
+            @click="changePage(page - 1)"
+            :disabled="page === 1"
+            class="p-2 rounded-lg transition-all flex items-center justify-center"
+            :class="{
+              'bg-white/20 text-gray-800 cursor-pointer hover:bg-white/30': page > 1,
+              'text-gray-400 cursor-not-allowed': page === 1
+            }"
+            title="Предыдущая страница"
+          >
+            <i class="fas fa-chevron-left text-xs"></i>
+          </button>
+
+          <!-- Первая страница с многоточием если нужно -->
+          <button
+            v-if="page > 3 && totalPages > 5"
+            @click="changePage(1)"
+            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
+            :class="{
+              'bg-blue-500 text-white': page === 1,
+              'bg-white/10 text-gray-700 hover:bg-white/20': page !== 1
+            }"
+          >
+            1
+          </button>
+          <span v-if="page > 3 && totalPages > 5" class="text-gray-500 px-1">...</span>
+
+          <!-- Страницы вокруг текущей -->
+          <button
+            v-for="pageNumber in visiblePages"
+            :key="pageNumber"
+            @click="changePage(pageNumber)"
+            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
+            :class="{
+              'bg-blue-500 text-white': page === pageNumber,
+              'bg-white/10 text-gray-700 hover:bg-white/20': page !== pageNumber
+            }"
+          >
+            {{ pageNumber }}
+          </button>
+
+          <!-- Многоточие и последняя страница если нужно -->
+          <span v-if="page < totalPages - 2 && totalPages > 5" class="text-gray-500 px-1">...</span>
+          <button
+            v-if="page < totalPages - 2 && totalPages > 5"
+            @click="changePage(totalPages)"
+            class="w-8 h-8 rounded-lg transition-all flex items-center justify-center text-sm font-medium"
+            :class="{
+              'bg-blue-500 text-white': page === totalPages,
+              'bg-white/10 text-gray-700 hover:bg-white/20': page !== totalPages
+            }"
+          >
+            {{ totalPages }}
+          </button>
+
+          <!-- Кнопка "Следующая" -->
+          <button
+            @click="changePage(page + 1)"
+            :disabled="page === totalPages"
+            class="p-2 rounded-lg transition-all flex items-center justify-center"
+            :class="{
+              'bg-white/20 text-gray-800 cursor-pointer hover:bg-white/30': page < totalPages,
+              'text-gray-400 cursor-not-allowed': page === totalPages
+            }"
+            title="Следующая страница"
+          >
+            <i class="fas fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+       
     </div>
   </template>
   
   <script>
+
   export default {
     name: 'List',
     data() {
@@ -317,20 +394,95 @@
     },
     computed: {
       posts() {
-        return this.$store.getters['posts/lists'];
+        return this.$store.getters['posts/lists']; 
+      },
+      pageSizeOptions() {
+        return [
+          { label: '10', value: 10 },
+          { label: '25', value: 25 },
+          { label: '50', value: 50 },
+          { label: '100', value: 100 }
+        ];
+      },
+      totalPages() {
+        return this.$store.getters['posts/totalPages'];
+      },
+      page() {
+        return this.$store.getters['posts/page'] || 1;
+      },
+      perPage() {
+        return this.$store.getters['posts/perPage'] || 1;
+      },
+      totalPosts() {
+        return this.$store.getters['posts/total'];
+      },
+      visiblePages() {
+        const current = this.page;
+        const total = this.totalPages;
+        const range = 1; // уменьшил диапазон для лучшего отображения
+        const pages = [];
+        
+        let start = Math.max(1, current - range);
+        let end = Math.min(total, current + range);
+        
+        // Если страниц мало, показываем все
+        if (total <= 5) {
+          for (let i = 1; i <= total; i++) {
+            pages.push(i);
+          }
+          return pages;
+        }
+        
+        // Корректируем диапазон для крайних случаев
+        if (current - range <= 1) {
+          end = Math.min(total, end + (range - current + 2));
+        }
+        
+        if (current + range >= total) {
+          start = Math.max(1, start - (current + range - total + 1));
+        }
+        
+        for (let i = start; i <= end; i++) {
+          pages.push(i);
+        }
+        
+        return pages;
       },
       
       processedPosts() {
         if (!this.posts || !Array.isArray(this.posts)) {
           return [];
         }
-        
         return this.posts.map(post => ({
           ...post,
           displayTitle: this.getPostTitle(post),
           displayDescription: this.getPostDescription(post),
           gallery: post.gallery || []
         }));
+      },
+      visiblePages() {
+        const current = this.page;
+        const total = this.totalPages;
+        const range = 2; // количество страниц по бокам от текущей
+        const pages = [];
+        
+        let start = Math.max(1, current - range);
+        let end = Math.min(total, current + range);
+        
+        // Корректируем диапазон, если мы в начале или конце
+        if (current - range <= 1) {
+          end = Math.min(total, 1 + range * 2);
+        }
+        
+        if (current + range >= total) {
+          start = Math.max(1, total - range * 2);
+        }
+        
+        for (let i = start; i <= end; i++) {
+          pages.push(i);
+        }
+        
+        return pages;
       }
     },
     
@@ -388,12 +540,15 @@
           month: 'short',
           day: 'numeric'
         });
-      }
+      },
+      changePage(pageNumber) {
+        this.$store.dispatch('posts/lists', { page: pageNumber, perPage: this.perPage });
+      },
     },
     
     mounted() {
-      this.$store.dispatch('posts/lists', { page: 1, pageSize: 10 }).then((res) => {
-        console.log('Posts loaded:', this.posts);
+      this.$store.dispatch('posts/lists', { page: 1, perPage: 21 }).then(() => {
+
       }).catch(error => {
         console.error('Error loading posts:', error);
       });

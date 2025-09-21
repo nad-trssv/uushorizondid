@@ -136,11 +136,7 @@ export default [
             {
                 path: 'blog',
                 name: 'admin.blog',
-                redirect: {name: 'admin.blog.posts'},   
-                meta: {
-                    auth: true,
-                    breadcrumb: 'blog',
-                },
+                redirect: {name: 'admin.blog.list'},  
                 children: [
                     {
                         path: '',

@@ -14,12 +14,8 @@ class PostService {
         return $this->post->create($data);
     }
 
-    public function getAll() {
-        return $this->post->list();
-    }
-
-    public function listPaginated() {
-        return $this->post->listPaginated();
+    public function getAll($locale, $request): \Illuminate\Pagination\LengthAwarePaginator {
+        return $this->post->getAll($locale, $request);
     }
 
     public function getStat(): array
