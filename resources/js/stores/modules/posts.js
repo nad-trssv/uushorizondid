@@ -40,7 +40,6 @@ export const posts = {
             api.get('/posts', { params: payload })
                 .then(response => {
                     commit('lists', response.data.posts.data);
-                    commit('stats', response.data.stats);
                     commit('page', response.data.posts.current_page);
                     commit('perPage', response.data.posts.per_page);
                     commit('totalPages', response.data.posts.last_page);
@@ -51,6 +50,19 @@ export const posts = {
                     reject(error);
                 });
         });
+    },
+    stats({ commit }, payload) {
+      return new Promise((resolve, reject) => {
+          api.get('/posts/stats', { params: payload })
+              .then(response => {
+                  commit('stats', response.data.stats);
+                  resolve(response);
+              })
+              .catch(error => {
+                  console.error('Error fetching posts:', error);
+                  reject(error);
+              });
+      });
     },
   },
   mutations: {

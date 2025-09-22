@@ -28,7 +28,7 @@ class PostRepository
         return $posts;
     }
 
-    public function getStat($locale = null)
+    public function getStat($locale = null): array
     {
         $locale = $locale ?? app()->getLocale();
         $stats = [];

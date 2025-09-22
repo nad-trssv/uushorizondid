@@ -31,15 +31,27 @@ class PostController extends Controller
         try {
             $locale = $this->setAndGetLocale($request);
             $posts = PostResource::collection($this->post->getAll($locale, $request));
-            $stats = new PostStatResource($this->post->getStat());
             $paginatedData = PaginateResource::make($posts, PostResource::class);
             return response()->json([
                 'posts' => $paginatedData,
-                'stats' => $stats,
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch posts', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function stats(Request $request)
+    {
+        try {
+            $this->setAndGetLocale($request);
+            $stats = new PostStatResource($this->post->getStat());
+            return response()->json([
+                'stats' => $stats,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch stats for posts', 'message' => $e->getMessage()], 500);
         }
     }
 

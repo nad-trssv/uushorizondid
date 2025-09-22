@@ -92,6 +92,8 @@ Route::group(['prefix' => 'v1'], function () {
             Route::group(['prefix' => 'posts'], function () {
                 Route::get('/', [PostController::class, 'index'])
                     ->name('api.posts.index');
+                Route::get('/stats', [PostController::class, 'stats'])
+                    ->name('api.posts.stats');
             });
         });
     });

@@ -243,7 +243,7 @@ export default {
   },
   
   mounted() {
-    this.$store.dispatch('posts/lists', { page: 1, pageSize: 10 }).then((res) => {
+    this.$store.dispatch('posts/stats', { page: 1, pageSize: 10 }).then((res) => {
       console.log('Posts loaded:', this.posts);
     }).catch(error => {
       console.error('Error loading posts:', error);

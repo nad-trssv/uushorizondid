@@ -8,6 +8,7 @@ class PostStatResource extends JsonResource
 {
     public function toArray($request)
     {
+        
         return [
             'total_count' => $this['total_count'] ?? 0,
             'total_views' => $this['total_views'] ?? 0,
