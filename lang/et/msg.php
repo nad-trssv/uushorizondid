@@ -101,6 +101,7 @@ return [
         'day' => 'Päev',
         'list' => 'Nimekiri',
         'year' => 'Aasta',
+        'add_news' => 'Lisa uudis',
     ],
     'modal' => [
         'client_info' => 'Kliendi info',

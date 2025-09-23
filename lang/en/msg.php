@@ -101,6 +101,7 @@ return [
         'day' => 'Day',
         'list' => 'List',
         'year' => 'Year',
+        'add_news' => 'Add News',
     ],
     'modal' => [
         'client_info' => 'Client Information',

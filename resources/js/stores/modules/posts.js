@@ -7,8 +7,14 @@ export const posts = {
     lists: [],
     stats: {},
     page: 1,
-    perPage: 10,
+    perPage: 18,
     totalPages: 1,
+    searchQuery: '',
+    sortBy: 'created_at',
+    sortDirection: 'desc',
+    statusFilter: '',
+    dateFrom: '',
+    dateTo: ''
   },
   getters: {
     lists: state => state.lists,
@@ -16,6 +22,12 @@ export const posts = {
     page: state => state.page,
     perPage: state => state.perPage,
     totalPages: state => state.totalPages,
+    searchQuery: state => state.searchQuery,
+    sortBy: state => state.sortBy,
+    sortDirection: state => state.sortDirection,
+    statusFilter: state => state.statusFilter,
+    dateFrom: state => state.dateFrom,
+    dateTo: state => state.dateTo,
   },
   mutations: {
     lists(state, lists) {
@@ -33,11 +45,41 @@ export const posts = {
     totalPages(state, totalPages) {
       state.totalPages = totalPages;
     },
+    setSearchQuery(state, query) {
+      state.searchQuery = query;
+    },
+    setSortBy(state, sortBy) {
+      state.sortBy = sortBy;
+    },
+    setSortDirection(state, direction) {
+      state.sortDirection = direction;
+    },
+    setStatusFilter(state, status) {
+      state.statusFilter = status;
+    },
+    setDateFrom(state, date) {
+      state.dateFrom = date;
+    },
+    setDateTo(state, date) {
+      state.dateTo = date;
+    },
   },
   actions: {
-    lists({ commit }, payload) {
+    lists({ commit, state }, payload) {
+        const params = {
+          page: state.page,
+          perPage: state.perPage,
+          search: state.searchQuery,
+          sort_by: state.sortBy,
+          sort_direction: state.sortDirection,
+          status: state.statusFilter,
+          date_from: state.dateFrom,
+          date_to: state.dateTo,
+          ...payload
+        };
+
         return new Promise((resolve, reject) => {
-            api.get('/posts', { params: payload })
+            api.get('/posts', { params })
                 .then(response => {
                     commit('lists', response.data.posts.data);
                     commit('page', response.data.posts.current_page);
@@ -50,6 +92,24 @@ export const posts = {
                     reject(error);
                 });
         });
+    },
+    updateSearchQuery({ commit, dispatch }, query) {
+      commit('setSearchQuery', query);
+      dispatch('lists', { page: 1 }); 
+    },
+    updateSort({ commit, dispatch }, { sortBy, sortDirection }) {
+      commit('setSortBy', sortBy);
+      commit('setSortDirection', sortDirection);
+      dispatch('lists', { page: 1 });
+    },
+    updateStatusFilter({ commit, dispatch }, status) {
+      commit('setStatusFilter', status);
+      dispatch('lists', { page: 1 });
+    },
+    updateDateFilter({ commit, dispatch }, { dateFrom, dateTo }) {
+      commit('setDateFrom', dateFrom);
+      commit('setDateTo', dateTo);
+      dispatch('lists', { page: 1 });
     },
     stats({ commit }, payload) {
       return new Promise((resolve, reject) => {
@@ -81,5 +141,23 @@ export const posts = {
     totalPages(state, totalPages) {
       state.totalPages = totalPages;
     },
+    setSearchQuery(state, query) {
+      state.searchQuery = query;
+    },
+    setSortBy(state, sortBy) {
+      state.sortBy = sortBy;
+    },
+    setSortDirection(state, direction) {
+      state.sortDirection = direction;
+    },
+    setStatusFilter(state, status) {
+      state.statusFilter = status;
+    },
+    setDateFrom(state, date) {
+      state.dateFrom = date;
+    },
+    setDateTo(state, date) {
+      state.dateTo = date;
+    },  
   },
 }

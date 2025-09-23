@@ -29,8 +29,8 @@ class PostController extends Controller
     public function index(Request $request)
     {
         try {
-            $locale = $this->setAndGetLocale($request);
-            $posts = PostResource::collection($this->post->getAll($locale, $request));
+            $this->setAndGetLocale($request);
+            $posts = PostResource::collection($this->post->getAll($request));
             $paginatedData = PaginateResource::make($posts, PostResource::class);
             return response()->json([
                 'posts' => $paginatedData,

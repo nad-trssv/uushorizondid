@@ -14,8 +14,8 @@ class PostService {
         return $this->post->create($data);
     }
 
-    public function getAll($locale, $request): \Illuminate\Pagination\LengthAwarePaginator {
-        return $this->post->getAll($locale, $request);
+    public function getAll($request): \Illuminate\Pagination\LengthAwarePaginator {
+        return $this->post->getAll($request);
     }
 
     public function getStat(): array
