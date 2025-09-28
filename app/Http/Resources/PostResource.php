@@ -17,19 +17,23 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'published_at' => $this->published_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
             'status' => $this->status,
             'user_id' => $this->user_id,
             'views' => $this->views,
+            'current_lang' => $lang,
 
             'title' => $translation?->title,
             'description' => $translation?->description,
             'image' => $this->image,
 
-            'seo' => [
-                'meta_title' => $seoTranslation?->meta_title,
-                'meta_description' => $seoTranslation?->meta_description,
-                'meta_keywords' => $seoTranslation?->meta_keywords,
-            ],
+            'seo' => $this->seo?->translations->map(fn($seoTranslation) => [
+                'language' => $seoTranslation->language->code,
+                'meta_title' => $seoTranslation->meta_title,
+                'meta_description' => $seoTranslation->meta_description,
+                'meta_keywords' => $seoTranslation->meta_keywords,
+            ]),
 
             'gallery' => $this->gallery->map(fn($image) => [
                 'image' => $image->image,
@@ -39,6 +43,8 @@ class PostResource extends JsonResource
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
+                'email' => $this->user->email,
+                'role' => $this->user->role->name,
             ],
             'translations' => $this->translations->map(fn($t) => [
                 'language' => $t->language->code,
@@ -47,12 +53,14 @@ class PostResource extends JsonResource
                 'description' => $t->description,
             ]),
             'comments_count' => $this->commentsCount(),
-            'comments' => $this->comments()->where('approved', true)->get()->map(fn($comment) => [
+            'comments' => $this->comments()->get()->map(fn($comment) => [
                 'id' => $comment->id,
                 'name' => $comment->name,
                 'rating' => $comment->rating,
                 'content' => $comment->content,
+                
                 'created_at' => $comment->created_at->toDateTimeString(),
+                'approved' => $comment->approved,
             ]),
             'averageRating' => round($this->averageRating(), 1),
         ];

@@ -137,6 +137,10 @@ export default [
                 path: 'blog',
                 name: 'admin.blog',
                 redirect: {name: 'admin.blog.list'},  
+                meta: {
+                    auth: true,
+                    breadcrumb: 'blog',
+                },
                 children: [
                     {
                         path: '',
@@ -144,8 +148,8 @@ export default [
                         component: () => import('../../pages/Blog/Stats.vue'),
                         meta: {
                             auth: true,
-                            breadcrumb: '',
-                        },
+                            breadcrumb: 'blog_stats',
+                        },  
                     },
                     {
                         path: 'list',
@@ -154,6 +158,15 @@ export default [
                         meta: {
                             auth: true,
                             breadcrumb: 'blog_list',
+                        },
+                    },
+                    {
+                        path: ':id',
+                        name: 'admin.blog.edit',
+                        component: () => import('../../pages/Blog/Edit.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_edit',
                         },
                     },
                 ]

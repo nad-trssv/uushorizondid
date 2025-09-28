@@ -74,9 +74,17 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
-        //
+        try {
+            $this->setAndGetLocale($request);
+            $post = $this->post->getById($post->id);
+            return response()->json([
+                'post' => new PostResource($post),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch the post', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

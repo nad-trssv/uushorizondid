@@ -94,6 +94,8 @@ Route::group(['prefix' => 'v1'], function () {
                     ->name('api.posts.index');
                 Route::get('/stats', [PostController::class, 'stats'])
                     ->name('api.posts.stats');
+                Route::get('/{post}', [PostController::class, 'show'])
+                    ->name('api.posts.show');
             });
         });
     });

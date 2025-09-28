@@ -58,6 +58,8 @@ return [
         'blog' => 'Uudised',
         'blog_list' => 'Nimekiri',
         'blog_stats' => 'Statistika',
+        'blog_edit' => 'Muuda uudist',
+        'blog_create' => 'Loo uudis',
     ],
     'label' => [
         'title' => 'Pealkiri',

@@ -24,7 +24,7 @@ class PostService {
         return $stats;
     }
 
-    public function getPostById($id) {
+    public function getById($id) {
         return $this->post->find($id);
     }
 

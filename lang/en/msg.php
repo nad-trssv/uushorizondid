@@ -58,6 +58,8 @@ return [
         'blog' => 'News',
         'blog_list' => 'List',
         'blog_stats' => 'Statistics',
+        'blog_edit' => 'Edit News',
+        'blog_create' => 'Create News',
     ],
     'label' => [
         'title' => 'Title',

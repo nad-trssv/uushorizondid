@@ -62,7 +62,7 @@
                                 
                                 <!-- Website Logo -->
                                 <div class="logo-header mostion">
-                                    <a href="index.html" ><img src="assets/images/logo.png" alt="/"></a>
+                                    <a href="index.html" ><img src="assets/images/logopng.png" alt="/"></a>
                                 </div>
                                 
                                 <!-- Nav Toggle Button -->
@@ -90,7 +90,7 @@
                                 <!-- Header Nav -->
                                 <div class="header-nav navbar-collapse collapse justify-content-end" id="navbarNavDropdown">
                                     <div class="logo-header">
-                                        <a href="index.html"><img src="assets/images/logo.png" alt="/" ></a>
+                                        <a href="index.html"><img src="assets/images/logopng.png" alt="/" ></a>
                                     </div>
                                     <ul class="nav navbar-nav navbar navbar-left">
                                         <li>
@@ -148,7 +148,7 @@
             <div class="contact-sidebar">
                 <div class="contact-box1">
                     <div class="logo-contact logo-header">
-                        <a href="index.html"><img src="assets/images/logo.png" alt="/"></a>
+                        <a href="index.html"><img src="assets/images/logopng.png" alt="/"></a>
                     </div>
                     <div class="m-b50 contact-text">
                         <div class="dz-title">
@@ -203,7 +203,7 @@
                                         <div class="col-xl-4 col-lg-4 m-lg-0 m-b20 wow fadeInUp" data-wow-delay="0.4s">
                                             <div class="footer-logo">
                                                 <a href="index.html">
-                                                    <img src="assets/images/logo.png" alt="/">
+                                                    <img src="assets/images/logopng.png" alt="/">
                                                 </a>
                                             </div>
                                             <p class="text-white mb-0 font-14">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>

@@ -180,9 +180,9 @@
           
           <!-- Кнопки действий (появляются при наведении) -->
           <div class="absolute top-3 left-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-            <button class="bg-white/20 backdrop-blur-md border border-white/30 text-gray-700 px-3.5 py-1 rounded-xl shadow-md transition-all hover:bg-white/30 hover:scale-110 active:scale-95 cursor-pointer">
+            <router-link :to="{ name: 'admin.blog.edit', params: { id: post.id } }" class="bg-white/20 backdrop-blur-md border border-white/30 text-gray-700 px-3.5 py-1 rounded-xl shadow-md transition-all hover:bg-white/30 hover:scale-110 active:scale-95 cursor-pointer">
               <i class="fas fa-edit text-xs"></i>
-            </button>
+            </router-link>
             <button class="bg-white/20 backdrop-blur-md border border-white/30 text-gray-700 px-3.5 py-1 rounded-xl shadow-md transition-all hover:bg-white/30 hover:scale-110 active:scale-95 cursor-pointer">
               <i class="fas fa-trash text-xs"></i>
             </button>

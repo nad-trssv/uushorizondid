@@ -14,7 +14,8 @@ export const posts = {
     sortDirection: 'desc',
     statusFilter: '',
     dateFrom: '',
-    dateTo: ''
+    dateTo: '',
+    editPost: null,
   },
   getters: {
     lists: state => state.lists,
@@ -28,6 +29,7 @@ export const posts = {
     statusFilter: state => state.statusFilter,
     dateFrom: state => state.dateFrom,
     dateTo: state => state.dateTo,
+    editPost: state => state.editPost,
   },
   mutations: {
     lists(state, lists) {
@@ -63,6 +65,9 @@ export const posts = {
     setDateTo(state, date) {
       state.dateTo = date;
     },
+    setEditPost(state, post) {
+      state.editPost = post;
+    }
   },
   actions: {
     lists({ commit, state }, payload) {
@@ -124,6 +129,19 @@ export const posts = {
               });
       });
     },
+    show({ commit }, id) {
+      return new Promise((resolve, reject) => {
+          api.get(`/posts/${id}`)
+              .then(response => {
+                commit('setEditPost', response.data.post);
+                resolve(response);
+              })
+              .catch(error => {
+                  console.error('Error fetching post:', error);
+                  reject(error);
+              });
+      });
+    },
   },
   mutations: {
     lists(state, lists) {
@@ -159,5 +177,8 @@ export const posts = {
     setDateTo(state, date) {
       state.dateTo = date;
     },  
+    setEditPost(state, post) {
+      state.editPost = post;
+    }
   },
 }

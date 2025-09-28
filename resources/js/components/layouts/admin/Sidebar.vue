@@ -252,7 +252,7 @@ export default {
             {
               label: this.$t('msg.menu.blog_list'),
               key: 'admin.blog.list',
-            }
+            },
           ],
         },
       ];
