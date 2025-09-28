@@ -3,52 +3,104 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EventRequest;
+use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
+use App\Models\Event;
 use App\Services\EventService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
+use App\Http\Resources\PaginateResource;
+use App\Http\Resources\EventStatResource;
 
 class EventController extends Controller
 {
-    protected $service;
+    use HandlesLocale;
 
-    public function __construct(EventService $service)
+    protected $eventService;
+
+    public function __construct(EventService $eventService)
     {
-        $this->service = $service;
+        $this->eventService = $eventService;
     }
 
-    // GET /api/v1/events
-    public function index()
+    public function index(Request $request)
     {
-        $events = $this->service->getAllEvents();
-        return EventResource::collection($events);
+        try {
+            $this->setAndGetLocale($request);
+            $events = EventResource::collection($this->eventService->getAll($request));
+            $paginatedData = PaginateResource::make($events, EventResource::class);
+            return response()->json([
+                'events' => $paginatedData,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch events', 'message' => $e->getMessage()], 500);
+        }
     }
 
-    // GET /api/v1/events/{id}
-    public function show($id)
+    public function stats(Request $request)
     {
-        $event = $this->service->getEventById($id);
-        return new EventResource($event);
+        try {
+            $this->setAndGetLocale($request);
+            $stats = new EventStatResource($this->eventService->getStat());
+            return response()->json([
+                'stats' => $stats,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch stats for events', 'message' => $e->getMessage()], 500);
+        }
     }
 
-    // POST /api/v1/events
-    public function store(EventRequest $request): JsonResponse
+    public function show(Request $request, Event $event)
     {
-        $event = $this->service->createEvent($request->validated());
-        return (new EventResource($event))->response()->setStatusCode(201);
+        try {
+            $this->setAndGetLocale($request);
+            $event = $this->eventService->getById($event->id);
+            return response()->json([
+                'event' => new EventResource($event),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch the event', 'message' => $e->getMessage()], 500);
+        }
     }
 
-    // PUT /api/v1/events/{id}
-    public function update(EventRequest $request, $id): JsonResponse
+    public function store(StoreEventRequest $request)
     {
-        $event = $this->service->updateEvent($id, $request->validated());
-        return (new EventResource($event))->response()->setStatusCode(200);
+        try {
+            $event = $this->eventService->create($request->validated());
+            return response()->json([
+                'event' => new EventResource($event),
+                'message' => 'Event created successfully'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create event', 'message' => $e->getMessage()], 500);
+        }
     }
 
-    // DELETE /api/v1/events/{id}
-    public function destroy($id): JsonResponse
+    public function update(UpdateEventRequest $request, Event $event)
     {
-        $this->service->deleteEvent($id);
-        return response()->json(null, 204);
+        try {
+            $event = $this->eventService->update($event->id, $request->validated());
+            return response()->json([
+                'event' => new EventResource($event),
+                'message' => 'Event updated successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update event', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(Event $event)
+    {
+        try {
+            $this->eventService->delete($event->id);
+            return response()->json([
+                'message' => 'Event deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete event', 'message' => $e->getMessage()], 500);
+        }
     }
 }

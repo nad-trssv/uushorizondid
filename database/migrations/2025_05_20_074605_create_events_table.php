@@ -6,28 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
-            $table->enum('type', ['online', 'offline', 'hybrid']);
-            $table->string('location')->nullable();
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at')->nullable();
-            $table->boolean('all_day')->default(false);
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['draft', 'published', 'archived', 'cancelled'])->default('draft');
+            $table->string('image')->nullable();
+            $table->unsignedInteger('max_participants')->default(10);
+            $table->unsignedInteger('current_participants')->default(0);
+            $table->decimal('price', 8, 2)->default(0);
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->timestamp('registration_deadline')->nullable();
+            $table->unsignedBigInteger('views')->default(0);
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
-        
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('events');

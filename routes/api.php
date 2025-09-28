@@ -72,10 +72,11 @@ Route::group(['prefix' => 'v1'], function () {
             });
             Route::group(['prefix' => 'events'], function () {
                 Route::get('/', [EventController::class, 'index']);
-                Route::get('/{id}', [EventController::class, 'show']);
+                Route::get('/stats', [EventController::class, 'stats']);
                 Route::post('/', [EventController::class, 'store']);
-                Route::put('/{id}', [EventController::class, 'update']);
-                Route::delete('/{id}', [EventController::class, 'destroy']);
+                Route::get('/{event}', [EventController::class, 'show']);
+                Route::put('/{event}', [EventController::class, 'update']);
+                Route::delete('/{event}', [EventController::class, 'destroy']);
             });
             Route::group(['prefix' => 'appointments'], function () {
                 Route::get('/all', [AppointmentsController::class, 'index'])
