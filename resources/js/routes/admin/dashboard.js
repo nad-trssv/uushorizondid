@@ -190,6 +190,15 @@ export default [
                         },
                     },
                     {
+                        path: 'stats',
+                        name: 'admin.events.stats',
+                        component: () => import('../../pages/Events/Stats.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_stats',
+                        },
+                    },
+                    {
                         path: 'create',
                         name: 'admin.events.create',
                         component: () => import('../../pages/Events/Form.vue'),
@@ -205,16 +214,6 @@ export default [
                         meta: {
                             auth: true,
                             breadcrumb: 'event_edit',
-                        },
-                        props: true,
-                    },
-                    {
-                        path: ':id/participants',
-                        name: 'admin.events.participants',
-                        component: () => import('../../pages/Events/Participants.vue'),
-                        meta: {
-                            auth: true,
-                            breadcrumb: 'event_participants',
                         },
                         props: true,
                     }

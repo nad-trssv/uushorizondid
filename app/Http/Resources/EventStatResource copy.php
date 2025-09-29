@@ -18,7 +18,7 @@ class EventStatResource extends JsonResource
             
             'most_popular_event' => new EventResource($this['most_popular_event']) ?? null,
             'most_viewed_event' => new EventResource($this['most_viewed_event']) ?? null,
-            'most_participated_event' => $this['most_participated_event'] ?? null,
+            'most_participated_event' => new EventResource($this['most_participated_event']) ?? null,
             
             'upcoming_events' => $this['upcoming_events'] ?? 0,
             'past_events' => $this['past_events'] ?? 0,

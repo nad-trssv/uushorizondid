@@ -261,6 +261,10 @@ export default {
           iconClass: 'fas fa-calendar-check text-indigo-500',
           children: [
             {
+              label: this.$t('msg.menu.blog_stats'),
+              key: 'admin.events.stats',
+            },
+            {
               label: this.$t('msg.menu.events'),
               key: 'admin.events.list',
             },
