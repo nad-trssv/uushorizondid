@@ -144,13 +144,62 @@
                 <n-input v-model:value="localEvent.slug" placeholder="URL-адрес" />
               </div>
 
+              <!-- Главное изображение -->
               <div class="border rounded-lg p-4">
-                <label class="text-sm font-medium text-gray-700 mb-2 block">Главное изображение</label>
-                <n-input v-model:value="localEvent.image" placeholder="Путь/URL изображения" />
-                <div v-if="localEvent.image" class="mt-2">
-                  <img :src="previewSrc(localEvent.image)" alt="Event Image" class="w-32 h-32 object-cover rounded" />
+                <label class="text-sm font-medium text-gray-700 mb-3 block">Главное изображение</label>
+
+                <div class="flex items-start gap-4 flex-wrap">
+                  <!-- Превью -->
+                  <div class="w-32">
+                    <img
+                      :src="previewSrc(localEvent.image) || '/storage/placeholders/600x400.svg'"
+                      alt="Event Image"
+                      class="w-32 h-32 object-cover rounded border"
+                    />
+                    <div class="mt-2 flex gap-2">
+                      <n-button
+                        v-if="localEvent.image"
+                        size="tiny"
+                        type="error"
+                        ghost
+                        @click="clearImage"
+                      >
+                        <template #icon><i class="fas fa-trash"></i></template>
+                        Удалить
+                      </n-button>
+                    </div>
+                  </div>
+
+                  <!-- Загрузка файла -->
+                  <div class="flex-1 min-w-[260px]">
+                    <n-upload
+                      :custom-request="uploadMainImage"
+                      :show-file-list="false"
+                      :max="1"
+                      accept="image/*"
+                      :disabled="uploadingImage"
+                    >
+                      <n-button :loading="uploadingImage">
+                        <template #icon><i class="fas fa-upload"></i></template>
+                        Загрузить файл
+                      </n-button>
+                    </n-upload>
+
+                    <!-- Fallback: ввести URL -->
+                    <div class="mt-3">
+                      <label class="text-xs text-gray-500 block mb-1">или вставьте URL</label>
+                      <n-input
+                        v-model:value="localEvent.image"
+                        placeholder="https://... или относительный путь в storage"
+                        clearable
+                        @change="onImageUrlChange"
+                      />
+                      <p class="text-xs text-gray-400 mt-1">После загрузки файла сюда автоматически подставится путь (например: <code>events/abc123.jpg</code>).</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -274,7 +323,7 @@
 <script>
 import {
   NCard, NButton, NInput, NSelect, NTag, NAlert, NDatePicker,
-  NSwitch, NInputNumber, NDataTable, NTabs, NTabPane
+  NSwitch, NInputNumber, NDataTable, NTabs, NTabPane, NUpload
 } from 'naive-ui';
 import Swal from 'sweetalert2';
 
@@ -282,7 +331,7 @@ export default {
   name: 'EventForm',
   components: {
     NCard, NButton, NInput, NSelect, NTag, NAlert, NDatePicker,
-    NSwitch, NInputNumber, NDataTable, NTabs, NTabPane
+    NSwitch, NInputNumber, NDataTable, NTabs, NTabPane, NUpload
   },
   props: {
     id: { type: [String, Number], default: null }
@@ -304,7 +353,8 @@ export default {
         { title: 'Статус', key: 'status' },
         { title: 'Кол-во', key: 'participants_count' },
         { title: 'Дата регистрации', key: 'created_at', render: (row) => this.formatDate(row.created_at) }
-      ]
+      ],
+      uploadingImage: false,
     }
   },
   computed: {
@@ -414,7 +464,6 @@ export default {
         this.currentLanguage = this.availableLanguages[0].code;
       }
     },
-
     getDefaultEvent() {
       return {
         id: null,
@@ -672,7 +721,42 @@ export default {
       });
       console.log('EVENT DELETE INTENT →', { id: this.localEvent.id });
       this.$message?.success?.('Запрос на удаление сформирован (смотри консоль).');
-    }
+    },
+    async uploadMainImage({ file, onFinish, onError, onProgress }) {
+      try {
+        this.uploadingImage = true;
+
+        const fd = new FormData();
+        fd.append('file', file.file ?? file); // naive-ui передает {file: File}
+
+        // через стор — чтобы всё было централизовано
+        const resp = await this.$store.dispatch('events/uploadImage', {
+          formData: fd,
+          onProgress
+        });
+
+        // ожидаем backend: { path: 'events/xxx.jpg', url: 'https://.../storage/events/xxx.jpg' }
+        const path = resp?.data?.path || '';
+        if (!path) throw new Error('Не получен путь к файлу');
+
+        this.localEvent.image = path;
+        onProgress?.({ percent: 100 });
+        onFinish?.();
+        this.$message?.success?.('Изображение загружено');
+      } catch (e) {
+        console.error('Upload error:', e);
+        this.$message?.error?.('Не удалось загрузить изображение');
+        onError?.();
+      } finally {
+        this.uploadingImage = false;
+      }
+    },
+    clearImage() {
+      this.localEvent.image = '';
+    },
+    onImageUrlChange() {
+      // можно добавить валидацию url/пути при ручном вводе
+    },
   }
 }
 </script>

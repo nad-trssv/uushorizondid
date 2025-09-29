@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
 use App\Http\Resources\PaginateResource;
 use App\Http\Resources\EventStatResource;
+use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
@@ -109,5 +111,27 @@ class EventController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete event', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'file' => [
+                'required',
+                File::image()->types(['jpg','jpeg','png','webp','avif', 'heic', 'svg'])->max(5 * 1024), // 5MB
+            ],
+        ]);
+        $dir = 'events';
+
+        $ext = $request->file('file')->extension();
+        $filename = Str::uuid() . '.' . $ext;
+
+        $path = $request->file('file')->storeAs($dir, $filename, 'public');
+
+        return response()->json([
+            'path' => $path,                         
+            'url'  => asset('storage/' . $path),      
+            'message' => 'Image uploaded successfully',
+        ], 201);
     }
 }

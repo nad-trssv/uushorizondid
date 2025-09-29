@@ -139,6 +139,16 @@ export const events = {
             reject(error);
           });
       });
-    }
+    },
+    uploadImage(_, { formData, onProgress }) {
+       return api.post('/events/upload-image', formData, {
+         headers: { 'Content-Type': 'multipart/form-data' },
+         onUploadProgress: (e) => {
+           if (onProgress && e.total) {
+             onProgress({ percent: Math.round((e.loaded * 100) / e.total) });
+           }
+         }
+       });
+     },
   }
 };

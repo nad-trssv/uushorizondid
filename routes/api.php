@@ -77,6 +77,8 @@ Route::group(['prefix' => 'v1'], function () {
                 Route::get('/{event}', [EventController::class, 'show']);
                 Route::put('/{event}', [EventController::class, 'update']);
                 Route::delete('/{event}', [EventController::class, 'destroy']);
+                Route::post('/upload-image', [EventController::class, 'uploadImage']);
+                Route::post('/{event}/upload-image', [EventController::class, 'uploadImage']);
             });
             Route::group(['prefix' => 'appointments'], function () {
                 Route::get('/all', [AppointmentsController::class, 'index'])
