@@ -29,4 +29,8 @@ class SiteSettingService
     {
         return $this->repository->getLanguages();
     }
+    public function currlang()
+    {
+        return $this->repository->currlang();
+    }
 }

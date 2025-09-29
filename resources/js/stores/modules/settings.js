@@ -1,3 +1,4 @@
+import { currentLocale } from 'laravel-vue-i18n';
 import api from '../../lib/axios';
 
 export const settings = {
@@ -6,6 +7,7 @@ export const settings = {
     lists: [],
     availableLanguages: [],
     languagesV2: [],
+    currentLocale: {},
   },
   getters: {
     lists: state => state.lists,
@@ -18,6 +20,7 @@ export const settings = {
       }
       return [];
     },
+    currentLocale: state => state.currentLocale,
   },
   actions: {
     lists({ commit }, payload) {
@@ -26,6 +29,7 @@ export const settings = {
                 .then(response => {
                     commit('lists', response.data.settings);
                     commit('languagesV2', response.data.languages);
+                    commit('setCurrentLocale', response.data.current_language);
                     
                     resolve(response);
                 })
@@ -46,5 +50,8 @@ export const settings = {
     setAvailableLanguages(state, languages) {
       state.availableLanguages = languages;
     },
+    setCurrentLocale(state, locale) {
+      state.currentLocale = locale;
+    }
   },
 }

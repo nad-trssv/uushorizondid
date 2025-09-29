@@ -70,6 +70,7 @@ class EventService
                 'slug', 'status', 'image',
                 'max_participants', 'price',
                 'start_time', 'end_time', 'registration_deadline',
+                'updated_at',
                 // 'published_at' — если обновляешь
             ]);
             $event->update($eventFields);

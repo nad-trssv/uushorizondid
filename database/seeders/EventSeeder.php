@@ -19,7 +19,7 @@ class EventSeeder extends Seeder
         
         // Создаем 5 тестовых мероприятий вручную
         $events = [];
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 35; $i++) {
             $startTime = Carbon::now()->addWeeks($i);
             
             $events[] = Event::create([

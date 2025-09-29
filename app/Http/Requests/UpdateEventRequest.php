@@ -43,6 +43,8 @@ class UpdateEventRequest extends FormRequest
             'seo.*.meta_title'       => ['nullable', 'string', 'max:255'],
             'seo.*.meta_description' => ['nullable', 'string', 'max:500'],
             'seo.*.meta_keywords'    => ['nullable', 'string', 'max:500'],
+            
+            'updated_at' => ['nullable', 'date'],
         ];
     }
 

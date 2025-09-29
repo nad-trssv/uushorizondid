@@ -76,6 +76,32 @@
       </n-statistic>
     </div>
 
+    <!-- Доп. статистика -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <n-statistic label="Предстоящие" class="bg-white p-4 rounded-lg shadow">
+        <template #prefix><i class="fas fa-calendar-plus text-blue-500 mr-2"></i></template>
+        {{ stats.upcoming_events || 0 }}
+        <template #suffix>
+          <n-tag :bordered="false" type="info" size="small">Прошедшие: {{ stats.past_events || 0 }}</n-tag>
+        </template>
+      </n-statistic>
+
+      <n-statistic label="Участники (всего)" class="bg-white p-4 rounded-lg shadow">
+        <template #prefix><i class="fas fa-users text-indigo-500 mr-2"></i></template>
+        {{ stats.total_participants || 0 }}
+        <template #suffix>
+          <n-tag :bordered="false" type="success" size="small">
+            Подтв.: {{ stats.total_confirmed_participants || 0 }}
+          </n-tag>
+        </template>
+      </n-statistic>
+
+      <n-statistic label="Средняя заполняемость" class="bg-white p-4 rounded-lg shadow">
+        <template #prefix><i class="fas fa-percentage text-rose-500 mr-2"></i></template>
+        {{ Math.round((stats.average_participation_rate || 0) * 100) }}%
+      </n-statistic>
+    </div>
+
     <!-- Фильтры -->
     <n-card class="mb-6" :bordered="false">
       <template #header>
@@ -130,174 +156,161 @@
         </n-button>
       </div>
     </n-card>
-    <!-- TOP PAGINATION (всегда) -->
-    <div class="my-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <n-pagination
-        v-model:page="page"
-        :page-count="totalPages"
-        :page-slot="5"
-        @update:page="handlePageChange"
-      />
-      <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">На странице:</span>
-        <n-select
-          v-model:value="pageSize"
-          :options="pageSizeOptions"
-          style="width: 100px"
-          size="small"
-          @update:value="handlePageSizeChange"
-        />
-      </div>
-    </div>
-    <div id="eventsResults">
-      <!-- GRID -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <n-card
-          v-for="ev in events"
-          :key="ev.id"
-          class="shadow-sm"
-          :title="getEventTitle(ev) || ('#' + ev.id)"
-        >
-          <template #cover>
-            <img
-              :src="previewSrc(ev.image)"
-              alt="cover"
-              class="w-full h-44 object-cover"
-              @error="onImgError"
-            />
-          </template>
 
-          <div class="space-y-2">
+    <!-- Представление: GRID -->
+    <div v-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <n-card
+        v-for="ev in events"
+        :key="ev.id"
+        class="shadow-sm"
+        :title="ev.slug || ('#' + ev.id)"
+      >
+        <template #cover>
+          <img
+            :src="previewSrc(ev.image)"
+            alt="cover"
+            class="w-full h-44 object-cover"
+            @error="onImgError"
+          />
+        </template>
+
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <n-tag :type="ev.status === 'published' ? 'success' : 'warning'" size="small" bordered="false">
+              {{ ev.status === 'published' ? 'Опубликовано' : 'Черновик' }}
+            </n-tag>
+            <n-tag v-if="ev.price !== null" size="small" type="info" bordered="false">
+              € {{ formatPrice(ev.price) }}
+            </n-tag>
+          </div>
+
+          <div class="text-sm text-gray-600">
+            <i class="far fa-calendar-alt mr-1"></i>
+            {{ formatDate(ev.start_time) }} — {{ formatDate(ev.end_time) }}
+          </div>
+
+          <div class="text-xs text-gray-500">
+            <i class="fas fa-user-friends mr-1"></i>
+            {{ ev.confirmed_participants_count || 0 }} / {{ ev.max_participants || 0 }} подтверждено
+          </div>
+
+          <div class="text-xs text-gray-400">
+            <i class="fas fa-eye mr-1"></i>{{ ev.views || 0 }}
+          </div>
+        </div>
+
+        <template #action>
+          <div class="flex justify-between items-center">
+            <n-button size="small" @click="$router.push({ name: 'admin.events.edit', params: { id: ev.id } })" type="primary">
+              <template #icon><i class="fas fa-edit"></i></template>
+              Редактировать
+            </n-button>
+
+            <n-button size="small" ghost type="error" @click="confirmDelete(ev)">
+              <template #icon><i class="fas fa-trash"></i></template>
+              Удалить
+            </n-button>
+          </div>
+        </template>
+      </n-card>
+    </div>
+
+    <!-- Представление: LIST -->
+    <div v-else-if="viewMode === 'list'" class="space-y-3">
+      <n-card v-for="ev in events" :key="ev.id" class="shadow-sm">
+        <div class="flex gap-4">
+          <img
+            :src="previewSrc(ev.image)"
+            alt=""
+            class="w-24 h-24 object-cover rounded"
+            @error="onImgError"
+          />
+          <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              <n-tag :type="ev.status === 'published' ? 'success' : 'warning'" size="small" :bordered="false">
+              <h3 class="font-semibold truncate">{{ ev.slug || ('#' + ev.id) }}</h3>
+              <n-tag :type="ev.status === 'published' ? 'success' : 'warning'" size="small" bordered="false">
                 {{ ev.status === 'published' ? 'Опубликовано' : 'Черновик' }}
               </n-tag>
-              <n-tag v-if="ev.price !== null" size="small" type="info" :bordered="false">
-                € {{ formatPrice(ev.price) }}
-              </n-tag>
             </div>
-
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-gray-600 mt-1">
               <i class="far fa-calendar-alt mr-1"></i>
               {{ formatDate(ev.start_time) }} — {{ formatDate(ev.end_time) }}
             </div>
-
-            <div class="text-xs text-gray-500">
+            <div class="text-xs text-gray-500 mt-1">
               <i class="fas fa-user-friends mr-1"></i>
-              {{ ev.confirmed_participants_count || 0 }} / {{ ev.max_participants || 0 }} подтверждено
-            </div>
-
-            <div class="text-xs text-gray-400">
-              <i class="fas fa-eye mr-1"></i>{{ ev.views || 0 }}
+              {{ ev.confirmed_participants_count || 0 }} / {{ ev.max_participants || 0 }} •
+              <i class="fas fa-eye ml-2 mr-1"></i>{{ ev.views || 0 }}
             </div>
           </div>
-
-          <template #action>
-            <div class="flex justify-between items-center">
-              <n-button size="small" @click="$router.push({ name: 'admin.events.edit', params: { id: ev.id } })" type="primary">
-                <template #icon><i class="fas fa-edit"></i></template>
-                Редактировать
-              </n-button>
-
-              <n-button size="small" ghost type="error" @click="confirmDelete(ev)">
-                <template #icon><i class="fas fa-trash"></i></template>
-                Удалить
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </div>
-
-      <!-- LIST -->
-      <div v-else-if="viewMode === 'list'" class="space-y-3">
-        <n-card v-for="ev in events" :key="ev.id" class="shadow-sm">
-          <div class="flex gap-4">
-            <img
-              :src="previewSrc(ev.image)"
-              alt=""
-              class="w-24 h-24 object-cover rounded"
-              @error="onImgError"
-            />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <h3 class="font-semibold truncate">{{ getEventTitle(ev) || ('#' + ev.id) }}</h3>
-                <n-tag :type="ev.status === 'published' ? 'success' : 'warning'" size="small" :bordered="false">
-                  {{ ev.status === 'published' ? 'Опубликовано' : 'Черновик' }}
-                </n-tag>
-              </div>
-              <div class="text-sm text-gray-600 mt-1">
-                <i class="far fa-calendar-alt mr-1"></i>
-                {{ formatDate(ev.start_time) }} — {{ formatDate(ev.end_time) }}
-              </div>
-              <div class="text-xs text-gray-500 mt-1">
-                <i class="fas fa-user-friends mr-1"></i>
-                {{ ev.confirmed_participants_count || 0 }} / {{ ev.max_participants || 0 }} •
-                <i class="fas fa-eye ml-2 mr-1"></i>{{ ev.views || 0 }}
-              </div>
-            </div>
-            <div class="flex flex-col gap-2">
-              <n-button size="small" @click="$router.push({ name: 'admin.events.edit', params: { id: ev.id } })" type="primary">
-                <template #icon><i class="fas fa-edit"></i></template>
-                Редактировать
-              </n-button>
-              <n-button size="small" ghost type="error" @click="confirmDelete(ev)">
-                <template #icon><i class="fas fa-trash"></i></template>
-                Удалить
-              </n-button>
-            </div>
+          <div class="flex flex-col gap-2">
+            <n-button size="small" @click="$router.push({ name: 'admin.events.edit', params: { id: ev.id } })" type="primary">
+              <template #icon><i class="fas fa-edit"></i></template>
+              Редактировать
+            </n-button>
+            <n-button size="small" ghost type="error" @click="confirmDelete(ev)">
+              <template #icon><i class="fas fa-trash"></i></template>
+              Удалить
+            </n-button>
           </div>
-        </n-card>
-      </div>
-
-      <!-- TABLE -->
-      <n-card v-else class="shadow-sm rounded-lg" :bordered="false">
-        <!-- Верхняя пагинация -->
-        <div class="my-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-600">На странице:</span>
-            <n-select
-              v-model:value="pageSize"
-              :options="pageSizeOptions"
-              style="width: 90px"
-              size="small"
-              @update:value="handlePageSizeChange"
-            />
-          </div>
-        </div>
-
-        <div class="overflow-x-auto eventsTableContainer">
-          <n-data-table
-            :columns="columns"
-            :data="events"
-            :bordered="false"
-            :loading="loading"
-            :remote="true"
-            @update:sorter="handleSort"
-            striped
-            class="min-h-[400px]"
-          />
         </div>
       </n-card>
     </div>
-    <!-- BOTTOM PAGINATION (всегда) -->
-    <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <n-pagination
-        v-model:page="page"
-        :page-count="totalPages"
-        :page-slot="5"
-        @update:page="handlePageChange"
-      />
-      <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">На странице:</span>
-        <n-select
-          v-model:value="pageSize"
-          :options="pageSizeOptions"
-          style="width: 100px"
-          size="small"
-          @update:value="handlePageSizeChange"
+
+    <!-- Представление: TABLE -->
+    <n-card v-else class="shadow-sm rounded-lg" :bordered="false">
+      <!-- Верхняя пагинация -->
+      <div class="my-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <n-pagination
+          v-model:page="page"
+          :page-count="totalPages"
+          :page-slot="5"
+          @update:page="handlePageChange"
+        />
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">На странице:</span>
+          <n-select
+            v-model:value="pageSize"
+            :options="pageSizeOptions"
+            style="width: 90px"
+            size="small"
+            @update:value="handlePageSizeChange"
+          />
+        </div>
+      </div>
+
+      <div class="overflow-x-auto eventsTableContainer">
+        <n-data-table
+          :columns="columns"
+          :data="events"
+          :bordered="false"
+          :loading="loading"
+          :remote="true"
+          @update:sorter="handleSort"
+          striped
+          class="min-h-[400px]"
         />
       </div>
-    </div>
+
+      <!-- Нижняя пагинация -->
+      <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <n-pagination
+          v-model:page="page"
+          :page-count="totalPages"
+          :page-slot="5"
+          @update:page="handlePageChange"
+        />
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">На странице:</span>
+          <n-select
+            v-model:value="pageSize"
+            :options="pageSizeOptions"
+            style="width: 90px"
+            size="small"
+            @update:value="handlePageSizeChange"
+          />
+        </div>
+      </div>
+    </n-card>
   </div>
 </template>
 
@@ -315,7 +328,8 @@ import {
   NDatePicker,
   NTag,
   NBadge,
-  NDropdown
+  NDropdown,
+  useMessage
 } from 'naive-ui';
 import Swal from 'sweetalert2';
 
@@ -340,7 +354,7 @@ export default {
       loading: false,
       viewMode: 'grid', // 'grid' | 'list' | 'table'
       page: 1,
-      pageSize: 12,
+      pageSize: 10,
       sortField: null,
       sortOrder: null, // 'asc' | 'desc' | null
       filters: {
@@ -362,7 +376,7 @@ export default {
     },
     pageSizeOptions() {
       return [
-        { label: '12', value: 12 },
+        { label: '10', value: 10 },
         { label: '25', value: 25 },
         { label: '50', value: 50 },
         { label: '100', value: 100 }
@@ -385,8 +399,19 @@ export default {
           class: isMobile ? 'hidden sm:table-cell' : ''
         },
         {
-          title: 'Заголовок',
-          key: 'title',
+          title: 'Изображение',
+          key: 'image',
+          render: (row) =>
+            h('img', {
+              src: this.previewSrc(row.image),
+              class: 'w-12 h-12 object-cover rounded',
+              onError: this.onImgError
+            }),
+          width: 80
+        },
+        {
+          title: 'Slug / Название',
+          key: 'slug',
           render: (row) =>
             h(
               'a',
@@ -394,12 +419,29 @@ export default {
                 class: 'cursor-pointer hover:underline text-indigo-700',
                 onClick: () => this.$router.push({ name: 'admin.events.edit', params: { id: row.id } })
               },
-              this.getEventTitle(row)
+              row.slug || `#${row.id}`
             ),
-          // сортировку по title лучше отключить, если бэк не умеет
-          sorter: false,
-          minWidth: 200,
+          sorter: true,
+          minWidth: 180,
           resizable: true
+        },
+        {
+          title: 'Статус',
+          key: 'status',
+          render: (row) =>
+            h(
+              NBadge,
+              { type: row.status === 'published' ? 'success' : 'warning', dot: true },
+              {
+                default: () =>
+                  h(
+                    NTag,
+                    { type: row.status === 'published' ? 'success' : 'warning', bordered: false, size: 'small' },
+                    { default: () => (row.status === 'published' ? 'Опубликовано' : 'Черновик') }
+                  )
+              }
+            ),
+          width: 130
         },
         {
           title: 'Даты',
@@ -430,6 +472,13 @@ export default {
           render: (row) => `€ ${this.formatPrice(row.price)}`,
           sorter: true,
           width: 100
+        },
+        {
+          title: 'Просмотры',
+          key: 'views',
+          render: (row) => `${row.views || 0}`,
+          sorter: true,
+          width: 110
         },
         {
           title: 'Действия',
@@ -464,36 +513,24 @@ export default {
       ];
 
       return columns;
-    },
-    currentLangIsoCode() {
-      return this.$store.getters['settings/currentLocale']?.iso || 'ru-RU';
-    },
+    }
   },
   methods: {
+    // API
     async fetchEvents() {
       this.loading = true;
       try {
-        // отправляем только поддерживаемые бэком ключи
-        const params = {
+        const payload = {
           page: this.page,
-          per_page: this.pageSize
+          per_page: this.pageSize,
+          sort_field: this.sortField,
+          sort_order: this.sortOrder,
+          query: this.filters.query,
+          status: this.filters.status,
+          start_from: Array.isArray(this.filters.startRange) && this.filters.startRange[0] ? this.tsToIso(this.filters.startRange[0]) : null,
+          start_to: Array.isArray(this.filters.startRange) && this.filters.startRange[1] ? this.tsToIso(this.filters.startRange[1]) : null
         };
-        if (this.sortField && this.sortOrder) {
-          params.sort_by = this.sortField;
-          params.sort_order = this.sortOrder;
-        }
-        if (this.filters.query) params.search = this.filters.query;
-        if (this.filters.status) params.status = this.filters.status;
-
-        if (Array.isArray(this.filters.startRange) && this.filters.startRange[0]) {
-          params.date_from = this.tsToIso(this.filters.startRange[0]);
-        }
-        if (Array.isArray(this.filters.startRange) && this.filters.startRange[1]) {
-          params.date_to = this.tsToIso(this.filters.startRange[1]);
-        }
-        
-
-        await this.$store.dispatch('events/lists', params);
+        await this.$store.dispatch('events/lists', payload);
         await this.$store.dispatch('events/stats');
       } catch (e) {
         console.error('Error fetching events:', e);
@@ -502,6 +539,8 @@ export default {
         this.loading = false;
       }
     },
+
+    // Handlers
     handleSort({ columnKey, order }) {
       this.sortField = columnKey;
       this.sortOrder = order === 'ascend' ? 'asc' : order === 'descend' ? 'desc' : null;
@@ -512,8 +551,8 @@ export default {
       this.page = p;
       this.fetchEvents();
       this.$nextTick(() => {
-        const wrap = document.querySelector('#eventsResults');
-        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const el = document.querySelector('.eventsTableContainer');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     },
     handlePageSizeChange(size) {
@@ -534,7 +573,7 @@ export default {
     async confirmDelete(ev) {
       const res = await Swal.fire({
         title: 'Удалить мероприятие?',
-        text: ev.slug ? `Вы уверены, что хотите удалить "${ev.title}"?` : 'Действие необратимо.',
+        text: ev.slug ? `Вы уверены, что хотите удалить "${ev.slug}"?` : 'Действие необратимо.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Да, удалить',
@@ -545,22 +584,25 @@ export default {
       try {
         await this.$store.dispatch('events/delete', ev.id);
         Swal.fire({ icon: 'success', title: 'Удалено', timer: 2000 });
-        // если страница опустела — откатиться на предыдущую
-        if (this.events.length - 1 <= 0 && this.page > 1) this.page -= 1;
+        // если осталась пустая страница после удаления — откатиться на предыдущую
+        const afterCount = this.events.length - 1;
+        if (afterCount <= 0 && this.page > 1) this.page -= 1;
         this.fetchEvents();
       } catch (e) {
         console.error('Error deleting event:', e);
         Swal.fire({ icon: 'error', title: 'Ошибка', text: 'Не удалось удалить мероприятие', timer: 2500 });
       }
     },
+
+    // Utils
     setView(mode) {
       this.viewMode = mode;
+      // при переключении на таблицу сразу подгружаем (если нужно) — у нас уже есть данные
     },
     formatDate(s) {
       if (!s) return '—';
       try {
-        let iso = this.currentLangIsoCode;
-        return new Date(s).toLocaleString(iso, {
+        return new Date(s).toLocaleString('ru-RU', {
           year: 'numeric', month: 'short', day: '2-digit',
           hour: '2-digit', minute: '2-digit'
         });
@@ -570,16 +612,16 @@ export default {
       if (val === null || val === undefined) return '0.00';
       const num = Number(val);
       return Number.isFinite(num) ? num.toFixed(2) : '0.00';
-    },
+      },
     previewSrc(path) {
-      if (!path) return '/storage/placeholders/600x400.svg';
+      if (!path) return 'https://via.placeholder.com/600x320?text=Event';
       return /^https?:\/\//i.test(path) ? path : `/storage/${path}`;
     },
     onImgError(e) {
-      e.target.src = '/storage/placeholders/600x400.svg';
+      e.target.src = 'https://via.placeholder.com/96?text=—';
     },
     tsToIso(ts) {
-      // YYYY-MM-DD HH:mm:ss
+      // NaiveUI возвращает миллисекунды
       const d = new Date(ts);
       const pad = (n) => String(n).padStart(2, '0');
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -589,42 +631,10 @@ export default {
       const t = Number(total) || 0;
       if (t === 0) return 0;
       return Math.round((p / t) * 100);
-    },
-    getEventTitle(ev) {
-      if (!ev) return '';
-      // прямо на корне вдруг пришёл заголовок
-      if (ev.title) return ev.title;
-
-      const trs = Array.isArray(ev.translations) ? ev.translations : [];
-
-      // 1) пробуем по коду (если в ответе translation.language есть как код)
-      let t = trs.find(x => x.language === this.currentLangCode && x.title);
-      if (t?.title) return t.title;
-
-      // 2) пробуем по id языка (обычный случай)
-      const wantedId = this.langIdByCode[this.currentLangCode];
-      if (wantedId) {
-        t = trs.find(x => Number(x.language_id) === Number(wantedId) && x.title);
-        if (t?.title) return t.title;
-      }
-
-      // 3) дефолтный язык
-      const defId = this.langIdByCode[this.defaultLangCode];
-      if (defId) {
-        t = trs.find(x => Number(x.language_id) === Number(defId) && x.title);
-        if (t?.title) return t.title;
-      }
-
-      // 4) любое непустое название
-      t = trs.find(x => x.title);
-      if (t?.title) return t.title;
-
-      // 5) запасной вариант
-      return ev.slug || `#${ev.id}`;
     }
   },
-  mounted() {
-    this.fetchEvents();
+  async mounted() {
+    await this.fetchEvents();
   }
 };
 </script>

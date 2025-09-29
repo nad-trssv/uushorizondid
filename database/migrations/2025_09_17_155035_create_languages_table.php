@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('native_name')->nullable();
             $table->boolean('enabled')->default(true);
             $table->boolean('is_default')->default(false);
+            $table->string('iso')->nullable();
             $table->string('flag')->nullable();
             $table->timestamps();
         });

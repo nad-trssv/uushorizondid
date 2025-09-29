@@ -560,8 +560,6 @@ export default {
       const data = this.buildPayload();
       const id = this.event?.id || this.localEvent?.id;
 
-      console.log('Saving event payload:', JSON.stringify(data, null, 2));
-
       if (this.isEdit) {
         this.$store.dispatch('events/update', { id, data })
           .then(() => {
@@ -632,6 +630,46 @@ export default {
         this.$message?.warning?.('Удалять нечего: это новый черновик.');
         return;
       }
+      Swal.fire({
+        title: 'Вы уверены?',
+        text: 'Это действие нельзя будет отменить!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Да, удалить!',
+        cancelButtonText: 'Отмена'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$store.dispatch('events/delete',  this.localEvent.id )
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Удалено!',
+                text: 'Мероприятие успешно удалено.',
+                timer: 2000,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                customClass: { popup: 'modern-toast success' }
+              });
+              this.$router.replace({ name: 'admin.events.list' });
+            })
+            .catch((error) => {
+              console.error('Ошибка при удалении мероприятия:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Ошибка!',
+                text: error?.response?.data?.message || 'Не удалось удалить мероприятие.',
+                timer: 2500,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                customClass: { popup: 'modern-toast error' }
+              });
+            });
+        }
+      });
       console.log('EVENT DELETE INTENT →', { id: this.localEvent.id });
       this.$message?.success?.('Запрос на удаление сформирован (смотри консоль).');
     }

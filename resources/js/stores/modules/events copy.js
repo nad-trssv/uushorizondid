@@ -36,22 +36,22 @@ export const events = {
     },
     setPagination(state, meta) {
       state.pagination = {
-        current_page: meta?.current_page ?? 1,
-        last_page: meta?.last_page ?? 1,
-        per_page: meta?.per_page ?? 10,
-        total: meta?.total ?? 0
+        current_page: meta?.current_page || 1,
+        last_page: meta?.last_page || 1,
+        per_page: meta?.per_page || 10,
+        total: meta?.total || 0
       };
     }
   },
 
   actions: {
-    // Список мероприятий
+    // Список мероприятий с пагинацией/сортировкой/фильтрами
     lists({ commit }, params = {}) {
+      // Ожидаем структуру ответа: { events: { data, current_page, last_page, per_page, total, ... } }
       return new Promise((resolve, reject) => {
         api
           .get('/events', { params })
           .then((response) => {
-            // ожидаем { events: { data, current_page, last_page, per_page, total } }
             const payload = response?.data?.events || {};
             const items = payload?.data || [];
             commit('setLists', items);
@@ -76,7 +76,8 @@ export const events = {
         api
           .get('/events/stats')
           .then((response) => {
-            commit('setStats', response?.data?.stats || {});
+            const stats = response?.data?.stats || {};
+            commit('setStats', stats);
             resolve(response);
           })
           .catch((error) => {
@@ -107,7 +108,9 @@ export const events = {
       return new Promise((resolve, reject) => {
         api
           .post('/events', data)
-          .then((response) => resolve(response))
+          .then((response) => {
+            resolve(response);
+          })
           .catch((error) => {
             console.error('Error creating event:', error);
             reject(error);
@@ -120,7 +123,9 @@ export const events = {
       return new Promise((resolve, reject) => {
         api
           .put(`/events/${id}`, data)
-          .then((response) => resolve(response))
+          .then((response) => {
+            resolve(response);
+          })
           .catch((error) => {
             console.error('Error updating event:', error);
             reject(error);
@@ -133,7 +138,9 @@ export const events = {
       return new Promise((resolve, reject) => {
         api
           .delete(`/events/${id}`)
-          .then((response) => resolve(response))
+          .then((response) => {
+            resolve(response);
+          })
           .catch((error) => {
             console.error('Error deleting event:', error);
             reject(error);

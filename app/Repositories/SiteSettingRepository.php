@@ -35,4 +35,11 @@ class SiteSettingRepository
     {
         return Language::all();
     }
+
+    public function currlang()
+    {
+        $lang = app()->getLocale();
+        $language = Language::where('code', $lang)->first();
+        return $language;
+    }
 }
