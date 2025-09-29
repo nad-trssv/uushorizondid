@@ -255,6 +255,21 @@ export default {
             },
           ],
         },
+        {
+          label: this.$t('msg.menu.events'),
+          key: 'admin.events.parent',
+          iconClass: 'fas fa-calendar-check text-indigo-500',
+          children: [
+            {
+              label: this.$t('msg.menu.events'),
+              key: 'admin.events.list',
+            },
+            {
+              label: this.$t('msg.menu.event_create'),
+              key: 'admin.events.create',
+            }
+          ],
+        },
       ];
     }
   },

@@ -25,7 +25,7 @@ class EventSeeder extends Seeder
             $events[] = Event::create([
                 'slug' => "event-{$i}",
                 'status' => $i <= 3 ? 'published' : 'draft',
-                'image' => "events/event-{$i}.jpg",
+                'image' => "events/event-{$i}.jpeg",
                 'max_participants' => rand(10, 25),
                 'current_participants' => 0,
                 'price' => rand(0, 50),

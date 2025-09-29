@@ -75,7 +75,7 @@ class EventResource extends JsonResource
             'confirmed_participants_count' => $this->confirmedParticipantsCount(),
 
             // Участники (только для админки)
-            'participants' => $this->when($request->has('include_participants'), 
+            'participants' =>  
                 $this->participants->map(fn($participant) => [
                     'id' => $participant->id,
                     'first_name' => $participant->first_name,
@@ -87,7 +87,7 @@ class EventResource extends JsonResource
                     'participants_count' => $participant->participants_count,
                     'notes' => $participant->notes,
                     'created_at' => $participant->created_at->toDateTimeString(),
-                ])
+                ]
             ),
         ];
     }

@@ -192,7 +192,12 @@ export default {
           icon: () => h('i', { class: 'fas fa-bell mr-2' })
         }
       ];
-    }
+    },
+    langv2() {
+      const langv2 = this.$store.getters['settings/justForTest'] || {};
+      console.log('langV2 navbar', langv2);
+      return langv2;
+    },
   },
   watch: {
     availableLanguages: {

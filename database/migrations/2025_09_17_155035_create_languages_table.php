@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('name');
+            $table->string('default')->nullable();
+            $table->string('native_name')->nullable();
+            $table->boolean('enabled')->default(true);
             $table->boolean('is_default')->default(false);
+            $table->string('flag')->nullable();
             $table->timestamps();
         });
         

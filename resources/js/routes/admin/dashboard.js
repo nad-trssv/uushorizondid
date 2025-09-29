@@ -170,6 +170,55 @@ export default [
                         },
                     },
                 ]
+            },
+            {
+                path: 'events',
+                name: 'admin.events',
+                redirect: {name: 'admin.events.list'},
+                meta: {
+                    auth: true,
+                    breadcrumb: 'events',
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'admin.events.list',
+                        component: () => import('../../pages/Events/Index.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: '',
+                        },
+                    },
+                    {
+                        path: 'create',
+                        name: 'admin.events.create',
+                        component: () => import('../../pages/Events/Form.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'event_create',
+                        },
+                    },
+                    {
+                        path: ':id',
+                        name: 'admin.events.edit',
+                        component: () => import('../../pages/Events/Form.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'event_edit',
+                        },
+                        props: true,
+                    },
+                    {
+                        path: ':id/participants',
+                        name: 'admin.events.participants',
+                        component: () => import('../../pages/Events/Participants.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'event_participants',
+                        },
+                        props: true,
+                    }
+                ]
             }
         ]
     },

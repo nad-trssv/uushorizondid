@@ -109,6 +109,7 @@ class SiteSettingSeeder extends Seeder
             'default_language' => 'ru',
             'available_languages' => [
                 'en' => [
+                    'id' => 1,
                     'code' => 'en',
                     'name' => 'English',
                     'native_name' => 'English',
@@ -117,6 +118,7 @@ class SiteSettingSeeder extends Seeder
                     'flag' => 'flags/en.svg',
                 ],
                 'ru' => [
+                    'id' => 2,
                     'code' => 'ru',
                     'name' => 'Русский',
                     'native_name' => 'Русский',
@@ -125,6 +127,7 @@ class SiteSettingSeeder extends Seeder
                     'flag' => 'flags/ru.svg', // Обновляем путь
                 ],
                 'et' => [
+                    'id' => 3,
                     'code' => 'et',
                     'name' => 'Eesti',
                     'native_name' => 'Eesti',
@@ -132,22 +135,16 @@ class SiteSettingSeeder extends Seeder
                     'default' => false,
                     'flag' => 'flags/et.svg',
                 ],
-                'lv' => [
-                    'code' => 'lv',
-                    'name' => 'Latviešu',
-                    'native_name' => 'Latviešu',
+                'uk' => [
+                    'id' => 4,
+                    'code' => 'uk',
+                    'name' => 'Українська',
+                    'native_name' => 'Українська',
                     'enabled' => true,
                     'default' => false,
                     'flag' => 'flags/lv.svg',
                 ],
-                'fi' => [
-                    'code' => 'fi',
-                    'name' => 'Suomi',
-                    'native_name' => 'Suomi',
-                    'enabled' => true,
-                    'default' => false,
-                    'flag' => 'flags/lv.svg',
-                ],
+                
             ],
             'language_switcher' => true,
             'detect_browser_language' => false,

@@ -60,6 +60,9 @@ return [
         'blog_stats' => 'Statistika',
         'blog_edit' => 'Muuda uudist',
         'blog_create' => 'Loo uudis',
+        'events' => 'Sündmused',
+        'event_create' => 'Loo sündmus',
+        'event_edit' => 'Muuda sündmust'
     ],
     'label' => [
         'title' => 'Pealkiri',

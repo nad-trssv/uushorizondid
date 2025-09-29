@@ -24,4 +24,9 @@ class SiteSettingService
     {
         return $this->repository->updateGroup($group, $data);
     }
+
+    public function getLanguages()
+    {
+        return $this->repository->getLanguages();
+    }
 }

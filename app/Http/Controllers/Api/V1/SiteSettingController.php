@@ -17,15 +17,18 @@ class SiteSettingController extends Controller
     public function index(Request $request)
     {
         $settings = $this->service->getAll($request);
+        
+        $languages = $this->service->getLanguages();
 
-        return response()->json(
-            $settings->map(function ($items, $group) {
+        return response()->json([
+            'languages' => $languages,
+            'settings' => $settings->map(function ($items, $group) {
                 return [
                     'group' => $group,
-                    'settings' => SiteSettingResource::collection($items),
+                    'settings' => SiteSettingResource::collection($items)
                 ];
             })->values()
-        );
+        ]);
     }
 
     // Получить одну группу по названию

@@ -60,6 +60,9 @@ return [
         'blog_stats' => 'Statistics',
         'blog_edit' => 'Edit News',
         'blog_create' => 'Create News',
+        'events' => 'Events',
+        'event_create' => 'Create Event',
+        'event_edit' => 'Edit Event'
     ],
     'label' => [
         'title' => 'Title',

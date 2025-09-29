@@ -22,9 +22,9 @@ class EventRequest extends FormRequest
             'created_by' => 'required|exists:users,id',
             'all_day' => 'boolean|default:false',
 
-            'translations' => 'required|array|min:1',
-            'translations.*.language_id' => 'required|exists:languages,id',
-            'translations.*.title' => 'required|string|max:255',
+            'translations' => 'array|min:1',
+            'translations.*.language_id' => 'exists:languages,id',
+            'translations.*.title' => 'string|max:255',
             'translations.*.description' => 'nullable|string',
         ];
     }

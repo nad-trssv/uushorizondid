@@ -21,12 +21,12 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             SiteSettingSeeder::class,
             WorkTimeExceptionSeeder::class,
-            EventSeeder::class,
             AppointmentsSeeder::class,
             ServiceMasterSeeder::class,
             LanguageSeeder::class,
             PostSeeder::class,
             CommentSeeder::class,
+            EventSeeder::class,
         ]);
     }
 }

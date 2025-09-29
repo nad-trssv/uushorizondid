@@ -82,15 +82,22 @@ class EventController extends Controller
     public function update(UpdateEventRequest $request, Event $event)
     {
         try {
-            $event = $this->eventService->update($event->id, $request->validated());
+            // убедимся, что работаем с route id
+            $payload = $request->validated();
+            $updated = $this->eventService->update($event->id, $payload);
+
             return response()->json([
-                'event' => new EventResource($event),
+                'event' => new EventResource($updated),
                 'message' => 'Event updated successfully'
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update event', 'message' => $e->getMessage()], 500);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Failed to update event',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function destroy(Event $event)
     {
