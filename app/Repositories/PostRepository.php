@@ -21,49 +21,45 @@ class PostRepository
 
     public function getAll($request): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $query = $this->model->with(['translations', 'gallery', 'comments']);
+        $query = $this->model->with(['translations.language', 'gallery', 'comments', 'user']);
 
-        // ===== Поиск =====
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('id', 'LIKE', "%{$search}%")
-                ->orWhereHas('translations', function($translationQuery) use ($search) {
-                    $translationQuery->where('title', 'LIKE', "%{$search}%")
-                                    ->orWhere('description', 'LIKE', "%{$search}%");
+                ->orWhereHas('translations', function($tq) use ($search) {
+                    $tq->where('title', 'LIKE', "%{$search}%")
+                        ->orWhere('description', 'LIKE', "%{$search}%");
                 });
             });
         }
 
-        // ===== Фильтрация по статусу =====
-        if ($request->has('status') && !empty($request->status)) {
+        // Статус
+        if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
-        // ===== Фильтрация по дате =====
-        if ($request->has('date') && !empty($request->date)) {
-            $query->whereDate('created_at', $request->date);
+        // Дата (диапазон)
+        if ($request->filled('date_from')) {
+            $query->where('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('created_at', '<=', $request->date_to);
         }
 
-        // ===== Сортировка =====
-        $sortBy = $request->get('sortBy', 'created_at');
-        $sortDirection = $request->get('sortDirection', 'desc');
-        
-        // Разрешенные поля для сортировки
-        $allowedSortFields = ['id', 'created_at', 'published_at', 'status'];
-        if (in_array($sortBy, $allowedSortFields)) {
-            $query->orderBy($sortBy, $sortDirection);
-        } else {
-            // По умолчанию сортируем по дате создания
-            $query->orderBy('created_at', 'desc');
-        }
+        // Сортировка
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        $allowedSort = ['id','created_at','published_at','status','views'];
+        $query->orderBy(in_array($sortBy, $allowedSort) ? $sortBy : 'created_at', $sortDirection);
 
-        // ===== Пагинация =====
-        $perPage = $request->input('perPage', 10);
-        $page = $request->input('page', 1);
+        // Пагинация
+        $perPage = (int)$request->input('perPage', (int)$request->input('per_page', 10));
+        $page    = (int)$request->input('page', 1);
 
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
+
 
     public function getStat($locale = null): array
     {
@@ -249,6 +245,5 @@ class PostRepository
         }
         return false;
     }
-    
 
 }

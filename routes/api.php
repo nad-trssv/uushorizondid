@@ -78,7 +78,6 @@ Route::group(['prefix' => 'v1'], function () {
                 Route::put('/{event}', [EventController::class, 'update']);
                 Route::delete('/{event}', [EventController::class, 'destroy']);
                 Route::post('/upload-image', [EventController::class, 'uploadImage']);
-                Route::post('/{event}/upload-image', [EventController::class, 'uploadImage']);
             });
             Route::group(['prefix' => 'appointments'], function () {
                 Route::get('/all', [AppointmentsController::class, 'index'])
@@ -99,6 +98,13 @@ Route::group(['prefix' => 'v1'], function () {
                     ->name('api.posts.stats');
                 Route::get('/{post}', [PostController::class, 'show'])
                     ->name('api.posts.show');
+                Route::post('/upload-image', [PostController::class, 'uploadImage']);
+                Route::post('/', [PostController::class, 'store'])
+                    ->name('api.posts.store');
+                Route::put('/{post}', [PostController::class, 'update'])
+                    ->name('api.posts.update');
+                Route::delete('/{post}', [PostController::class, 'destroy'])
+                    ->name('api.posts.destroy');
             });
         });
     });

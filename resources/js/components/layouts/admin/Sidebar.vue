@@ -253,6 +253,10 @@ export default {
               label: this.$t('msg.menu.blog_list'),
               key: 'admin.blog.list',
             },
+            {
+              label: this.$t('msg.menu.blog_create'),
+              key: 'admin.blog.create',
+            }
           ],
         },
         {

@@ -1,4 +1,3 @@
-import { c } from 'naive-ui';
 import api from '../../lib/axios';
 
 export const posts = {
@@ -12,173 +11,105 @@ export const posts = {
     searchQuery: '',
     sortBy: 'created_at',
     sortDirection: 'desc',
-    statusFilter: '',
+    statusFilter: 'all',
     dateFrom: '',
     dateTo: '',
     editPost: null,
   },
   getters: {
-    lists: state => state.lists,
-    stats: state => state.stats,
-    page: state => state.page,
-    perPage: state => state.perPage,
-    totalPages: state => state.totalPages,
-    searchQuery: state => state.searchQuery,
-    sortBy: state => state.sortBy,
-    sortDirection: state => state.sortDirection,
-    statusFilter: state => state.statusFilter,
-    dateFrom: state => state.dateFrom,
-    dateTo: state => state.dateTo,
-    editPost: state => state.editPost,
+    lists: s => s.lists,
+    stats: s => s.stats,
+    page: s => s.page,
+    perPage: s => s.perPage,
+    totalPages: s => s.totalPages,
+    searchQuery: s => s.searchQuery,
+    sortBy: s => s.sortBy,
+    sortDirection: s => s.sortDirection,
+    statusFilter: s => s.statusFilter,
+    dateFrom: s => s.dateFrom,
+    dateTo: s => s.dateTo,
+    editPost: s => s.editPost,
   },
   mutations: {
-    lists(state, lists) {
-      state.lists = lists;
-    },
-    stats(state, stats) {
-      state.stats = stats;
-    },
-    page(state, page) {
-      state.page = page;
-    },
-    perPage(state, perPage) {
-      state.perPage = perPage;
-    },
-    totalPages(state, totalPages) {
-      state.totalPages = totalPages;
-    },
-    setSearchQuery(state, query) {
-      state.searchQuery = query;
-    },
-    setSortBy(state, sortBy) {
-      state.sortBy = sortBy;
-    },
-    setSortDirection(state, direction) {
-      state.sortDirection = direction;
-    },
-    setStatusFilter(state, status) {
-      state.statusFilter = status;
-    },
-    setDateFrom(state, date) {
-      state.dateFrom = date;
-    },
-    setDateTo(state, date) {
-      state.dateTo = date;
-    },
-    setEditPost(state, post) {
-      state.editPost = post;
-    }
+    lists(s, v){ s.lists = v; },
+    stats(s, v){ s.stats = v; },
+    page(s, v){ s.page = v; },
+    perPage(s, v){ s.perPage = v; },
+    totalPages(s, v){ s.totalPages = v; },
+    setSearchQuery(s, v){ s.searchQuery = v; },
+    setSortBy(s, v){ s.sortBy = v; },
+    setSortDirection(s, v){ s.sortDirection = v; },
+    setStatusFilter(s, v){ s.statusFilter = v; },
+    setDateFrom(s, v){ s.dateFrom = v; },
+    setDateTo(s, v){ s.dateTo = v; },
+    setEditPost(s, v){ s.editPost = v; },
   },
   actions: {
-    lists({ commit, state }, payload) {
-        const params = {
-          page: state.page,
-          perPage: state.perPage,
-          search: state.searchQuery,
-          sort_by: state.sortBy,
-          sort_direction: state.sortDirection,
-          status: state.statusFilter,
-          date_from: state.dateFrom,
-          date_to: state.dateTo,
-          ...payload
-        };
-
-        return new Promise((resolve, reject) => {
-            api.get('/posts', { params })
-                .then(response => {
-                    commit('lists', response.data.posts.data);
-                    commit('page', response.data.posts.current_page);
-                    commit('perPage', response.data.posts.per_page);
-                    commit('totalPages', response.data.posts.last_page);
-                    resolve(response);
-                })
-                .catch(error => {
-                    console.error('Error fetching posts:', error);
-                    reject(error);
-                });
-        });
-    },
-    updateSearchQuery({ commit, dispatch }, query) {
-      commit('setSearchQuery', query);
-      dispatch('lists', { page: 1 }); 
-    },
-    updateSort({ commit, dispatch }, { sortBy, sortDirection }) {
-      commit('setSortBy', sortBy);
-      commit('setSortDirection', sortDirection);
-      dispatch('lists', { page: 1 });
-    },
-    updateStatusFilter({ commit, dispatch }, status) {
-      commit('setStatusFilter', status);
-      dispatch('lists', { page: 1 });
-    },
-    updateDateFilter({ commit, dispatch }, { dateFrom, dateTo }) {
-      commit('setDateFrom', dateFrom);
-      commit('setDateTo', dateTo);
-      dispatch('lists', { page: 1 });
+    lists({ commit, state }, payload = {}) {
+      const params = {
+        page: state.page,
+        per_page: state.perPage,
+        search: state.searchQuery,
+        sort_by: state.sortBy,
+        sort_direction: state.sortDirection,
+        status: state.statusFilter,
+        date_from: state.dateFrom,
+        date_to: state.dateTo,
+        ...payload
+      };
+      return api.get('/posts', { params }).then(res => {
+        const p = res.data.posts;
+        commit('lists', p.data);
+        commit('page', p.current_page);
+        commit('perPage', p.per_page);
+        commit('totalPages', p.last_page);
+        return res;
+      });
     },
     stats({ commit }, payload) {
-      return new Promise((resolve, reject) => {
-          api.get('/posts/stats', { params: payload })
-              .then(response => {
-                  commit('stats', response.data.stats);
-                  resolve(response);
-              })
-              .catch(error => {
-                  console.error('Error fetching posts:', error);
-                  reject(error);
-              });
+      return api.get('/posts/stats', { params: payload }).then(res => {
+        commit('stats', res.data.stats); return res;
       });
     },
     show({ commit }, id) {
-      return new Promise((resolve, reject) => {
-          api.get(`/posts/${id}`)
-              .then(response => {
-                commit('setEditPost', response.data.post);
-                resolve(response);
-              })
-              .catch(error => {
-                  console.error('Error fetching post:', error);
-                  reject(error);
-              });
+      return api.get(`/posts/${id}`).then(res => {
+        commit('setEditPost', res.data.post); return res;
       });
     },
+    store(_, { data }) {
+      return api.post('/posts', data);
+    },
+    update(_, { id, data }) {
+      return api.put(`/posts/${id}`, data);
+    },
+    delete(_, id) {
+      return api.delete(`/posts/${id}`);
+    },
+    uploadImage(_, { formData, onProgress }) {
+      return api.post('/posts/upload-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: e => {
+          if (onProgress && e.total) {
+            onProgress({ percent: Math.round((e.loaded * 100) / e.total) });
+          }
+        }
+      });
+    },
+
+    // хелперы для фильтров/сортировки
+    updateSearchQuery({ commit, dispatch }, query) {
+      commit('setSearchQuery', query); return dispatch('lists', { page: 1 });
+    },
+    updateSort({ commit, dispatch }, { sortBy, sortDirection }) {
+      commit('setSortBy', sortBy); commit('setSortDirection', sortDirection);
+      return dispatch('lists', { page: 1 });
+    },
+    updateStatusFilter({ commit, dispatch }, status) {
+      commit('setStatusFilter', status); return dispatch('lists', { page: 1 });
+    },
+    updateDateFilter({ commit, dispatch }, { dateFrom, dateTo }) {
+      commit('setDateFrom', dateFrom); commit('setDateTo', dateTo);
+      return dispatch('lists', { page: 1 });
+    },
   },
-  mutations: {
-    lists(state, lists) {
-      state.lists = lists;
-    },
-    stats(state, stats) {
-      state.stats = stats;
-    },
-    page(state, page) {
-      state.page = page;
-    },
-    perPage(state, perPage) {
-      state.perPage = perPage;
-    },
-    totalPages(state, totalPages) {
-      state.totalPages = totalPages;
-    },
-    setSearchQuery(state, query) {
-      state.searchQuery = query;
-    },
-    setSortBy(state, sortBy) {
-      state.sortBy = sortBy;
-    },
-    setSortDirection(state, direction) {
-      state.sortDirection = direction;
-    },
-    setStatusFilter(state, status) {
-      state.statusFilter = status;
-    },
-    setDateFrom(state, date) {
-      state.dateFrom = date;
-    },
-    setDateTo(state, date) {
-      state.dateTo = date;
-    },  
-    setEditPost(state, post) {
-      state.editPost = post;
-    }
-  },
-}
+};

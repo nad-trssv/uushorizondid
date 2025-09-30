@@ -6,24 +6,25 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6">
           <div class="flex items-center gap-3">
             <h1 class="text-2xl font-bold text-gray-900">
-              {{ isEdit ? `#${event.id} - Редактирование` : 'Создание мероприятия' }}
+              {{ isEdit ? `#${routeId} — Редактирование` : 'Создание новости' }}
             </h1>
-            <n-tag v-if="isEdit" :type="event.status === 'published' ? 'success' : 'warning'" size="small">
-              {{ event.status === 'published' ? 'Опубликовано' : 'Черновик' }}
+            <n-tag v-if="isEdit" :type="localPost.status === 'published' ? 'success' : 'warning'" size="small">
+              {{ localPost.status === 'published' ? 'Опубликовано' : 'Черновик' }}
             </n-tag>
           </div>
-          
           <div class="flex flex-wrap gap-3">
             <n-button secondary @click="$router.back()">
-              <template #icon>
-                <i class="fas fa-arrow-left"></i>
-              </template>
-              Вернуться назад
+              <template #icon><i class="fas fa-arrow-left"></i></template>
+              Назад
+            </n-button>
+            <n-button v-if="isEdit" type="primary" @click="$router.push({ name: 'admin.posts.create' })">
+              <template #icon><i class="fas fa-plus"></i></template>
+              Создать новую
             </n-button>
           </div>
         </div>
 
-        <!-- Horizontal Tabs -->
+        <!-- Tabs -->
         <div class="border-b border-gray-200">
           <nav class="-mb-px flex space-x-8 overflow-x-auto">
             <button
@@ -45,424 +46,251 @@
       </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      
-      <!-- Общие ошибки -->
-      <n-alert v-if="Object.keys(validationErrors).length > 0" type="error" class="mb-6">
-        <template #icon>
-          <i class="fas fa-exclamation-triangle"></i>
-        </template>
-        <div class="font-semibold mb-2">Обнаружены ошибки валидации:</div>
-        <ul class="list-disc list-inside space-y-1">
-          <li v-for="(errors, field) in validationErrors" :key="field">
-            <span class="font-medium">{{ getFieldLabel(field) }}:</span> 
-            {{ Array.isArray(errors) ? errors.join(', ') : errors }}
-          </li>
-        </ul>
-      </n-alert>
-      
-      <!-- Basic Info Tab -->
+      <!-- BASIC -->
       <div v-if="activeTab === 'basic'" class="space-y-6">
         <n-card title="Основная информация" size="small">
-          <div class="space-y-6">
-            <!-- Title with language selector -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'title') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Название мероприятия *</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
-              </div>
-              <n-input 
-                :value="currentTranslation.title" 
-                @update:value="updateTranslationField('title', $event)"
-                placeholder="Введите название мероприятия"
-                size="large"
-                class="w-full"
-                :status="hasError('translations', 'title') ? 'error' : null"
-              />
-              <div v-if="hasError('translations', 'title')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('translations', 'title') }}
-              </div>
-            </div>
+          <n-tabs type="line" animated class="translation-tabs" v-model:value="currentLanguage">
+            <n-tab-pane
+              v-for="(lang, i) in activeLanguages"
+              :key="`${lang.code}-basic-${i}`"
+              :name="lang.code"
+            >
+              <template #tab>
+                <div
+                  class="tab-label"
+                  :style="lang.code === 'et' && hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title ? { color: 'red' } : {}"
+                >
+                  <img v-if="lang.flag" :src="`/storage/${lang.flag}`" :alt="lang.name" class="language-flag" />
+                  <span class="language-name">{{ lang.native_name || lang.name || lang.code }}</span>
+                </div>
+              </template>
 
-            <!-- Short Description -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'short_description') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Краткое описание</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
-              </div>
-              <n-input 
-                :value="currentTranslation.short_description" 
-                @update:value="updateTranslationField('short_description', $event)"
-                type="textarea"
-                :rows="3"
-                placeholder="Краткое описание мероприятия"
-                class="w-full"
-                :status="hasError('translations', 'short_description') ? 'error' : null"
-              />
-              <div v-if="hasError('translations', 'short_description')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('translations', 'short_description') }}
-              </div>
-            </div>
+              <div class="space-y-6">
+                <!-- Title -->
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">
+                    Заголовок
+                    <span v-if="isLangDefault(lang)" class="text-red-500">*</span>
+                  </label>
+                  <n-input
+                    v-model:value="ensureTrans(lang.code).title"
+                    placeholder="Введите заголовок новости"
+                    size="large"
+                    :status="hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title ? 'error' : undefined"
+                  />
+                  <p v-if="hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title" class="text-xs text-red-500 mt-1">
+                    {{ firstError(`translations.${i}.title`) }}
+                  </p>
+                </div>
 
-            <!-- Full Description -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'full_description') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Полное описание</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
-              </div>
-              <n-input 
-                :value="currentTranslation.full_description" 
-                @update:value="updateTranslationField('full_description', $event)"
-                type="textarea"
-                :rows="6"
-                placeholder="Полное описание мероприятия"
-                class="w-full"
-                :status="hasError('translations', 'full_description') ? 'error' : null"
-              />
-              <div v-if="hasError('translations', 'full_description')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('translations', 'full_description') }}
-              </div>
-            </div>
-
-            <!-- Location, Requirements, Included -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'location') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Место проведения</label>
-                <n-input 
-                  :value="currentTranslation.location" 
-                  @update:value="updateTranslationField('location', $event)"
-                  placeholder="Кафе эстонского языка, Таллинн"
-                  class="w-full"
-                  :status="hasError('translations', 'location') ? 'error' : null"
-                />
-                <div v-if="hasError('translations', 'location')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('translations', 'location') }}
+                <!-- Description -->
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Текст новости</label>
+                  <n-input
+                    v-model:value="ensureTrans(lang.code).description"
+                    type="textarea"
+                    :rows="10"
+                    placeholder="Текст новости (можно вставлять HTML)"
+                  />
                 </div>
               </div>
-
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'requirements') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Требования</label>
-                <n-input 
-                  :value="currentTranslation.requirements" 
-                  @update:value="updateTranslationField('requirements', $event)"
-                  type="textarea"
-                  :rows="3"
-                  placeholder="Базовые знания эстонского языка"
-                  class="w-full"
-                  :status="hasError('translations', 'requirements') ? 'error' : null"
-                />
-                <div v-if="hasError('translations', 'requirements')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('translations', 'requirements') }}
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('translations', 'included') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Что включено</label>
-                <n-input 
-                  :value="currentTranslation.included" 
-                  @update:value="updateTranslationField('included', $event)"
-                  type="textarea"
-                  :rows="3"
-                  placeholder="Материалы, кофе-брейк, сертификат"
-                  class="w-full"
-                  :status="hasError('translations', 'included') ? 'error' : null"
-                />
-                <div v-if="hasError('translations', 'included')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('translations', 'included') }}
-                </div>
-              </div>
-            </div>
-          </div>
+            </n-tab-pane>
+          </n-tabs>
         </n-card>
       </div>
 
-      <!-- Settings Tab -->
+      <!-- SETTINGS -->
       <div v-if="activeTab === 'settings'" class="space-y-6">
-        <n-card title="Настройки мероприятия" size="small">
+        <n-card title="Настройки публикации" size="small">
           <div class="space-y-6">
-            <!-- Slug and Image -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('slug') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Slug (ЧПУ) *</label>
-                <n-input 
-                  v-model:value="localEvent.slug" 
-                  placeholder="URL-адрес"
-                  class="w-full"
-                  :status="hasError('slug') ? 'error' : null"
+              <div class="border rounded-lg p-4">
+                <label class="text-sm font-medium text-gray-700 mb-2 block">Slug (ЧПУ) *</label>
+                <n-input
+                  v-model:value="localPost.slug"
+                  placeholder="URL-адрес, например: news-my-article"
+                  :status="hasError('slug') ? 'error' : undefined"
                 />
-                <div v-if="hasError('slug')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('slug') }}
-                </div>
+                <p v-if="hasError('slug')" class="text-xs text-red-500 mt-1">
+                  {{ firstError('slug') }}
+                </p>
               </div>
 
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('image') }">
+              <!-- Главное изображение -->
+              <div class="border rounded-lg p-4">
                 <label class="text-sm font-medium text-gray-700 mb-3 block">Главное изображение</label>
-                <n-input 
-                  v-model:value="localEvent.image" 
-                  placeholder="URL изображения"
-                  class="w-full"
-                  :status="hasError('image') ? 'error' : null"
-                />
-                <div v-if="localEvent.image" class="mt-2">
-                  <img :src="localEvent.image" alt="Event Image" class="w-32 h-32 object-cover rounded" />
-                </div>
-                <div v-if="hasError('image')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('image') }}
+
+                <div class="flex items-start gap-4 flex-wrap">
+                  <!-- Превью -->
+                  <div class="w-32">
+                    <img
+                      :src="previewSrc(localPost.image) || '/storage/placeholders/600x400.svg'"
+                      alt="Post Image"
+                      class="w-32 h-32 object-cover rounded border"
+                    />
+                    <div class="mt-2 flex gap-2">
+                      <n-button
+                        v-if="localPost.image"
+                        size="tiny"
+                        type="error"
+                        ghost
+                        @click="clearImage"
+                      >
+                        <template #icon><i class="fas fa-trash"></i></template>
+                        Удалить
+                      </n-button>
+                    </div>
+                  </div>
+
+                  <!-- Загрузка файла -->
+                  <div class="flex-1 min-w-[260px]">
+                    <n-upload
+                      :custom-request="uploadMainImage"
+                      :show-file-list="false"
+                      :max="1"
+                      accept="image/*"
+                      :disabled="uploadingImage"
+                    >
+                      <n-button :loading="uploadingImage">
+                        <template #icon><i class="fas fa-upload"></i></template>
+                        Загрузить файл
+                      </n-button>
+                    </n-upload>
+
+                    <!-- Вставка URL -->
+                    <div class="mt-3">
+                      <label class="text-xs text-gray-500 block mb-1">или вставьте URL</label>
+                      <n-input
+                        v-model:value="localPost.image"
+                        placeholder="https://... или относительный путь в storage"
+                        clearable
+                        @change="onImageUrlChange"
+                      />
+                      <p class="text-xs text-gray-400 mt-1">
+                        После загрузки файла сюда автоматически подставится путь (например: <code>posts/abc123.jpg</code>).
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Date and Time -->
+            <!-- Published At & Status -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('start_time') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Дата и время начала *</label>
-                <n-date-picker 
-                  v-model:value="startTimeTimestamp" 
-                  type="datetime"
-                  clearable
-                  class="w-full"
-                  :status="hasError('start_time') ? 'error' : null"
-                />
-                <div v-if="hasError('start_time')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('start_time') }}
+              <div class="border rounded-lg p-4">
+                <label class="text-sm font-medium text-gray-700 mb-2 block">Дата и время публикации</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <n-config-provider :date-locale="dateFnsLocale">
+                    <n-date-picker
+                      v-model:value="publishedDateTs"
+                      type="date"
+                      clearable
+                      class="w-full"
+                      :first-day-of-week="1"
+                      :status="hasError('published_at') ? 'error' : undefined"
+                    />
+                  </n-config-provider>
+
+                  <n-time-picker
+                    v-model:value="publishedTimeMs"
+                    format="HH:mm"
+                    :actions="['now', 'confirm']"
+                    :clearable="true"
+                    class="w-full"
+                    :status="hasError('published_at') ? 'error' : undefined"
+                  />
+
+                  <p class="text-xs text-gray-500 mt-2">
+                    <code>{{ localPost.published_at || '—' }}</code>
+                  </p>
                 </div>
               </div>
 
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('end_time') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Дата и время окончания *</label>
-                <n-date-picker 
-                  v-model:value="endTimeTimestamp" 
-                  type="datetime"
-                  clearable
-                  class="w-full"
-                  :status="hasError('end_time') ? 'error' : null"
-                />
-                <div v-if="hasError('end_time')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('end_time') }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Registration and Participants -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('registration_deadline') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Дедлайн регистрации</label>
-                <n-date-picker 
-                  v-model:value="registrationDeadlineTimestamp" 
-                  type="datetime"
-                  clearable
-                  class="w-full"
-                  :status="hasError('registration_deadline') ? 'error' : null"
-                />
-                <div v-if="hasError('registration_deadline')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('registration_deadline') }}
-                </div>
-              </div>
-
-              <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('max_participants') }">
-                <label class="text-sm font-medium text-gray-700 mb-3 block">Максимум участников *</label>
-                <n-input-number 
-                  v-model:value="localEvent.max_participants" 
-                  :min="1"
-                  :max="100"
-                  class="w-full"
-                  :status="hasError('max_participants') ? 'error' : null"
-                />
-                <div v-if="hasError('max_participants')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                  <i class="fas fa-exclamation-circle"></i>
-                  {{ getError('max_participants') }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Price -->
-            <div class="border rounded-lg p-4 max-w-md" :class="{ 'border-red-300 bg-red-50': hasError('price') }">
-              <label class="text-sm font-medium text-gray-700 mb-3 block">Цена (€)</label>
-              <n-input-number 
-                v-model:value="localEvent.price" 
-                :min="0"
-                :step="5"
-                class="w-full"
-                :status="hasError('price') ? 'error' : null"
-              />
-              <p class="text-xs text-gray-500 mt-2">0 = бесплатное мероприятие</p>
-              <div v-if="hasError('price')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('price') }}
+              <div class="border rounded-lg p-4 flex items-center gap-3">
+                <span class="text-sm font-medium text-gray-700">Статус:</span>
+                <n-switch v-model:value="isPublished" size="small" :checked-text="'Опубликовано'" :unchecked-text="'Черновик'" />
               </div>
             </div>
           </div>
         </n-card>
       </div>
 
-      <!-- SEO Tab -->
+      <!-- SEO -->
       <div v-if="activeTab === 'seo'" class="space-y-6">
-        <n-alert type="info" class="mb-4">
-          SEO настройки для языка: <strong>{{ currentLanguageName }}</strong>
-        </n-alert>
+        <n-card title="SEO" size="small">
+          <n-tabs type="line" animated v-model:value="currentLanguage">
+            <n-tab-pane
+              v-for="lang in activeLanguages"
+              :key="`${lang.code}-seo`"
+              :name="lang.code"
+            >
+              <template #tab>
+                <div class="tab-label">
+                  <img v-if="lang.flag" :src="`/storage/${lang.flag}`" :alt="lang.name" class="language-flag" />
+                  <span class="language-name">{{ lang.native_name || lang.name || lang.code }}</span>
+                </div>
+              </template>
 
-        <n-card title="Мета-теги" size="small">
-          <div class="space-y-6">
-            <!-- Meta Title -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('seo', 'meta_title') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Meta Title</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
+              <div class="space-y-6">
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Meta Title</label>
+                  <n-input v-model:value="ensureSeo(lang.code).meta_title" placeholder="Заголовок для поисковых систем" />
+                </div>
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Meta Description</label>
+                  <n-input
+                    v-model:value="ensureSeo(lang.code).meta_description"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="Описание для поисковых систем"
+                  />
+                </div>
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Meta Keywords</label>
+                  <n-input v-model:value="ensureSeo(lang.code).meta_keywords" placeholder="Ключевые слова через запятую" />
+                </div>
               </div>
-              <n-input 
-                :value="currentSeo.meta_title" 
-                @update:value="updateSeoField('meta_title', $event)"
-                placeholder="Заголовок для поисковых систем"
-                class="w-full"
-                :status="hasError('seo', 'meta_title') ? 'error' : null"
-              />
-              <div v-if="hasError('seo', 'meta_title')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('seo', 'meta_title') }}
-              </div>
-            </div>
-
-            <!-- Meta Description -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('seo', 'meta_description') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Meta Description</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
-              </div>
-              <n-input 
-                :value="currentSeo.meta_description" 
-                @update:value="updateSeoField('meta_description', $event)"
-                type="textarea"
-                :rows="3"
-                placeholder="Описание для поисковых систем"
-                class="w-full"
-                :status="hasError('seo', 'meta_description') ? 'error' : null"
-              />
-              <div v-if="hasError('seo', 'meta_description')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('seo', 'meta_description') }}
-              </div>
-            </div>
-
-            <!-- Meta Keywords -->
-            <div class="border rounded-lg p-4" :class="{ 'border-red-300 bg-red-50': hasError('seo', 'meta_keywords') }">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <label class="text-sm font-medium text-gray-700">Meta Keywords</label>
-                <n-select 
-                  v-model:value="currentLanguage" 
-                  :options="languageOptions" 
-                  size="small" 
-                  style="width: 150px"
-                />
-              </div>
-              <n-input 
-                :value="currentSeo.meta_keywords" 
-                @update:value="updateSeoField('meta_keywords', $event)"
-                placeholder="Ключевые слова через запятую"
-                class="w-full"
-                :status="hasError('seo', 'meta_keywords') ? 'error' : null"
-              />
-              <div v-if="hasError('seo', 'meta_keywords')" class="text-red-600 text-xs mt-2 flex items-center gap-1">
-                <i class="fas fa-exclamation-circle"></i>
-                {{ getError('seo', 'meta_keywords') }}
-              </div>
-            </div>
-          </div>
+            </n-tab-pane>
+          </n-tabs>
         </n-card>
       </div>
 
-      <!-- Participants Tab -->
-      <div v-if="activeTab === 'participants' && isEdit">
-        <n-card title="Участники мероприятия" size="small">
-          <div v-if="localEvent.participants && localEvent.participants.length > 0">
-            <n-data-table
-              :columns="participantColumns"
-              :data="localEvent.participants"
-              :pagination="pagination"
-            />
+      <!-- COMMENTS -->
+      <div v-if="activeTab === 'comments' && isEdit">
+        <n-card :title="`Комментарии (${localPost.comments?.length || 0})`" size="small">
+          <div v-if="Array.isArray(localPost.comments) && localPost.comments.length">
+            <n-data-table :columns="commentColumns" :data="localPost.comments" :pagination="pagination" />
           </div>
           <div v-else class="text-center py-12">
-            <i class="fas fa-users text-6xl text-gray-300 mb-4"></i>
-            <p class="text-gray-500 text-lg mb-4">Пока нет участников</p>
+            <i class="fas fa-comments text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg mb-4">Комментариев пока нет</p>
           </div>
         </n-card>
       </div>
     </div>
 
-    <!-- Footer with Status -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-lg">
+    <!-- Footer -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-lg z-20">
       <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-3 ml-8">
           <div v-if="isEdit" class="text-sm text-gray-500">
-            <span>Создано: {{ formatDate(localEvent.created_at) }}</span>
-            <span class="ml-4">Обновлено: {{ formatDate(localEvent.updated_at) }}</span>
+            <span>Создано: {{ formatDate(localPost.created_at) }}</span>
+            <span class="ml-4">Обновлено: {{ formatDate(localPost.updated_at) }}</span>
           </div>
         </div>
         <div class="flex gap-3">
-          <div class="flex items-center gap-3 ml-8 mr-8">
-            <span class="text-sm font-medium text-gray-700">Статус:</span>
-            <n-switch 
-              v-model:value="isPublished" 
-              size="small"
-              :checked-text="'Опубликовано'" 
-              :unchecked-text="'Черновик'"
-              @update:value="updateStatus"
-            />
-          </div>
-          <n-button @click="saveEvent" type="primary" size="small" :loading="loading">
-            <template #icon>
-              <i class="fas fa-save"></i>
-            </template>
+          <n-button @click="onSave" type="primary" size="small" :loading="loading">
+            <template #icon><i class="fas fa-save"></i></template>
             Сохранить
           </n-button>
-          
-          <n-button v-if="!isEdit || localEvent.status === 'draft'" type="success" size="small" @click="publishEvent">
-            <template #icon>
-              <i class="fas fa-eye"></i>
-            </template>
+          <n-button v-if="!isEdit || localPost.status === 'draft'" type="success" size="small" @click="onPublish">
+            <template #icon><i class="fas fa-eye"></i></template>
             Опубликовать
           </n-button>
-          
-          <n-button v-if="isEdit" type="error" size="small" ghost @click="deleteEvent">
-            <template #icon>
-              <i class="fas fa-trash"></i>
-            </template>
+          <n-button v-if="isEdit" type="error" size="small" ghost @click="onDelete">
+            <template #icon><i class="fas fa-trash"></i></template>
             Удалить
           </n-button>
         </div>
@@ -473,37 +301,22 @@
 
 <script>
 import {
-  NCard,
-  NButton,
-  NInput,
-  NSelect,
-  NTag,
-  NAlert,
-  NDatePicker,
-  NSwitch,
-  NInputNumber,
-  NDataTable
-} from 'naive-ui'
+  NCard, NButton, NInput, NTag, NDatePicker,
+  NSwitch, NDataTable, NTabs, NTabPane, NUpload,
+  NTimePicker, NConfigProvider
+} from 'naive-ui';
+import Swal from 'sweetalert2';
+import { ru, enUS, et, uk, lv } from 'date-fns/locale';
 
 export default {
-  name: 'EventForm',
+  name: 'PostForm',
   components: {
-    NCard,
-    NButton,
-    NInput,
-    NSelect,
-    NTag,
-    NAlert,
-    NDatePicker,
-    NSwitch,
-    NInputNumber,
-    NDataTable
+    NCard, NButton, NInput, NTag, NDatePicker,
+    NSwitch, NDataTable, NTabs, NTabPane, NUpload,
+    NTimePicker, NConfigProvider
   },
   props: {
-    id: {
-      type: [String, Number],
-      default: null
-    }
+    id: { type: [String, Number], default: null }
   },
   data() {
     return {
@@ -511,518 +324,489 @@ export default {
       currentLanguage: 'ru',
       loading: false,
       pagination: { pageSize: 10 },
-      // Локальные реактивные данные
-      localEvent: this.getDefaultEvent(),
-      localTranslations: {},
-      localSeo: {},
-      // Ошибки валидации
-      validationErrors: {},
-      participantColumns: [
-        {
-          title: 'Имя',
-          key: 'first_name',
-          render: (row) => `${row.first_name} ${row.last_name}`
-        },
-        {
-          title: 'Email',
-          key: 'email'
-        },
-        {
-          title: 'Телефон',
-          key: 'phone'
-        },
-        {
-          title: 'Статус',
-          key: 'status',
-          render: (row) => {
-            const statusMap = {
-              'pending': { type: 'warning', text: 'Ожидание' },
-              'confirmed': { type: 'success', text: 'Подтвержден' },
-              'cancelled': { type: 'error', text: 'Отменен' },
-              'waiting_list': { type: 'default', text: 'Лист ожидания' }
-            }
-            const status = statusMap[row.status] || { type: 'default', text: row.status }
-            return this.$createElement(NTag, { type: status.type, size: 'small' }, { default: () => status.text })
-          }
-        },
-        {
-          title: 'Кол-во',
-          key: 'participants_count'
-        },
-        {
-          title: 'Дата регистрации',
-          key: 'created_at',
-          render: (row) => this.formatDate(row.created_at)
-        }
-      ]
+
+      localPost: this.getDefaultPost(),
+      translationsByCode: {}, // { 'ru': {...}, 'en': {...} }
+      seoByCode: {},          // { 'ru': {...}, 'en': {...} }
+
+      commentColumns: [
+        { title: 'Имя', key: 'name' },
+        { title: 'Рейтинг', key: 'rating' },
+        { title: 'Комментарий', key: 'content' },
+        { title: 'Одобрен', key: 'approved', render: (row) => row.approved ? 'Да' : 'Нет' },
+        { title: 'Дата', key: 'created_at', render: (row) => this.formatDate(row.created_at) }
+      ],
+
+      uploadingImage: false,
+      publishedDateTs: null,
+      publishedTimeMs: null,
+
+      errorsValidation: {}
     }
   },
   computed: {
-    isEdit() {
-      return !!this.id
+    post() {
+      return this.$store.getters["posts/editPost"] || {};
     },
-    event() {
-      return this.localEvent
+    currentLangIsoCode() {
+      return this.$store.getters['settings/currentLocale']?.iso || 'ru-RU';
     },
-    tabs() {
-      const baseTabs = [
-        { name: 'basic', label: 'Основная информация', icon: 'fas fa-info-circle' },
-        { name: 'settings', label: 'Настройки', icon: 'fas fa-cog' },
-        { name: 'seo', label: 'SEO', icon: 'fas fa-search' }
-      ]
-      
-      if (this.isEdit) {
-        baseTabs.push({ 
-          name: 'participants', 
-          label: 'Участники', 
-          icon: 'fas fa-users',
-          badge: this.localEvent.participants_count 
-        })
-      }
-      
-      return baseTabs
+    dateFnsLocale() {
+      const iso = this.currentLangIsoCode || 'ru-RU';
+      if (iso.startsWith('en')) return enUS;
+      if (iso.startsWith('et')) return et;
+      if (iso.startsWith('uk')) return uk;
+      if (iso.startsWith('lv')) return lv;
+      return ru;
     },
     availableLanguages() {
       const languages = this.$store.getters['settings/availableLanguages'] || {};
-      console.log('Доступные языки из Vuex:', languages);
-      
-      // Преобразуем объект в массив и фильтруем включенные языки
-      const languagesArray = Object.values(languages).filter(lang => lang && lang.enabled);
-      console.log('Отфильтрованные языки:', languagesArray);
-      
-      return languagesArray;
+      return Object.values(languages).filter(lang => lang.enabled);
     },
-    languageOptions() {
-      return this.availableLanguages.map(lang => ({ 
-        label: lang.native_name, 
-        value: lang.code 
-      }))
+    languagesV2() {
+      const arr = this.$store.getters['settings/languagesV2'] || [];
+      return Array.isArray(arr) ? arr : Object.values(arr || {});
     },
-    currentTranslation() {
-      if (!this.localTranslations[this.currentLanguage]) {
-        this.localTranslations[this.currentLanguage] = this.createEmptyTranslation()
-      }
-      return this.localTranslations[this.currentLanguage]
+    activeLanguages() {
+      return this.languagesV2.filter(l => !!(+l.enabled));
     },
-    currentSeo() {
-      if (!this.localSeo[this.currentLanguage]) {
-        this.localSeo[this.currentLanguage] = this.createEmptySeo()
-      }
-      return this.localSeo[this.currentLanguage]
+    routeId() {
+      return this.$route.params.id || this.id || null;
     },
-    currentLanguageName() {
-      const lang = this.availableLanguages.find(l => l.code === this.currentLanguage)
-      return lang ? lang.native_name : this.currentLanguage
+    isEdit() {
+      return !!(this.post && this.post.id);
+    },
+    tabs() {
+      const base = [
+        { name: 'basic', label: 'Основная информация', icon: 'fas fa-info-circle' },
+        { name: 'settings', label: 'Настройки', icon: 'fas fa-cog' },
+        { name: 'seo', label: 'SEO', icon: 'fas fa-search' }
+      ];
+      if (this.isEdit) base.push({ name: 'comments', label: 'Комментарии', icon: 'fas fa-comments' });
+      return base;
     },
     isPublished: {
-      get() {
-        return this.localEvent.status === 'published'
-      },
-      set(value) {
-        this.localEvent.status = value ? 'published' : 'draft'
-      }
-    },
-    startTimeTimestamp: {
-      get() {
-        if (!this.localEvent.start_time) return null
-        return new Date(this.localEvent.start_time).getTime()
-      },
-      set(value) {
-        if (!value) return
-        const date = new Date(value)
-        this.localEvent.start_time = date.toISOString().slice(0, 19).replace('T', ' ')
-        this.clearError('start_time')
-      }
-    },
-    endTimeTimestamp: {
-      get() {
-        if (!this.localEvent.end_time) return null
-        return new Date(this.localEvent.end_time).getTime()
-      },
-      set(value) {
-        if (!value) return
-        const date = new Date(value)
-        this.localEvent.end_time = date.toISOString().slice(0, 19).replace('T', ' ')
-        this.clearError('end_time')
-      }
-    },
-    registrationDeadlineTimestamp: {
-      get() {
-        if (!this.localEvent.registration_deadline) return null
-        return new Date(this.localEvent.registration_deadline).getTime()
-      },
-      set(value) {
-        if (!value) {
-          this.localEvent.registration_deadline = null
-          return
-        }
-        const date = new Date(value)
-        this.localEvent.registration_deadline = date.toISOString().slice(0, 19).replace('T', ' ')
-        this.clearError('registration_deadline')
-      }
-    },
-    // Исправленный currentLanguageIndex с защитой от ошибок
-    currentLanguageIndex() {
-      if (!Array.isArray(this.availableLanguages)) {
-        console.warn('availableLanguages is not an array:', this.availableLanguages);
-        return -1;
-      }
-      const index = this.availableLanguages.findIndex(lang => lang && lang.code === this.currentLanguage);
-      console.log(`Index for language ${this.currentLanguage}:`, index);
-      return index;
+      get() { return this.localPost.status === 'published' },
+      set(v) { this.localPost.status = v ? 'published' : 'draft' }
     }
   },
+
+  async mounted() {
+    if (this.$store.state.settings.lists.length === 0) {
+      await this.$store.dispatch('settings/lists');
+    }
+
+    if (this.routeId) {
+      await this.$store.dispatch("posts/show", this.routeId);
+    } else {
+      this.initializeNewPost();
+    }
+  },
+
+  watch: {
+    post: {
+      handler(newVal) {
+        if (!newVal || !Object.keys(newVal).length) return;
+        this.hydrateFromStore(newVal);
+
+        if (newVal.current_lang) this.currentLanguage = newVal.current_lang;
+        else {
+          const def = this.activeLanguages.find(this.isLangDefault);
+          if (def) this.currentLanguage = def.code;
+        }
+      },
+      immediate: true
+    },
+    activeLanguages: {
+      handler(newVal) {
+        if (!this.routeId && newVal.length > 0) {
+          this.initializeNewPost();
+        }
+      },
+      immediate: true
+    },
+    publishedDateTs() { this.syncPublishedAtToLocalPost(); },
+    publishedTimeMs() { this.syncPublishedAtToLocalPost(); },
+  },
+
   methods: {
-    getDefaultEvent() {
+    // Init
+    initializeNewPost() {
+      if (this.routeId) return;
+
+      this.localPost = this.getDefaultPost();
+      this.translationsByCode = {};
+      this.seoByCode = {};
+
+      this.availableLanguages.forEach(lang => {
+        this.ensureTrans(lang.code);
+        this.ensureSeo(lang.code);
+      });
+
+      const defaultLang = this.availableLanguages.find(l => l.default);
+      if (defaultLang) this.currentLanguage = defaultLang.code;
+      else if (this.availableLanguages.length > 0) this.currentLanguage = this.availableLanguages[0].code;
+    },
+
+    getDefaultPost() {
       return {
         id: null,
         slug: '',
         status: 'draft',
         image: '',
-        max_participants: 10,
-        current_participants: 0,
-        price: 0,
-        start_time: null,
-        end_time: null,
-        registration_deadline: null,
-        views: 0,
         published_at: null,
+        views: 0,
         user_id: null,
-        participants: [],
-        participants_count: 0,
-        confirmed_participants_count: 0
-      }
+
+        // hydrate-only fields
+        created_at: null,
+        updated_at: null,
+
+        comments: []
+      };
     },
-    initializeLocalData(storeEvent) {
-      this.localEvent = { ...this.getDefaultEvent(), ...storeEvent }
-      
-      // Инициализируем переводы
-      this.localTranslations = {}
-      if (storeEvent.translations) {
-        storeEvent.translations.forEach(translation => {
-          // Находим код языка по language_id
-          const lang = this.availableLanguages.find(l => l && l.id === translation.language_id)
-          if (lang) {
-            this.localTranslations[lang.code] = { 
-              ...translation,
-              language: lang.code // Сохраняем код языка для удобства
-            }
-          }
-        })
-      }
-      
-      // Инициализируем SEO
-      this.localSeo = {}
-      if (storeEvent.seo) {
-        storeEvent.seo.forEach(seoItem => {
-          // Находим код языка по language_id
-          const lang = this.availableLanguages.find(l => l && l.id === seoItem.language_id)
-          if (lang) {
-            this.localSeo[lang.code] = { 
-              ...seoItem,
-              language: lang.code // Сохраняем код языка для удобства
-            }
-          }
-        })
-      }
+
+    // Helpers
+    formatDate(s) {
+      if (!s) return '—';
+      return new Date(s).toLocaleString('ru-RU', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
     },
-    createEmptyTranslation() {
-      return {
-        language: this.currentLanguage,
-        title: '',
-        short_description: '',
-        full_description: '',
-        location: '',
-        requirements: '',
-        included: ''
-      }
+    toApiDate(ts) {
+      const d = new Date(ts);
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     },
-    createEmptySeo() {
-      return {
-        language: this.currentLanguage,
-        meta_title: '',
-        meta_description: '',
-        meta_keywords: ''
-      }
+    previewSrc(path) {
+      if (!path) return '';
+      if (/^https?:\/\//i.test(path)) return path;
+      return `/storage/${path}`;
     },
-    updateTranslationField(field, value) {
-      if (!this.localTranslations[this.currentLanguage]) {
-        this.localTranslations[this.currentLanguage] = this.createEmptyTranslation()
-      }
-      this.localTranslations[this.currentLanguage][field] = value
-      this.clearError('translations', field)
+    isLangDefault(l) {
+      const raw = (l?.is_default ?? l?.default ?? 0);
+      return Number(raw) === 1 || raw === true;
     },
-    updateSeoField(field, value) {
-      if (!this.localSeo[this.currentLanguage]) {
-        this.localSeo[this.currentLanguage] = this.createEmptySeo()
-      }
-      this.localSeo[this.currentLanguage][field] = value
-      this.clearError('seo', field)
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'Не указано'
-      return new Date(dateString).toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    },
-    updateStatus(value) {
-      this.localEvent.status = value ? 'published' : 'draft'
-    },
-    
-    // Методы для работы с ошибками валидации
-    setValidationErrors(errors) {
-      this.validationErrors = errors || {}
-    },
-    
-    clearValidationErrors() {
-      this.validationErrors = {}
-    },
-    
-    clearError(section, field = null) {
-      if (field && section) {
-        // Для переводов и SEO
-        const errorKey = `${section}.${this.currentLanguageIndex}.${field}`
-        if (this.validationErrors[errorKey]) {
-          delete this.validationErrors[errorKey]
-        }
-      } else if (section) {
-        // Для основных полей
-        if (this.validationErrors[section]) {
-          delete this.validationErrors[section]
-        }
+
+    // Hydration
+    hydrateFromStore(storePost) {
+      this.localPost = { ...this.getDefaultPost(), ...storePost };
+
+      // published_at → pickers
+      if (this.localPost.published_at) {
+        const d = new Date(this.localPost.published_at);
+        this.publishedDateTs = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        this.publishedTimeMs = new Date(1970, 0, 1, d.getHours(), d.getMinutes(), 0).getTime();
       } else {
-        this.clearValidationErrors()
+        this.publishedDateTs = null;
+        this.publishedTimeMs = null;
       }
-    },
-    
-    hasError(section, field = null) {
-      if (field && section) {
-        // Ищем ошибки для переводов и SEO по текущему языку
-        const errorKey = `${section}.${this.currentLanguageIndex}.${field}`
-        return !!this.validationErrors[errorKey]
-      } else if (section) {
-        // Для основных полей
-        return !!this.validationErrors[section]
-      }
-      return false
-    },
-    
-    getError(section, field = null) {
-      if (field && section) {
-        const errorKey = `${section}.${this.currentLanguageIndex}.${field}`
-        const error = this.validationErrors[errorKey]
-        return error ? (Array.isArray(error) ? error[0] : error) : ''
-      } else if (section) {
-        const error = this.validationErrors[section]
-        return error ? (Array.isArray(error) ? error[0] : error) : ''
-      }
-      return ''
-    },
-    
-    getFieldLabel(field) {
-      const labels = {
-        'slug': 'Slug',
-        'image': 'Изображение',
-        'max_participants': 'Максимум участников',
-        'price': 'Цена',
-        'start_time': 'Время начала',
-        'end_time': 'Время окончания',
-        'registration_deadline': 'Дедлайн регистрации',
-        'translations': 'Переводы',
-        'seo': 'SEO',
-        'title': 'Название',
-        'short_description': 'Краткое описание',
-        'full_description': 'Полное описание',
-        'location': 'Место проведения',
-        'requirements': 'Требования',
-        'included': 'Что включено',
-        'meta_title': 'Meta Title',
-        'meta_description': 'Meta Description',
-        'meta_keywords': 'Meta Keywords'
-      }
-      
-      // Для вложенных полей
-      if (field.includes('.')) {
-        const parts = field.split('.')
-        if (parts.length >= 3) {
-          const fieldName = parts[2]
-          return labels[fieldName] || fieldName
-        }
-      }
-      
-      return labels[field] || field
-    },
-    
-    async saveEvent() {
-      this.loading = true
-      this.clearValidationErrors()
-      
-      try {
-        const eventData = this.prepareEventData()
-        
-        // Отладочная информация
-        console.log('Sending event data:', JSON.stringify(eventData, null, 2))
-        
-        let response
-        if (this.isEdit) {
-          response = await this.$store.dispatch('events/update', {
-            id: this.localEvent.id,
-            data: eventData
-          })
-        } else {
-          response = await this.$store.dispatch('events/create', eventData)
-        }
-        
-        this.$message.success('Мероприятие успешно сохранено')
-        this.$router.push({ name: 'admin.events.list' })
-      } catch (error) {
-        console.error('Ошибка сохранения:', error)
-        console.error('Response data:', error.response?.data)
-        
-        if (error.response?.status === 422 && error.response?.data?.errors) {
-          // Сохраняем ошибки валидации
-          this.setValidationErrors(error.response.data.errors)
-          this.$message.error('Пожалуйста, исправьте ошибки в форме')
-        } else if (error.response?.data?.message) {
-          this.$message.error(error.response.data.message)
-        } else {
-          this.$message.error(error.message || 'Ошибка при сохранении мероприятия')
-        }
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    prepareEventData() {
-      // Собираем все переводы
-      const translations = this.availableLanguages.map(lang => {
-        const translation = this.localTranslations[lang.code] || this.createEmptyTranslation()
-        
-        return {
-          language_id: lang.id, // Используем ID языка из availableLanguages
-          title: translation.title || '',
-          short_description: translation.short_description || '',
-          full_description: translation.full_description || '',
-          location: translation.location || '',
-          requirements: translation.requirements || '',
-          included: translation.included || ''
-        }
-      })
 
-      // Собираем SEO данные
-      const seo = this.availableLanguages.map(lang => {
-        const seoData = this.localSeo[lang.code] || this.createEmptySeo()
-        
-        return {
-          language_id: lang.id, // Используем ID языка из availableLanguages
-          meta_title: seoData.meta_title || '',
-          meta_description: seoData.meta_description || '',
-          meta_keywords: seoData.meta_keywords || ''
-        }
-      })
+      // translations
+      this.translationsByCode = {};
+      const hasLangId = !!this.activeLanguages.find(l => typeof l.id !== 'undefined');
+      const langById = id => this.activeLanguages.find(l => l.id === id);
+      const langCodeSafe = it => {
+        if (it.language) return it.language; // already code
+        if (hasLangId && it.language_id && langById(it.language_id)) return langById(it.language_id).code;
+        return null;
+      };
+
+      if (Array.isArray(storePost.translations)) {
+        storePost.translations.forEach(t => {
+          const code = langCodeSafe(t);
+          if (!code) return;
+          this.translationsByCode[code] = {
+            language: code,
+            title: t.title || '',
+            description: t.description || '',
+          };
+        });
+      }
+      this.activeLanguages.forEach(l => this.ensureTrans(l.code));
+
+      // SEO
+      this.seoByCode = {};
+      if (Array.isArray(storePost.seo)) {
+        storePost.seo.forEach(s => {
+          const code = langCodeSafe(s);
+          if (!code) return;
+          this.seoByCode[code] = {
+            language: code,
+            meta_title: s.meta_title || '',
+            meta_description: s.meta_description || '',
+            meta_keywords: s.meta_keywords || ''
+          };
+        });
+      }
+      this.activeLanguages.forEach(l => this.ensureSeo(l.code));
+    },
+
+    ensureTrans(code) {
+      if (!this.translationsByCode[code]) {
+        this.translationsByCode[code] = {
+          language: code,
+          title: '',
+          description: '',
+        };
+      }
+      return this.translationsByCode[code];
+    },
+    ensureSeo(code) {
+      if (!this.seoByCode[code]) {
+        this.seoByCode[code] = {
+          language: code,
+          meta_title: '',
+          meta_description: '',
+          meta_keywords: ''
+        };
+      }
+      return this.seoByCode[code];
+    },
+
+    // Build payload
+    buildPayload() {
+      const translations = this.activeLanguages.map(l => {
+        const tr = this.ensureTrans(l.code);
+        const { language, ...rest } = tr;
+        return (typeof l.id !== 'undefined')
+          ? { language_id: l.id, ...rest }
+          : { ...rest };
+      });
+
+      const seo = this.activeLanguages.map(l => {
+        const s = this.ensureSeo(l.code);
+        const { language, ...rest } = s;
+        return (typeof l.id !== 'undefined')
+          ? { language_id: l.id, ...rest }
+          : { ...rest };
+      });
 
       return {
-        slug: this.localEvent.slug,
-        status: this.localEvent.status,
-        image: this.localEvent.image,
-        max_participants: this.localEvent.max_participants,
-        price: parseFloat(this.localEvent.price) || 0,
-        start_time: this.localEvent.start_time,
-        end_time: this.localEvent.end_time,
-        registration_deadline: this.localEvent.registration_deadline,
+        slug: this.localPost.slug || '',
+        status: this.localPost.status || 'draft',
+        image: this.localPost.image || '',
+        published_at: this.localPost.published_at,
         translations,
         seo
+      };
+    },
+
+    // Errors
+    setErrors(errors) {
+      this.errorsValidation = errors || {};
+    },
+    hasError(path) {
+      if (!this.errorsValidation) return false;
+      const v = this.errorsValidation[path];
+      return Array.isArray(v) ? v.length > 0 : !!v;
+    },
+    firstError(path) {
+      if (!this.errorsValidation) return '';
+      const v = this.errorsValidation[path];
+      if (Array.isArray(v)) return v[0] || '';
+      return typeof v === 'string' ? v : '';
+    },
+    clearErrors() {
+      this.errorsValidation = {};
+    },
+
+    // Save / Publish / Delete
+    onSave() {
+      this.clearErrors();
+      this.syncPublishedAtToLocalPost();
+      const data = this.buildPayload();
+      const id = this.post?.id || this.localPost?.id;
+      this.loading = true;
+
+      if (this.isEdit) {
+        this.$store.dispatch('posts/update', { id, data })
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Успех!',
+              text: 'Новость успешно обновлена.',
+              timer: 2000,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              customClass: { popup: 'modern-toast success' }
+            });
+          })
+          .catch((error) => {
+            this.setErrors(error?.response?.data?.errors);
+            Swal.fire({
+              icon: 'error',
+              title: 'Ошибка!',
+              text: error?.response?.data?.message || 'Не удалось обновить новость.',
+              timer: 2500,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              customClass: { popup: 'modern-toast error' }
+            });
+          })
+          .finally(() => { this.loading = false; });
+      } else {
+        this.$store.dispatch('posts/store', { data })
+          .then((resp) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Успех!',
+              text: 'Новость успешно создана.',
+              timer: 2000,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              customClass: { popup: 'modern-toast success' }
+            });
+            const newId = resp?.data?.post?.id || null;
+            if (newId) {
+              this.$router.replace({ name: 'admin.posts.edit', params: { id: newId } });
+            }
+          })
+          .catch((error) => {
+            this.setErrors(error?.response?.data?.errors);
+            Swal.fire({
+              icon: 'error',
+              title: 'Ошибка!',
+              text: error?.response?.data?.message || 'Не удалось создать новость.',
+              timer: 2500,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              customClass: { popup: 'modern-toast error' }
+            });
+          })
+          .finally(() => { this.loading = false; });
       }
     },
-    
-    publishEvent() {
-      this.localEvent.status = 'published'
-      this.saveEvent()
-    },
-    
-    async deleteEvent() {
-      if (!confirm('Вы уверены, что хотите удалить это мероприятие?')) return
-      
-      try {
-        await this.$store.dispatch('events/delete', this.localEvent.id)
-        this.$message.success('Мероприятие удалено')
-        this.$router.push({ name: 'admin.events.list' })
-      } catch (error) {
-        console.error('Ошибка удаления:', error)
-        this.$message.error('Ошибка при удалении мероприятия')
+
+    onPublish() {
+      this.localPost.status = 'published';
+      if (!this.localPost.published_at) {
+        // Если даты публикации нет — проставим "сейчас"
+        const now = Date.now();
+        this.publishedDateTs = new Date().setHours(0,0,0,0);
+        this.publishedTimeMs = new Date(1970,0,1,new Date(now).getHours(), new Date(now).getMinutes(),0).getTime();
+        this.syncPublishedAtToLocalPost();
       }
-    }
-  },
-  
-  watch: {
-    currentLanguage(newLang) {
-      // При смене языка убедимся, что переводы существуют
-      if (!this.localTranslations[newLang]) {
-        this.localTranslations[newLang] = this.createEmptyTranslation()
+      this.onSave();
+    },
+
+    onDelete() {
+      if (!this.isEdit) {
+        this.$message?.warning?.('Удалять нечего: это новый черновик.');
+        return;
       }
-      if (!this.localSeo[newLang]) {
-        this.localSeo[newLang] = this.createEmptySeo()
-      }
-    },
-    
-    'localEvent.slug': function() {
-      this.clearError('slug')
-    },
-    
-    'localEvent.image': function() {
-      this.clearError('image')
-    },
-    
-    'localEvent.max_participants': function() {
-      this.clearError('max_participants')
-    },
-    
-    'localEvent.price': function() {
-      this.clearError('price')
-    }
-  },
-  
-  mounted() {
-    console.log('Available languages:', this.availableLanguages)
-    
-    if (this.isEdit) {
-      this.$store.dispatch('events/show', this.id).then(response => {
-        console.log('Event data loaded:', response.data)
-        this.initializeLocalData(response.data.event)
-        
-        if (response.data.event.current_lang) {
-          this.currentLanguage = response.data.event.current_lang
-        } else {
-          const defaultLang = this.availableLanguages.find(lang => lang.default)
-          if (defaultLang) {
-            this.currentLanguage = defaultLang.code
-          }
+      Swal.fire({
+        title: 'Вы уверены?',
+        text: 'Это действие нельзя будет отменить!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Да, удалить!',
+        cancelButtonText: 'Отмена'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$store.dispatch('posts/delete', this.localPost.id )
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Удалено!',
+                text: 'Новость успешно удалена.',
+                timer: 2000,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                customClass: { popup: 'modern-toast success' }
+              });
+              this.$router.replace({ name: 'admin.posts.list' });
+            })
+            .catch((error) => {
+              console.error('Ошибка при удалении новости:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Ошибка!',
+                text: error?.response?.data?.message || 'Не удалось удалить новость.',
+                timer: 2500,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                customClass: { popup: 'modern-toast error' }
+              });
+            });
         }
-      }).catch(error => {
-        console.error('Error fetching event:', error)
-        this.$message.error('Ошибка загрузки мероприятия')
-      })
-    } else {
-      // Для нового мероприятия инициализируем пустые переводы для всех языков
-      this.availableLanguages.forEach(lang => {
-        this.localTranslations[lang.code] = this.createEmptyTranslation()
-        this.localSeo[lang.code] = this.createEmptySeo()
-      })
-    }
+      });
+      console.log('POST DELETE INTENT →', { id: this.localPost.id });
+      this.$message?.success?.('Запрос на удаление сформирован (смотри консоль).');
+    },
+
+    // Upload
+    async uploadMainImage({ file, onFinish, onError, onProgress }) {
+      try {
+        this.uploadingImage = true;
+
+        const fd = new FormData();
+        fd.append('file', file.file ?? file);
+
+        const resp = await this.$store.dispatch('posts/uploadImage', {
+          formData: fd,
+          onProgress
+        });
+        const path = resp?.data?.path || '';
+        if (!path) throw new Error('Не получен путь к файлу');
+
+        this.localPost.image = path;
+        onProgress?.({ percent: 100 });
+        onFinish?.();
+        this.$message?.success?.('Изображение загружено');
+      } catch (e) {
+        console.error('Upload error:', e);
+        this.$message?.error?.('Не удалось загрузить изображение');
+        onError?.();
+      } finally {
+        this.uploadingImage = false;
+      }
+    },
+    clearImage() {
+      this.localPost.image = '';
+    },
+    onImageUrlChange() {
+      // опционально: валидация пути/URL
+    },
+
+    // PublishedAt pickers
+    combineDateTime(dateTs, timeMs) {
+      if (!dateTs) return null;
+      const dDate = new Date(dateTs);
+      let h = 0, m = 0, s = 0;
+      if (timeMs) {
+        const t = new Date(timeMs);
+        h = t.getHours(); m = t.getMinutes(); s = 0;
+      }
+      const d = new Date(
+        dDate.getFullYear(),
+        dDate.getMonth(),
+        dDate.getDate(),
+        h, m, s, 0
+      );
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    },
+    syncPublishedAtToLocalPost() {
+      this.localPost.published_at = this.combineDateTime(this.publishedDateTs, this.publishedTimeMs);
+    },
   }
 }
 </script>
 
 <style scoped>
-.border-red-300 {
-  border-color: #fca5a5;
+.translation-tabs :deep(.n-tabs-nav) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
 }
-
-.bg-red-50 {
-  background-color: #fef2f2;
+.tab-label {
+  display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
 }
+.language-flag { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,0,0,0.05); }
 </style>

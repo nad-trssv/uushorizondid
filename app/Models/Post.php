@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     protected $fillable = ['slug', 'user_id', 'published_at', 'status', 'image', 'views'];
-
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+    
     public function translations()
     {
         return $this->hasMany(PostTranslation::class);

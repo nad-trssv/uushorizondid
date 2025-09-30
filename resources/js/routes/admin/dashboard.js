@@ -169,6 +169,15 @@ export default [
                             breadcrumb: 'blog_edit',
                         },
                     },
+                    {
+                        path: 'create',
+                        name: 'admin.blog.create',
+                        component: () => import('../../pages/Blog/Edit.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_create',
+                        },
+                    },
                 ]
             },
             {
