@@ -14,10 +14,10 @@ class LanguageSeeder extends Seeder
     public function run(): void
     {
         $languages = [
-            ['code' => 'ru', 'name' => 'Русский', 'native_name' => 'Русский', 'iso' => 'ru-RU', 'enabled' => true, 'default' => false, 'flag' => 'flags/ru.svg'],
-            ['code' => 'et', 'name' => 'Eesti', 'native_name' => 'Eesti', 'iso' => 'et-EE', 'enabled' => true, 'default' => true, 'flag' => 'flags/et.svg'],
-            ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'iso' => 'en-US', 'enabled' => true, 'default' => false, 'flag' => 'flags/en.svg'],
-            ['code' => 'uk', 'name' => 'Українська', 'native_name' => 'Українська', 'iso' => 'uk-UA', 'enabled' => true, 'default' => false, 'flag' => 'flags/lv.svg'],
+            ['code' => 'ru', 'name' => 'Русский', 'native_name' => 'Русский', 'iso' => 'ru-RU', 'enabled' => true, 'is_default' => false, 'flag' => 'flags/ru.svg'],
+            ['code' => 'et', 'name' => 'Eesti', 'native_name' => 'Eesti', 'iso' => 'et-EE', 'enabled' => true, 'is_default' => true, 'flag' => 'flags/et.svg'],
+            ['code' => 'en', 'name' => 'English', 'native_name' => 'English', 'iso' => 'en-US', 'enabled' => true, 'is_default' => false, 'flag' => 'flags/en.svg'],
+            ['code' => 'uk', 'name' => 'Українська', 'native_name' => 'Українська', 'iso' => 'uk-UA', 'enabled' => true, 'is_default' => false, 'flag' => 'flags/lv.svg'],
         ];
 
         foreach ($languages as $lang) {

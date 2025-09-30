@@ -6,9 +6,11 @@ use App\Models\Event;
 use App\Models\EventTranslation;
 use App\Models\EventSeo;
 use App\Models\EventSeoTranslation;
+use App\Models\Language;
 use App\Repositories\EventRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class EventService
 {
@@ -37,10 +39,18 @@ class EventService
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Создаем основное событие
+            $defaultLangId = Language::where('is_default', true)->first()->id ?? 1;
+            $defaultTranslation = collect($data['translations'])->firstWhere('language_id', $defaultLangId);
+            $defaultTitle = $defaultTranslation['title'] ?? null;
+
+            if ($data['slug'] === null) {
+                $data['slug'] = Str::slug($defaultTitle ?? '');
+            }
+            if (Event::where('slug', $data['slug'])->exists()) {
+                $data['slug'] = $data['slug'] . '-' . mt_rand(100000, 999999);
+            }
             $event = Event::create($data);
             
-            // Создаем переводы
             if (isset($data['translations'])) {
                 foreach ($data['translations'] as $translation) {
                     EventTranslation::create(array_merge($translation, ['event_id' => $event->id]));

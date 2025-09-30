@@ -36,7 +36,7 @@ class EventRepository
         }
 
         // Сортировка
-        $sortBy = $request->get('sort_by', 'start_time');
+        $sortBy = $request->get('sort_by', 'id');
         $sortOrder = $request->get('sort_order', 'desc');
         
         $query->orderBy($sortBy, $sortOrder);

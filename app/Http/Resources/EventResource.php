@@ -36,12 +36,12 @@ class EventResource extends JsonResource
             'has_available_spots' => $this->hasAvailableSpots(),
 
             // Переводы
-            'title' => $translation?->title,
-            'short_description' => $translation?->short_description,
-            'full_description' => $translation?->full_description,
-            'location' => $translation?->location,
-            'requirements' => $translation?->requirements,
-            'included' => $translation?->included,
+            'title' => $translation?->title ?? $this->translations->firstWhere('language.is_default', true)?->title,
+            'short_description' => $translation?->short_description ?? $this->translations->firstWhere('language.is_default', true)?->short_description,
+            'full_description' => $translation?->full_description ?? $this->translations->firstWhere('language.is_default', true)?->full_description,
+            'location' => $translation?->location ?? $this->translations->firstWhere('language.is_default', true)?->location,
+            'requirements' => $translation?->requirements ?? $this->translations->firstWhere('language.is_default', true)?->requirements,
+            'included' => $translation?->included ?? $this->translations->firstWhere('language.is_default', true)?->included,
             'image' => $this->image,
 
             // SEO

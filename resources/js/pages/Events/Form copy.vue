@@ -54,36 +54,27 @@
           <!-- Переключатели языков (вкладки) -->
           <n-tabs type="line" animated class="translation-tabs" v-model:value="currentLanguage">
             <n-tab-pane
-              v-for="(lang, i) in activeLanguages"
-              :key="`${lang.code}-basic-${i}`"
+              v-for="lang in activeLanguages"
+              :key="`${lang.code}-basic`"
               :name="lang.code"
             >
-                <template #tab>
-                <div
-                  class="tab-label"
-                  :style="lang.code === 'et' && hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title ? { color: 'red' } : {}"
-                >
+              <template #tab>
+                <div class="tab-label">
                   <img v-if="lang.flag" :src="`/storage/${lang.flag}`" :alt="lang.name" class="language-flag" />
                   <span class="language-name">{{ lang.native_name || lang.name || lang.code }}</span>
                 </div>
-                </template>
+              </template>
 
               <div class="space-y-6">
                 <!-- Title -->
                 <div class="border rounded-lg p-4">
-                    <label class="text-sm font-medium text-gray-700 mb-2 block">
-                      Название
-                    <span v-if="isLangDefault(lang)" class="text-red-500">*</span>
-                    </label>
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Название *</label>
                   <n-input
                     v-model:value="ensureTrans(lang.code).title"
                     placeholder="Введите название мероприятия"
+                    
                     size="large"
-                    :status="hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title ? 'error' : undefined"
-                    />
-                    <p v-if="hasError(`translations.${i}.title`) && isLangDefault(lang) && !ensureTrans(lang.code).title" class="text-xs text-red-500 mt-1">
-                      {{ firstError(`translations.${i}.title`) }}
-                    </p>
+                  />
                 </div>
 
                 <!-- Short description -->
@@ -151,14 +142,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="border rounded-lg p-4">
                 <label class="text-sm font-medium text-gray-700 mb-2 block">Slug (ЧПУ) *</label>
-                <n-input
-                  v-model:value="localEvent.slug"
-                  placeholder="URL-адрес"
-                  :status="hasError('slug') ? 'error' : undefined"
-                />
-                <p v-if="hasError('slug')" class="text-xs text-red-500 mt-1">
-                  {{ firstError('slug') }}
-                </p>
+                <n-input v-model:value="localEvent.slug" placeholder="URL-адрес" />
               </div>
 
               <!-- Главное изображение -->
@@ -220,74 +204,64 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <!-- Старт -->
-              <div class="border rounded-lg p-4">
-                <label class="text-sm font-medium text-gray-700 mb-2 block">Дата и время начала *</label>
+  <!-- Старт -->
+  <div class="border rounded-lg p-4">
+    <label class="text-sm font-medium text-gray-700 mb-2 block">Дата и время начала *</label>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <n-config-provider :date-locale="dateFnsLocale">
-                    <n-date-picker
-                      v-model:value="startDateTs"
-                      type="date"
-                      clearable
-                      class="w-full"
-                      :first-day-of-week="1"
-                      :status="hasError('start_time') ? 'error' : undefined"
-                    />
-                  </n-config-provider>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Дата (локализованный календарь) -->
+      <n-config-provider :date-locale="dateFnsLocale">
+        <n-date-picker
+          v-model:value="startDateTs"
+          type="date"
+          clearable
+          class="w-full"
+          :first-day-of-week="1"
+        />
+      </n-config-provider>
 
-                  <n-time-picker
-                    v-model:value="startTimeMs"
-                    format="HH:mm"
-                    :actions="['now', 'confirm']"
-                    :clearable="true"
-                    class="w-full"
-                    :status="hasError('start_time') ? 'error' : undefined"
-                  />
+      <!-- Время (часы:минуты) -->
+      <n-time-picker
+        v-model:value="startTimeMs"
+        format="HH:mm"
+        :actions="['now', 'confirm']"
+        :clearable="true"
+        class="w-full"
+      />
+    </div>
+    <p class="text-xs text-gray-500 mt-2">
+      Будет сохранено как: <code>{{ localEvent.start_time || '—' }}</code>
+    </p>
+  </div>
 
-                  <p class="text-xs text-gray-500 mt-2">
-                    <code>{{ localEvent.start_time || '—' }}</code>
-                  </p>
-                  <p v-if="hasError('start_time')" class="text-xs text-red-500 mt-1">
-                    {{ firstError('start_time') }}
-                  </p>
+  <!-- Окончание -->
+  <div class="border rounded-lg p-4">
+    <label class="text-sm font-medium text-gray-700 mb-2 block">Дата и время окончания *</label>
 
-                </div>
-              </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <n-config-provider :date-locale="dateFnsLocale">
+        <n-date-picker
+          v-model:value="endDateTs"
+          type="date"
+          clearable
+          class="w-full"
+          :first-day-of-week="1"
+        />
+      </n-config-provider>
 
-              <!-- Окончание -->
-              <div class="border rounded-lg p-4">
-                <label class="text-sm font-medium text-gray-700 mb-2 block">Дата и время окончания *</label>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <n-config-provider :date-locale="dateFnsLocale">
-                      <n-date-picker
-                        v-model:value="endDateTs"
-                        type="date"
-                        clearable
-                        class="w-full"
-                        :first-day-of-week="1"
-                        :status="hasError('end_time') ? 'error' : undefined"
-                      />
-                    </n-config-provider>
-
-                    <n-time-picker
-                      v-model:value="endTimeMs"
-                      format="HH:mm"
-                      :actions="['now', 'confirm']"
-                      :clearable="true"
-                      class="w-full"
-                      :status="hasError('end_time') ? 'error' : undefined"
-                    />
-                    <p class="text-xs text-gray-500 mt-2">
-                       <code>{{ localEvent.end_time || '—' }}</code>
-                    </p>
-                    <p v-if="hasError('end_time')" class="text-xs text-red-500 mt-1">
-                      {{ firstError('end_time') }}
-                    </p>
-                </div>
-              </div>
-            </div>
+      <n-time-picker
+        v-model:value="endTimeMs"
+        format="HH:mm"
+        :actions="['now', 'confirm']"
+        :clearable="true"
+        class="w-full"
+      />
+    </div>
+    <p class="text-xs text-gray-500 mt-2">
+      Будет сохранено как: <code>{{ localEvent.end_time || '—' }}</code>
+    </p>
+  </div>
+</div>
 
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -440,7 +414,6 @@ export default {
       startTimeMs: null,
       endDateTs: null,   
       endTimeMs: null,   
-      errorsValidation: {}
     }
   },
   computed: {
@@ -695,26 +668,7 @@ export default {
         seo
       };
     },
-    setErrors(errors) {
-      this.errorsValidation = errors || {};
-    },
-    hasError(path) {
-      if (!this.errorsValidation) return false;
-      // ошибки могут приходить как массивы сообщений
-      const v = this.errorsValidation[path];
-      return Array.isArray(v) ? v.length > 0 : !!v;
-    },
-    firstError(path) {
-      if (!this.errorsValidation) return '';
-      const v = this.errorsValidation[path];
-      if (Array.isArray(v)) return v[0] || '';
-      return typeof v === 'string' ? v : '';
-    },
-    clearErrors() {
-      this.errorsValidation = {};
-    },
     onSave() {
-      this.clearErrors()
       this.syncDateTimeToLocalEvent();
       const data = this.buildPayload();
       const id = this.event?.id || this.localEvent?.id;
@@ -734,7 +688,7 @@ export default {
             });
           })
           .catch((error) => {
-            this.setErrors(error?.response?.data?.errors);
+            console.error('Ошибка при обновлении мероприятия:', error);
             Swal.fire({
               icon: 'error',
               title: 'Ошибка!',
@@ -759,13 +713,14 @@ export default {
               showConfirmButton: false,
               customClass: { popup: 'modern-toast success' }
             });
+            
             const newId = resp?.data?.event.id || null;
             if (newId) {
               this.$router.replace({ name: 'admin.events.edit', params: { id: newId } });
             }
           })
           .catch((error) => {
-            this.setErrors(error?.response?.data?.errors);
+            console.error('Ошибка при создании мероприятия:', error);
             Swal.fire({
               icon: 'error',
               title: 'Ошибка!',
@@ -843,6 +798,8 @@ export default {
           formData: fd,
           onProgress
         });
+
+        // ожидаем backend: { path: 'events/xxx.jpg', url: 'https://.../storage/events/xxx.jpg' }
         const path = resp?.data?.path || '';
         if (!path) throw new Error('Не получен путь к файлу');
 
