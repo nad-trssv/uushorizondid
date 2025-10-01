@@ -17,7 +17,7 @@
               <template #icon><i class="fas fa-arrow-left"></i></template>
               Назад
             </n-button>
-            <n-button v-if="isEdit" type="primary" @click="$router.push({ name: 'admin.posts.create' })">
+            <n-button v-if="isEdit" type="primary" @click="openPage('create')">
               <template #icon><i class="fas fa-plus"></i></template>
               Создать новую
             </n-button>
@@ -427,10 +427,30 @@ export default {
     },
     publishedDateTs() { this.syncPublishedAtToLocalPost(); },
     publishedTimeMs() { this.syncPublishedAtToLocalPost(); },
+    $route: {
+      immediate: true,
+      handler(to, from) {
+        if (to.name === 'admin.blog.create') {
+          this.resetForm();
+        }
+      }
+    },
   },
 
   methods: {
-    // Init
+    resetForm() {
+      this.localPost = this.getDefaultPost();
+      this.translationsByCode = {};
+      this.seoByCode = {};
+      this.errorsValidation = {};
+      this.publishedDateTs = null;
+      this.publishedTimeMs = null;
+      this.activeTab = 'basic';
+      this.currentLanguage = 'ru';
+      
+      this.$store.commit('posts/resetEditPost');
+      this.initializeNewPost();
+    },
     initializeNewPost() {
       if (this.routeId) return;
 
@@ -465,8 +485,6 @@ export default {
         comments: []
       };
     },
-
-    // Helpers
     formatDate(s) {
       if (!s) return '—';
       return new Date(s).toLocaleString('ru-RU', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
@@ -485,8 +503,6 @@ export default {
       const raw = (l?.is_default ?? l?.default ?? 0);
       return Number(raw) === 1 || raw === true;
     },
-
-    // Hydration
     hydrateFromStore(storePost) {
       this.localPost = { ...this.getDefaultPost(), ...storePost };
 
@@ -539,7 +555,6 @@ export default {
       }
       this.activeLanguages.forEach(l => this.ensureSeo(l.code));
     },
-
     ensureTrans(code) {
       if (!this.translationsByCode[code]) {
         this.translationsByCode[code] = {
@@ -561,8 +576,6 @@ export default {
       }
       return this.seoByCode[code];
     },
-
-    // Build payload
     buildPayload() {
       const translations = this.activeLanguages.map(l => {
         const tr = this.ensureTrans(l.code);
@@ -589,8 +602,6 @@ export default {
         seo
       };
     },
-
-    // Errors
     setErrors(errors) {
       this.errorsValidation = errors || {};
     },
@@ -608,8 +619,6 @@ export default {
     clearErrors() {
       this.errorsValidation = {};
     },
-
-    // Save / Publish / Delete
     onSave() {
       this.clearErrors();
       this.syncPublishedAtToLocalPost();
@@ -660,7 +669,7 @@ export default {
             });
             const newId = resp?.data?.post?.id || null;
             if (newId) {
-              this.$router.replace({ name: 'admin.posts.edit', params: { id: newId } });
+              this.$router.replace({ name: 'admin.blog.edit', params: { id: newId } });
             }
           })
           .catch((error) => {
@@ -720,7 +729,7 @@ export default {
                 showConfirmButton: false,
                 customClass: { popup: 'modern-toast success' }
               });
-              this.$router.replace({ name: 'admin.posts.list' });
+              this.$router.replace({ name: 'admin.blog.list' });
             })
             .catch((error) => {
               console.error('Ошибка при удалении новости:', error);
@@ -740,8 +749,6 @@ export default {
       console.log('POST DELETE INTENT →', { id: this.localPost.id });
       this.$message?.success?.('Запрос на удаление сформирован (смотри консоль).');
     },
-
-    // Upload
     async uploadMainImage({ file, onFinish, onError, onProgress }) {
       try {
         this.uploadingImage = true;
@@ -796,6 +803,11 @@ export default {
     syncPublishedAtToLocalPost() {
       this.localPost.published_at = this.combineDateTime(this.publishedDateTs, this.publishedTimeMs);
     },
+    openPage(type) {
+      if (type === 'create') {
+        this.$router.push({ name: 'admin.blog.create' });
+      }
+    }
   }
 }
 </script>

@@ -43,6 +43,9 @@ export const posts = {
     setDateFrom(s, v){ s.dateFrom = v; },
     setDateTo(s, v){ s.dateTo = v; },
     setEditPost(s, v){ s.editPost = v; },
+    resetEditPost(state) {
+      state.editPost = null;
+    },
   },
   actions: {
     lists({ commit, state }, payload = {}) {
