@@ -74,10 +74,11 @@ Route::group(['prefix' => 'v1'], function () {
                 Route::get('/', [EventController::class, 'index']);
                 Route::get('/stats', [EventController::class, 'stats']);
                 Route::post('/', [EventController::class, 'store']);
+                Route::get('/calendar', [EventController::class, 'calendarEvents']);
+                Route::post('/upload-image', [EventController::class, 'uploadImage']);
                 Route::get('/{event}', [EventController::class, 'show']);
                 Route::put('/{event}', [EventController::class, 'update']);
                 Route::delete('/{event}', [EventController::class, 'destroy']);
-                Route::post('/upload-image', [EventController::class, 'uploadImage']);
             });
             Route::group(['prefix' => 'appointments'], function () {
                 Route::get('/all', [AppointmentsController::class, 'index'])

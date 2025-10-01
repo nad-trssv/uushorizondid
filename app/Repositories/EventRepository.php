@@ -44,6 +44,14 @@ class EventRepository
         return $query->paginate($request->get('per_page', 10));
     }
 
+    public function getCalendarEvents($request)
+    {
+        $query = Event::with(['translations', 'seo.translations', 'gallery', 'participants'])
+            ->withCount(['participants', 'confirmedParticipants']);
+        $query->orderBy('created_at', 'desc');
+        return $query->get();
+    }
+
     public function getById($id): Event
     {
         return Event::with([

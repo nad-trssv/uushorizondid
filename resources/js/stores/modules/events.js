@@ -69,7 +69,21 @@ export const events = {
           });
       });
     },
-
+    getAll({ commit }) {
+      return new Promise((resolve, reject) => {
+        api
+          .get('/events/calendar')
+          .then((response) => {
+            const items = response?.data?.events || [];
+            commit('setLists', items);
+            resolve(response);
+          })
+          .catch((error) => {
+            console.error('Error fetching all events:', error);
+            reject(error);
+          });
+      });
+    },
     // Статистика
     stats({ commit }) {
       return new Promise((resolve, reject) => {

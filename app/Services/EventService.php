@@ -26,6 +26,11 @@ class EventService
         return $this->eventRepository->getAll($request);
     }
 
+    public function getCalendarEvents($request)
+    {
+        return $this->eventRepository->getCalendarEvents($request);
+    }
+
     public function getById($id)
     {
         return $this->eventRepository->getById($id);

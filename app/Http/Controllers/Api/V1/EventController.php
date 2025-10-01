@@ -41,6 +41,20 @@ class EventController extends Controller
         }
     }
 
+    public function calendarEvents(Request $request)
+    {
+        try {
+            $this->setAndGetLocale($request);
+            $events = EventResource::collection($this->eventService->getCalendarEvents($request));
+            return response()->json([
+                'events' => $events,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch calendar events', 'message' => $e->getMessage()], 500);
+        }
+    }   
+
     public function stats(Request $request)
     {
         try {
