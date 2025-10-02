@@ -4794,6 +4794,7 @@ textarea.form-control-lg {
   color: var(--bs-pagination-active-color);
   background-color: var(--bs-pagination-active-bg);
   border-color: var(--bs-pagination-active-border-color);
+  background-color: var(--bs-pagination-active-bg) !important;
 }
 .page-link.disabled, .disabled > .page-link {
   color: var(--bs-pagination-disabled-color);

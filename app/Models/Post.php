@@ -49,7 +49,22 @@ class Post extends Model
     {
         return $this->comments()->avg('rating');
     }
+    public function getTitleAttribute()
+    {
+        $lang = app()->getLocale();
+        return optional($this->translations->firstWhere('language.code', $lang))->title;
+    }
+    
+    public function getDescriptionAttribute()
+    {
+        $lang = app()->getLocale();
+        return optional($this->translations->firstWhere('language.code', $lang))->description;
+    }
 
+    public function comments_count()
+    {
+        return $this->comments()->count();
+    }
 
 }
 
