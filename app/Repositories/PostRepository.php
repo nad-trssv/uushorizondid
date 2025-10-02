@@ -60,6 +60,18 @@ class PostRepository
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
+    public function getPublished($request): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model->with(['translations.language', 'gallery', 'comments', 'user'])
+            ->where('status', 'published');
+        $query->where('published_at', '<=', now());
+        $query->where('status', 'published');
+        $query->orderBy('published_at', 'desc');
+        $perPage = (int)$request->input('perPage', (int)$request->input('per_page', 12));
+        $page    = (int)$request->input('page', 1);
+
+        return $query->paginate($perPage, ['*'], 'page', $page);
+    }
 
     public function getStat($locale = null): array
     {

@@ -22,11 +22,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     
 	<!-- Favicon icon -->
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     
 	
 	<!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="assets/vendor/rangeslider/rangeslider.css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/rangeslider/rangeslider.css') }}">
 
 	<!-- Google Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,7 +62,7 @@
                                 
                                 <!-- Website Logo -->
                                 <div class="logo-header mostion">
-                                    <a href="index.html" ><img src="assets/images/logopng.png" alt="/"></a>
+                                    <a href="{{ url('/') }}" ><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                                 </div>
                                 
                                 <!-- Nav Toggle Button -->
@@ -90,7 +90,7 @@
                                 <!-- Header Nav -->
                                 <div class="header-nav navbar-collapse collapse justify-content-end" id="navbarNavDropdown">
                                     <div class="logo-header">
-                                        <a href="index.html"><img src="assets/images/logopng.png" alt="/" ></a>
+                                        <a href="{{ url('/') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                                     </div>
                                     <ul class="nav navbar-nav navbar navbar-left">
                                         <li>
@@ -100,7 +100,7 @@
                                             <a href="javascript:void(0);">Мероприятия</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);">Новости</a>
+                                            <a href="{{ route('blog.index') }}">Новости</a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);">Контакты</a>
@@ -148,7 +148,7 @@
             <div class="contact-sidebar">
                 <div class="contact-box1">
                     <div class="logo-contact logo-header">
-                        <a href="index.html"><img src="assets/images/logopng.png" alt="/"></a>
+                        <a href="{{ url('/') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                     </div>
                     <div class="m-b50 contact-text">
                         <div class="dz-title">
@@ -202,15 +202,15 @@
                                     <div class="row justify-content-between">
                                         <div class="col-xl-4 col-lg-4 m-lg-0 m-b20 wow fadeInUp" data-wow-delay="0.4s">
                                             <div class="footer-logo">
-                                                <a href="index.html">
-                                                    <img src="assets/images/logopng.png" alt="/">
+                                                <a href="{{ url('/') }}">
+                                                    <img src="{{ asset('assets/images/logopng.png') }}" alt="logo">
                                                 </a>
                                             </div>
                                             <p class="text-white mb-0 font-14">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                                         </div>
                                         <div class="col-xl-6 col-lg-6 wow fadeInUp" data-wow-delay="0.6s">
                                             <h4 class="text-white title m-b15">Subscribe To Our Newsletter</h4>
-                                            <form class="dzSubscribe" action="assets/script/mailchamp.php" method="post">
+                                            <form class="dzSubscribe" action="{{ asset('assets/script/mailchamp.php') }}" method="post">
                                                 <div class="dzSubscribeMsg text-white"></div>
                                                 <div class="input-group">
                                                     <input name="dzEmail" required="required" type="text" class="form-control" placeholder="Enter Your Email">
@@ -316,24 +316,24 @@
         </div>
     </div>
     <!-- JAVASCRIPT FILES ========================================= -->
-    <script src="assets/js/jquery.min.js"></script><!-- JQUERY.MIN JS -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script><!-- BOOTSTRAP.MIN JS -->
-    <script src="assets/vendor/bootstrap-select/js/bootstrap-select.min.js"></script><!-- BOOTSTRAP SELEECT -->
-    <script src="assets/vendor/magnific-popup/magnific-popup.js"></script><!-- MAGNIFIC POPUP JS -->
-    <script src="assets/vendor/masonry/masonry-4.2.2.js"></script><!-- MASONRY -->
-    <script src="assets/vendor/wow/wow.js"></script><!-- WOW JS -->
-    <script src="assets/vendor/masonry/isotope.pkgd.min.js"></script><!-- ISOTOPE -->
-    <script src="assets/vendor/imagesloaded/imagesloaded.js"></script><!-- IMAGESLOADED -->
-    <script src="assets/vendor/counter/waypoints-min.js"></script><!-- WAYPOINTS JS -->
-    <script src="assets/vendor/counter/counterup.min.js"></script><!-- COUNTERUP JS -->
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script><!-- OWL-CAROUSEL -->
-    <script src="assets/vendor/particles/particles.js"></script>
-    <script src="assets/vendor/particles/particles-app.js"></script>
-    <script src="assets/js/dz.carousel.min.js"></script><!-- OWL-CAROUSEL -->
-    <script src="assets/js/dz.ajax.js"></script><!-- AJAX -->
-    <script src="assets/js/custom.js"></script><!-- CUSTOM JS -->
-    <script src="assets/js/dznav-init.js"></script><!-- DZNAV INIT -->
-    <script src="assets/vendor/rangeslider/rangeslider.js"></script><!-- CUSTOM JS -->
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script><!-- JQUERY.MIN JS -->
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script><!-- BOOTSTRAP.MIN JS -->
+    <script src="{{ asset('assets/vendor/bootstrap-select/js/bootstrap-select.min.js') }}"></script><!-- BOOTSTRAP SELECT -->
+    <script src="{{ asset('assets/vendor/magnific-popup/magnific-popup.js') }}"></script><!-- MAGNIFIC POPUP JS -->
+    <script src="{{ asset('assets/vendor/masonry/masonry-4.2.2.js') }}"></script><!-- MASONRY -->
+    <script src="{{ asset('assets/vendor/wow/wow.js') }}"></script><!-- WOW JS -->
+    <script src="{{ asset('assets/vendor/masonry/isotope.pkgd.min.js') }}"></script><!-- ISOTOPE -->
+    <script src="{{ asset('assets/vendor/imagesloaded/imagesloaded.js') }}"></script><!-- IMAGESLOADED -->
+    <script src="{{ asset('assets/vendor/counter/waypoints-min.js') }}"></script><!-- WAYPOINTS JS -->
+    <script src="{{ asset('assets/vendor/counter/counterup.min.js') }}"></script><!-- COUNTERUP JS -->
+    <script src="{{ asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script><!-- OWL-CAROUSEL -->
+    <script src="{{ asset('assets/vendor/particles/particles.js') }}"></script>
+    <script src="{{ asset('assets/vendor/particles/particles-app.js') }}"></script>
+    <script src="{{ asset('assets/js/dz.carousel.min.js') }}"></script><!-- OWL-CAROUSEL -->
+    <script src="{{ asset('assets/js/dz.ajax.js') }}"></script><!-- AJAX -->
+    <script src="{{ asset('assets/js/custom.js') }}"></script><!-- CUSTOM JS -->
+    <script src="{{ asset('assets/js/dznav-init.js') }}"></script><!-- DZNAV INIT -->
+    <script src="{{ asset('assets/vendor/rangeslider/rangeslider.js') }}"></script><!-- CUSTOM JS -->
 
 
     <script>
@@ -342,5 +342,6 @@
             new dzSettings(dzSettingsOptions);
         });
     </script>
+    @stack('scripts')
 </body>
 </html>

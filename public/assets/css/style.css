@@ -14714,7 +14714,9 @@ button:focus {
   -webkit-transition: all 0.2s;
   -ms-transition: all 0.2s;
   transition: all 0.2s;
-  color: var(--theme-text-color); }
+  color: var(--theme-text-color);
+  width: 100%;
+}
   @media only screen and (max-width: 1199px) {
     .btn, .wp-block-button__link {
       padding: 9px 20px;
@@ -24219,7 +24221,7 @@ pre {
     margin: 0; }
   .comments-area .comment-list > .comment .comment-body {
     position: relative;
-    padding-left: 100px;
+    padding-left: 10px;
     margin-bottom: 30px;
     min-height: 95px;
     border-bottom: 1px solid rgba(34, 34, 34, 0.1);
@@ -24309,7 +24311,7 @@ pre {
     margin-bottom: 20px;
     padding-left: 10px;
     padding-right: 10px;
-    width: 50%; }
+    width: 100%; }
     @media only screen and (max-width: 767px) {
       .comment-respond .comment-form p {
         margin-bottom: 20px; } }
@@ -26699,4 +26701,42 @@ pre {
   gap: 20px;
   margin-top: 20px;
 }
+
+.page-link.active, .active > .page-link {
+  z-index: 3;
+  color: var(--bs-pagination-active-color);
+  background-color: var(--bs-pagination-active-bg);
+  border-color: var(--bs-pagination-active-border-color);
+  background-color: var(--bs-pagination-active-bg) !important;
+}
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  -webkit-user-select: none;
+  justify-content: center;
+}
+.rating input[type="radio"] {
+  /* оставляем доступность, но убираем из визуального потока */
+  position: absolute;
+  left: -9999px;
+}
+.rating .star {
+  font-size: 1.75rem; /* размер звезды */
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .1s ease-in-out;
+}
+.rating .star:hover {
+  transform: scale(1.05);
+}
+/* Цвет для активных звёзд */
+.rating .star.filled i {
+  color: #f6b400; /* золотой */
+}
+
+/* Поддержка FA6: если используешь Font Awesome 6, раскомментируй: */
+/* .far { font-family: "Font Awesome 6 Free"; font-weight: 400; } */
+/* .fas { font-family: "Font Awesome 6 Free"; font-weight: 900; } */
 /*# sourceMappingURL=style.css.map */

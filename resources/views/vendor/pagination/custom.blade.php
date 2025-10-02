@@ -1,13 +1,3 @@
-<style>
-    .page-link.active, .active > .page-link {
-  z-index: 3;
-  color: var(--bs-pagination-active-color);
-  background-color: var(--bs-pagination-active-bg);
-  border-color: var(--bs-pagination-active-border-color);
-  background-color: var(--bs-pagination-active-bg) !important;
-}
-</style>
-
 @if ($paginator->hasPages())
     <ul class="pagination m-b15">
         {{-- Предыдущая страница --}}

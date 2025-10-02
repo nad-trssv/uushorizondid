@@ -19,6 +19,9 @@ class PostService {
     public function getAll($request): \Illuminate\Pagination\LengthAwarePaginator {
         return $this->post->getAll($request);
     }
+    public function getPublished($request): \Illuminate\Pagination\LengthAwarePaginator {
+        return $this->post->getPublished($request);
+    }
 
     public function getStat(): array { return $this->post->getStat(); }
 

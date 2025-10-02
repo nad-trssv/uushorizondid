@@ -20,23 +20,47 @@ class BlogController extends Controller
     {
         try {
             $this->setAndGetLocale($request);
-            $request->merge(['per_page' => 12, 'order_by' => 'published_at']);
-            $posts = $this->post->getAll($request); 
+            $request->merge(['per_page' => 12]);
+            $posts = $this->post->getPublished($request); 
     
-            return view('main.blog', compact('posts'));
+            return view('main.blog.index', compact('posts'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch posts', 'message' => $e->getMessage()], 500);
         }
     }
 
-    public function show(Request $request, Post $post)
+    public function show($slug)
     {
-        try {
-            $this->setAndGetLocale($request);
-            $post = $this->post->getById($post->id);
-            return response()->json(['post' => new PostResource($post)], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch the post', 'message' => $e->getMessage()], 500);
-        }
+        $post = Post::where('slug', $slug)
+            ->with(['user', 'translations', 'seo.translations', 'comments' => function ($query) {
+                $query->where('approved', true);
+            }])
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        return view('main.blog.show', compact('post'));
     }
+
+    public function storeComment(Request $request, $slug)
+    {
+        $post = Post::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'name'    => ['required','string','max:255'],
+            'rating'  => ['required','integer','min:1','max:5'], // обязательно!
+            'content' => ['required','string','max:5000'],       // обязательно!
+        ]);
+
+        $post->comments()->create([
+            'name'     => $data['name'],
+            'rating'   => $data['rating'],
+            'content'  => $data['content'],
+            'approved' => true, // или false, если нужна модерация
+        ]);
+
+        return back()->with('success', 'Спасибо за отзыв!');
+    }
+
 }
