@@ -77,4 +77,20 @@ class Event extends Model
             ? now()->lte($this->registration_deadline)
             : true;
     }
+    public function getTitleAttribute()
+    {
+        $lang = app()->getLocale();
+        return optional($this->translations->firstWhere('language.code', $lang))->title;
+    }
+    
+    public function getDescriptionAttribute()
+    {
+        $lang = app()->getLocale();
+        return optional($this->translations->firstWhere('language.code', $lang))->short_description;
+    }
+
+    public function countParticipants()
+    {
+        return $this->participants()->count();
+    }
 }

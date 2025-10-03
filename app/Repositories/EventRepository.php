@@ -44,6 +44,20 @@ class EventRepository
         return $query->paginate($request->get('per_page', 10));
     }
 
+    public function getActivated($request): LengthAwarePaginator
+    {
+        $query = Event::with(['translations.language', 'seo.translations', 'gallery', 'participants']);
+
+        $sortBy = 'created_at';
+        $sortOrder = 'desc';
+
+        $query->orderBy($sortBy, $sortOrder);
+        $query->orderby('id', 'desc');
+        $query->where('status', 'published');
+
+        return $query->paginate($request->get('per_page', 12));
+    }
+
     public function getCalendarEvents($request)
     {
         $query = Event::with(['translations', 'seo.translations', 'gallery', 'participants'])

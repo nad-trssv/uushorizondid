@@ -94,10 +94,10 @@
                                     </div>
                                     <ul class="nav navbar-nav navbar navbar-left">
                                         <li>
-                                            <a href="javascript:void(0);">Главная</a>
+                                            <a href="{{ route('home') }}">Главная</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);">Мероприятия</a>
+                                            <a href="{{ route('events.index') }}">Мероприятия</a>
                                         </li>
                                         <li>
                                             <a href="{{ route('blog.index') }}">Новости</a>

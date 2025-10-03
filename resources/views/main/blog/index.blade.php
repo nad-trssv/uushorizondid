@@ -1,9 +1,9 @@
 @extends('layouts.front')
 
 @section('content')
-<div class="page-content bg-white mt-4">
+<div class="page-content bg-white">
     <section class="content-inner-1">
-        <div class="container">
+        <div class="container mt-5">
             <div class="row loadmore-content">
                 @foreach($posts as $post)
                     <div class="col-lg-4 col-md-6 d-flex">

@@ -26,6 +26,11 @@ class EventService
         return $this->eventRepository->getAll($request);
     }
 
+    public function getActivated($request)
+    {
+        return $this->eventRepository->getActivated($request);
+    }
+
     public function getCalendarEvents($request)
     {
         return $this->eventRepository->getCalendarEvents($request);
@@ -53,6 +58,9 @@ class EventService
             }
             if (Event::where('slug', $data['slug'])->exists()) {
                 $data['slug'] = $data['slug'] . '-' . mt_rand(100000, 999999);
+            }
+            if (isset($data['status']) && $data['status'] === 'published') {
+                $data['published_at'] = now();
             }
             $event = Event::create($data);
             
@@ -88,6 +96,9 @@ class EventService
                 'updated_at',
                 // 'published_at' — если обновляешь
             ]);
+            if (isset($data['status']) && $data['status'] === 'published') {
+                $eventFields['published_at'] = now();
+            }
             $event->update($eventFields);
 
             // 2) Переводы
@@ -137,6 +148,7 @@ class EventService
 
                 // (опционально) sync как выше
             }
+            
 
             return $event->load(['translations', 'seo.translations', 'gallery']);
         });

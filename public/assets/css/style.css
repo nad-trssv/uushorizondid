@@ -13918,29 +13918,6 @@ footer {
 .theme-bg-color {
   background-color: var(--theme-bg-color); }
 
-[data-body-bg="color_1"] {
-  background-color: #7da640; }
-
-[data-body-bg="color_2"] {
-  background-color: #fe9f10; }
-
-[data-body-bg="color_3"] {
-  background-color: #ee2737; }
-
-[data-body-bg="color_4"] {
-  background-color: #a75d5d; }
-
-[data-body-bg="color_5"] {
-  background-color: #ea5c2b; }
-
-[data-body-bg="color_6"] {
-  background-color: #a9907e; }
-
-[data-body-bg="color_7"] {
-  background-color: #87805e; }
-
-[data-body-bg="color_8"] {
-  background-color: #BDBD33; }
 
 /*=== Components ===*/
 .card {
@@ -26735,8 +26712,16 @@ pre {
 .rating .star.filled i {
   color: #f6b400; /* золотой */
 }
-
-/* Поддержка FA6: если используешь Font Awesome 6, раскомментируй: */
-/* .far { font-family: "Font Awesome 6 Free"; font-weight: 400; } */
-/* .fas { font-family: "Font Awesome 6 Free"; font-weight: 900; } */
+@media (max-width: 768px) {
+  
+  .pagination .page-item .page-link {
+      height: 25px;
+      min-width: 25px;
+      line-height: 25px;
+      font-size: 12px;
+  }
+  .pagination .page-item{
+    margin: 0 4px;
+  }
+}
 /*# sourceMappingURL=style.css.map */

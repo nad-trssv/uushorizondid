@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{slug}/comment', [BlogController::class, 'storeComment'])
     ->name('blog.comment.store');
 
+Route::get('/event', [EventController::class, 'index'])->name('events.index');
 
 
 // admin panel
