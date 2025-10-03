@@ -79,9 +79,9 @@
                                     @if($eventPassed)
                                         <a href="{{ route('home') }}#gallery" class="btn btn-gray w-100">Смотреть как прошло</a>
                                     @elseif(!$registrationOpen)
-                                        <span class="btn btn-gray w-100 disabled">Регистрация закрыта</span>
+                                        <a href="{{ route('home') }}" class="btn btn-gray w-100">Регистрация закрыта</a>
                                     @elseif(!$hasSpots)
-                                        <span class="btn btn-attention w-100">Мест нет</span>
+                                        <a href="{{ route('home') }}" class="btn btn-attention w-100">Мест нет</a>
                                     @else
                                         <a href="{{ route('home') }}" class="btn btn-primary btn-hover-2 w-100">Записаться</a>
                                     @endif

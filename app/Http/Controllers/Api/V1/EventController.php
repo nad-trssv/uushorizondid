@@ -14,6 +14,8 @@ use App\Http\Resources\PaginateResource;
 use App\Http\Resources\EventStatResource;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Str;
+use App\Models\Gallery;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -114,7 +116,6 @@ class EventController extends Controller
         }
     }
 
-
     public function destroy(Event $event)
     {
         try {
@@ -148,4 +149,99 @@ class EventController extends Controller
             'message' => 'Image uploaded successfully',
         ], 201);
     }
+
+    public function uploadGallery(Request $request, Event $event)
+    {
+        $isMultiple = $request->hasFile('files');
+        $isSingle   = $request->hasFile('file');
+    
+        if (!$isMultiple && !$isSingle) {
+            return response()->json([
+                'message' => 'No files were uploaded',
+                'errors'  => ['files' => ['The files field is required.']]
+            ], 422);
+        }
+    
+        // Валидируем по ситуации
+        if ($isMultiple) {
+            $request->validate([
+                'files'   => ['required','array','min:1'],
+                'files.*' => [File::image()->types(['jpg','jpeg','png','webp','avif','heic','svg'])->max(5 * 1024)],
+            ]);
+        } else { // одиночный
+            $request->validate([
+                'file' => [ 'required', File::image()->types(['jpg','jpeg','png','webp','avif','heic','svg'])->max(5 * 1024) ],
+            ]);
+        }
+    
+        $dir = 'events/gallery';
+        $files = $isMultiple ? $request->file('files') : [$request->file('file')];
+        $created = [];
+    
+        foreach ($files as $file) {
+            $ext = $file->extension();
+            $filename = \Str::uuid().'.'.$ext;
+            $path = $file->storeAs($dir, $filename, 'public');
+    
+            $g = new \App\Models\Gallery();
+            $g->image = $path;
+            $g->alt = null;
+            $g->galleryable()->associate($event);
+            $g->save();
+    
+            $created[] = [
+                'id'   => $g->id,
+                'path' => $g->image,
+                'url'  => asset('storage/'.$g->image),
+                'alt'  => $g->alt,
+            ];
+        }
+    
+        return response()->json([
+            'items'   => $created,
+            'message' => 'Gallery images uploaded',
+        ], 201);
+    }
+
+    public function updateGallery(Request $request, Event $event, Gallery $gallery)
+    {
+        // безопасность: убеждаемся, что фото принадлежит событию
+        if ($gallery->galleryable_type !== Event::class || (int)$gallery->galleryable_id !== (int)$event->id) {
+            return response()->json(['message' => 'Gallery item not found for this event'], 404);
+        }
+
+        $data = $request->validate([
+            'alt' => ['nullable','string','max:255'],
+        ]);
+
+        $gallery->alt = $data['alt'] ?? null;
+        $gallery->save();
+
+        return response()->json([
+            'item' => [
+                'id'   => $gallery->id,
+                'path' => $gallery->image,
+                'url'  => asset('storage/'.$gallery->image),
+                'alt'  => $gallery->alt,
+            ],
+            'message' => 'Gallery item updated',
+        ], 200);
+    }
+
+    public function destroyGallery(Event $event, Gallery $gallery)
+    {
+        if ($gallery->galleryable_type !== Event::class || (int)$gallery->galleryable_id !== (int)$event->id) {
+            return response()->json(['message' => 'Gallery item not found for this event'], 404);
+        }
+
+        // удаляем файл (если лежит в public диске)
+        if ($gallery->image && Storage::disk('public')->exists($gallery->image)) {
+            Storage::disk('public')->delete($gallery->image);
+        }
+
+        $gallery->delete();
+
+        return response()->json(['message' => 'Gallery item deleted'], 200);
+    }
+
 }

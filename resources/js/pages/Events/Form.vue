@@ -367,6 +367,74 @@
           </div>
         </n-card>
       </div>
+
+      <!-- GALLERY -->
+      <div v-if="activeTab === 'gallery'">
+        <n-card title="Галерея" size="small">
+          <div v-if="!isEdit" class="text-gray-500 py-8">
+            Сначала сохраните мероприятие, чтобы добавить галерею.
+          </div>
+
+          <div v-else class="space-y-6">
+            <!-- Загрузка -->
+            <div class="border rounded-lg p-4">
+              <label class="text-sm font-medium text-gray-700 mb-3 block">Загрузить изображения</label>
+
+              <n-upload
+                multiple
+                directory-dnd
+                :max="20"
+                accept="image/*"
+                :show-file-list="false"
+                :disabled="galleryUploading"
+                :custom-request="handleGalleryUpload"
+              >
+                <n-button :loading="galleryUploading">
+                  <template #icon><i class="fas fa-images"></i></template>
+                  Выбрать файлы
+                </n-button>
+              </n-upload>
+
+              <div v-if="galleryProgress > 0 && galleryProgress < 100" class="mt-3 text-xs text-gray-500">
+                Загрузка: {{ galleryProgress }}%
+              </div>
+            </div>
+
+            <!-- Сетка превью -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div v-for="item in (localEvent.gallery || [])" :key="item.id" class="bg-white rounded-lg border overflow-hidden">
+                <img
+                  :src="previewSrc(item.image || item.path) || (item.url || '/storage/placeholders/600x400.svg')"
+                  alt="gallery"
+                  class="w-full h-36 object-cover"
+                />
+                <div class="p-3 space-y-2">
+                  <n-input
+                    v-model:value="item.alt"
+                    size="small"
+                    placeholder="alt (подпись)"
+                    :disabled="altSavingIds.has(item.id)"
+                  />
+                  <div class="flex items-center gap-2">
+                    <n-button size="tiny" secondary :loading="altSavingIds.has(item.id)" @click="saveAlt(item)">
+                      <template #icon><i class="fas fa-save"></i></template>Сохранить
+                    </n-button>
+                    <n-button size="tiny" type="error" ghost :loading="deletingIds.has(item.id)" @click="removeGallery(item)">
+                      <template #icon><i class="fas fa-trash"></i></template>Удалить
+                    </n-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="!localEvent.gallery || !localEvent.gallery.length" class="text-center text-gray-400 py-8">
+              <i class="fas fa-image text-5xl mb-3"></i>
+              <div>Пока нет изображений</div>
+            </div>
+          </div>
+        </n-card>
+      </div>
+
     </div>
 
     <!-- Footer -->
@@ -422,10 +490,9 @@ export default {
       currentLanguage: 'ru',
       loading: false,
       pagination: { pageSize: 10 },
-      // локальные данные формы
       localEvent: this.getDefaultEvent(),
-      translationsByCode: {}, // { 'ru': {...}, 'en': {...} }
-      seoByCode: {},          // { 'ru': {...}, 'en': {...} }
+      translationsByCode: {}, 
+      seoByCode: {},          
       participantColumns: [
         { title: 'Имя', key: 'first_name', render: (row) => `${row.first_name || ''} ${row.last_name || ''}` },
         { title: 'Email', key: 'email' },
@@ -440,7 +507,11 @@ export default {
       startTimeMs: null,
       endDateTs: null,   
       endTimeMs: null,   
-      errorsValidation: {}
+      errorsValidation: {},
+      galleryUploading: false,
+      galleryProgress: 0,
+      altSavingIds: new Set(),
+      deletingIds: new Set(),
     }
   },
   computed: {
@@ -479,7 +550,8 @@ export default {
       const base = [
         { name: 'basic', label: 'Основная информация', icon: 'fas fa-info-circle' },
         { name: 'settings', label: 'Настройки', icon: 'fas fa-cog' },
-        { name: 'seo', label: 'SEO', icon: 'fas fa-search' }
+        { name: 'seo', label: 'SEO', icon: 'fas fa-search' },
+        { name: 'gallery', label: 'Галерея', icon: 'fas fa-images' }
       ];
       if (this.isEdit) base.push({ name: 'participants', label: 'Участники', icon: 'fas fa-users' });
       return base;
@@ -493,7 +565,6 @@ export default {
       set(v) { this.localEvent.registration_deadline = v ? this.toApiDate(v) : null }
     }
   },
-
   async mounted() {
     if (this.$store.state.settings.lists.length === 0) {
       await this.$store.dispatch('settings/lists');
@@ -533,7 +604,6 @@ export default {
     endTimeMs()   { this.syncDateTimeToLocalEvent(); },
   },
   methods: {
-    // Инициализация нового события
     initializeNewEvent() {
       if (this.routeId) return;
 
@@ -906,6 +976,65 @@ export default {
       this.localEvent.start_time = this.combineDateTime(this.startDateTs, this.startTimeMs);
       this.localEvent.end_time   = this.combineDateTime(this.endDateTs, this.endTimeMs);
     },
+    async handleGalleryUpload({ file, onFinish, onError, onProgress }) {
+      try {
+        this.galleryUploading = true;
+        const resp = await this.$store.dispatch('events/uploadGallery', {
+          eventId: this.localEvent.id,
+          files: [file.file ?? file], // передаём как массив для совместимости
+          onProgress
+        });
+        const items = resp?.data?.items || [];
+        if (!Array.isArray(this.localEvent.gallery)) this.localEvent.gallery = [];
+        this.localEvent.gallery = [...items.map(i => ({ id: i.id, image: i.path, alt: i.alt })), ...this.localEvent.gallery];
+        this.$message?.success?.('Изображение добавлено');
+        onFinish?.();
+      } catch (e) {
+        console.error(e);
+        this.$message?.error?.('Не удалось загрузить изображение');
+        onError?.();
+      } finally {
+        this.galleryUploading = false;
+      }
+    },
+    async saveAlt(item) {
+      if (!item?.id) return;
+      try {
+        this.altSavingIds.add(item.id);
+        await this.$store.dispatch('events/updateGalleryAlt', {
+          eventId: this.localEvent.id,
+          galleryId: item.id,
+          alt: item.alt || null
+        });
+        this.$message?.success?.('Подпись сохранена');
+      } catch (e) {
+        console.error(e);
+        this.$message?.error?.('Не удалось сохранить подпись');
+      } finally {
+        this.altSavingIds.delete(item.id);
+        // force update для reactivity на Set
+        this.altSavingIds = new Set(this.altSavingIds);
+      }
+    },
+    async removeGallery(item) {
+      if (!item?.id) return;
+      try {
+        this.deletingIds.add(item.id);
+        await this.$store.dispatch('events/deleteGalleryItem', {
+          eventId: this.localEvent.id,
+          galleryId: item.id
+        });
+        this.localEvent.gallery = (this.localEvent.gallery || []).filter(g => g.id !== item.id);
+        this.$message?.success?.('Изображение удалено');
+      } catch (e) {
+        console.error(e);
+        this.$message?.error?.('Не удалось удалить изображение');
+      } finally {
+        this.deletingIds.delete(item.id);
+        this.deletingIds = new Set(this.deletingIds);
+      }
+    },
+
   }
 }
 </script>

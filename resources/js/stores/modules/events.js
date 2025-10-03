@@ -163,6 +163,30 @@ export const events = {
            }
          }
        });
-     },
+    },
+    // МУЛЬТИЗАГРУЗКА галереи
+    uploadGallery({ }, { eventId, files, onProgress }) {
+      const fd = new FormData();
+      Array.from(files).forEach((f) => fd.append('files[]', f));
+      return api.post(`/events/${eventId}/gallery`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (e) => {
+          if (onProgress && e.total) {
+            onProgress({ percent: Math.round((e.loaded * 100) / e.total) });
+          }
+        }
+      });
+    },
+
+    // Обновить alt
+    updateGalleryAlt({ }, { eventId, galleryId, alt }) {
+      return api.put(`/events/${eventId}/gallery/${galleryId}`, { alt });
+    },
+
+    // Удалить фото
+    deleteGalleryItem({ }, { eventId, galleryId }) {
+      return api.delete(`/events/${eventId}/gallery/${galleryId}`);
+    },
+
   }
 };
