@@ -61,7 +61,7 @@
                                 <h5 class="dz-title title-limit mt-1 mb-2">
                                     <a href="{{ $url }}" class="event-title-link">{{ $title }}</a>
                                 </h5>
-                                <p class="desc-limit flex-grow-1">{{ strip_tags($description) }}</p>
+                                <p class="desc-limit flex-grow-1">{{ \Illuminate\Support\Str::limit(strip_tags($description), 140, '...') }}</p>
                                 <div class="dz-meta">
                                     <ul>
                                         <li>

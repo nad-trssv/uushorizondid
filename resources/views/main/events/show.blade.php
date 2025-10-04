@@ -31,6 +31,7 @@
                 <!-- Заголовок -->
                 <div class="post-header ev-post-header">
                     <h1 class="dz-title ev-title">{{ $tr['title'] ?? 'Без названия' }}</h1>
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($tr['title']) }}&dates={{ $start->format('Ymd\THis\Z') }}/{{ $end->format('Ymd\THis\Z') }}&details={{ urlencode($metaDesc) }}&location={{ urlencode($tr['location'] ?? '') }}" target="_blank" class="btn btn-outline-primary btn-sm">Google Calendar</a>
 
                     <!-- Центрированная мета -->
                     <div class="dz-meta ev-meta ev-meta-center">

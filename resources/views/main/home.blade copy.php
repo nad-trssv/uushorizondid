@@ -35,18 +35,14 @@
 											
 											<div class="banner-btn d-flex align-items-center">
 												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary btn-hover-1"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
 									
 									<div class="col-xl-4 col-lg-4 col-md-4 d-none d-xl-block">
 										<div class="banner-event-card">
-											<div class="event-soon-badge">
-												<i class="fa-solid fa-fire flame" aria-hidden="true"></i>
-												<span>НА ЭТОЙ НЕДЕЛЕ!</span>
-											</div>
-										  
+											<div class="event-soon-badge">НА ЭТОЙ НЕДЕЛЕ!</div>
 											<div class="event-card">
 												<div class="event-date-badge">
 													<span class="event-day">Сб</span>
@@ -82,17 +78,14 @@
 											</p>
 											<div class="banner-btn d-flex align-items-center">
 												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary btn-hover-1"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
 
 									<div class="col-xl-4 col-lg-4 col-md-4 d-none d-xl-block">
 										<div class="banner-event-card">
-											<div class="event-soon-badge">
-												<i class="fa-solid fa-fire flame" aria-hidden="true"></i>
-												<span>НА ЭТОЙ НЕДЕЛЕ!</span>
-											</div>
+											<div class="event-soon-badge">НА ЭТОЙ НЕДЕЛЕ!</div>
 											<div class="event-card">
 												<div class="event-date-badge">
 													<span class="event-day">Сб</span>
@@ -130,17 +123,14 @@
 											</p>
 											<div class="banner-btn d-flex align-items-center">
 												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary btn-hover-1"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
 
 									<div class="col-xl-4 col-lg-4 col-md-4 d-none d-xl-block">
 										<div class="banner-event-card">
-											<div class="event-soon-badge">
-												<i class="fa-solid fa-fire flame" aria-hidden="true"></i>
-												<span>НА ЭТОЙ НЕДЕЛЕ!</span>
-											</div>
+											<div class="event-soon-badge">НА ЭТОЙ НЕДЕЛЕ!</div>
 											<div class="event-card">
 												<div class="event-date-badge">
 													<span class="event-day">Сб</span>
@@ -162,6 +152,64 @@
 							</div>
 						</div>
 					</div>
+
+					{{-- <div class="swiper-slide">
+						<div class="banner-inner overflow-hidden" data-swiper-parallax="-10" data-swiper-parallax-duration="0.5" style="background-image:url('{{ asset('assets/images/main-slider/slider2/bg3.jpg') }}'); background-size:cover;">
+							<div class="container">
+								<div class="row align-items-center" data-swiper-parallax="-100">
+									<div class="col-xl-7 col-lg-7 col-md-8">
+										<div class="banner-content">
+											<span class="sub-title text-primary">Exploring the Delicious World</span>
+											<h1 class="title text-white">Food that Makes You Happy And Healthy</h1>
+											<p class="bnr-text ow fadeInUp">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+											
+											<div class="banner-btn d-flex align-items-center">
+												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary btn-hover-1"><span>Все мероприятия</span></a>
+											</div>
+											<div class="food-card">
+												<div class="dz-head">
+													<h5 class="text-white title">Veg Biryani</h5>
+													<ul class="rating">
+														<li><i class="fa-solid fa-star"></i></li>
+														<li><i class="fa-solid fa-star"></i></li>
+														<li><i class="fa-solid fa-star"></i></li>
+														<li><i class="fa-solid fa-star"></i></li>
+														<li><i class="fa-solid fa-star"></i></li>
+													</ul>
+												</div>
+												<div class="dz-body">
+													<div class="dz-left">
+														<div class="profile-info">
+															<div class="dz-media">
+																<img src="assets/images/team/pic1.jpg" alt="/">
+															</div>
+															<div class="dz-content">
+																<h6 class="title text-white">Kamy Klay</h6>
+																<p>Master Chief</p>
+															</div>
+														</div>
+														<p class="text">Lorem ipsum dolor shit amet...</p>
+													</div>
+													<div class="dz-right">
+														<h5 class="text-primary">$10.00</h5>
+														<a href="shop-cart.html" class="btn btn-primary btn-cart"><i class="flaticon-shopping-cart"></i></a>
+													</div>
+												</div>
+												<img class="target-line" src="assets/images/main-slider/slider2/line.png" alt="/">
+											</div>
+										</div>
+									</div>
+									<div class="col-xl-5 col-lg-5 col-md-4">
+										<div class="banner-media">
+											<img src="assets/images/main-slider/slider2/pic3.png" alt="/" data-swiper-parallax-scale="0.8">
+										</div>
+									</div>
+								</div>
+							</div>
+							<img class="leaf" src="assets/images/main-slider/slider2/pic4.png" alt="/">
+						</div>
+					</div> --}}
 				</div>
 			</div>
 		</div>	
@@ -393,7 +441,7 @@
 								<h5 class="dz-title"><a href="blog-standard.html">Киновечер</a></h5>
 								<p>Смотрим, обсуждаем, пополняем словарный запас из живой речи.</p>
 								<div class="read-btn">
-									<a href="blog-standard.html" class="btn btn-primary btn-hover-2 d-none d-md-inline">Записаться</a>
+									<a href="blog-standard.html" class="btn btn-primary btn-hover-2">Записаться</a>
 								</div>
 							</div>
 						</div>
@@ -413,7 +461,7 @@
 								<h5 class="dz-title"><a href="blog-standard.html">Кулинарный мастер-класс</a></h5>
 								<p>Готовим простое блюдо и общаемся на эстонском без стресса.</p>
 								<div class="read-btn">
-									<a href="blog-standard.html" class="btn btn-primary btn-hover-2 d-none d-md-inline">Записаться</a>
+									<a href="blog-standard.html" class="btn btn-primary btn-hover-2">Записаться</a>
 								</div>
 							</div>
 						</div>
@@ -463,7 +511,7 @@
 						<div class="section-head d-flex justify-content-between align-items-center m-b30">
 							<h2 class="title wow flipInX" data-wow-delay="0.2s" style="visibility: visible;">Новости и статьи</h2>
 							
-							<a href="blog-standard.html" class="read-all-link wow fadeInRight d-none d-md-inline" data-wow-delay="0.3s" style="visibility: visible;">
+							<a href="blog-standard.html" class="read-all-link wow fadeInRight" data-wow-delay="0.3s" style="visibility: visible;">
 								<span>Читать все</span>
 								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/>
@@ -491,7 +539,7 @@
 									</ul>
 								</div>
 								<div class="btn-wrapper p-t10">
-									<a href="blog-standard.html" class="btn btn-primary btn-hover-2 d-none d-md-inline">Читать далее</a>
+									<a href="blog-standard.html" class="btn btn-primary btn-hover-2">Читать далее</a>
 								</div>
 							</div>
 						</div>
@@ -515,7 +563,7 @@
 									</ul>
 								</div>
 								<div class="btn-wrapper p-t10">
-									<a href="blog-standard.html" class="btn btn-primary btn-hover-2 d-none d-md-inline">Читать далее</a>
+									<a href="blog-standard.html" class="btn btn-primary btn-hover-2">Читать далее</a>
 								</div>
 							</div>
 						</div>
@@ -540,9 +588,6 @@
 								</div>
 							</div>							
 						</div>
-					</div>
-					<div class="col-12 text-center m-t10 d-md-none">
-						<a href="{{ route('events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Читать новости</span></a>
 					</div>
 				</div>
 			</div>
@@ -588,7 +633,7 @@
 	  </div>
   
 	  <div class="row sm-grid justify-content-center">
-		<div class="col-12 col-sm-6 col-lg-4 mt-2">
+		<div class="col-12 col-sm-6 col-lg-4">
 		  <a href="https://www.instagram.com/keelekohvik?utm_source=qr&igsh=MWYxN3BqbjNwOGxwcA==" target="_blank" rel="noopener" class="sm-card">
 			<div class="sm-icon sm-ig">
 			  <i class="fab fa-instagram"></i>
@@ -603,7 +648,7 @@
 		  </a>
 		</div>
   
-		<div class="col-12 col-sm-6 col-lg-4 mt-2">
+		<div class="col-12 col-sm-6 col-lg-4">
 		  <a href="https://www.facebook.com/share/161aHLsUuT/" target="_blank" rel="noopener" class="sm-card">
 			<div class="sm-icon sm-fb">
 			  <i class="fab fa-facebook-f"></i>
@@ -618,7 +663,7 @@
 		  </a>
 		</div>
   
-		<div class="col-12 col-sm-6 col-lg-4 mt-2">
+		<div class="col-12 col-sm-6 col-lg-4">
 		  <a href="https://t.me/Keeleklubi" target="_blank" rel="noopener" class="sm-card">
 			<div class="sm-icon sm-tg">
 			  <i class="fab fa-telegram"></i>
