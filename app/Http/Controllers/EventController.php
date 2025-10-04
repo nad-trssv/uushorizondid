@@ -31,10 +31,11 @@ class EventController extends Controller
         }
     }
 
-    public function show(Request $request, string $slug)
+    public function show(Request $request)
     {
         $this->setAndGetLocale($request);
         $locale = app()->getLocale();
+        $slug = (string) $request->route('slug');
 
         // Берём опубликованное мероприятие по slug
         $event = Event::with(['translations', 'gallery', 'participants'])

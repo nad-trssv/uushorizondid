@@ -30,9 +30,11 @@ class BlogController extends Controller
         }
     }
 
-    public function show($slug, Request $request)
+    public function show(Request $request)
     {
         $this->setAndGetLocale($request);
+        $slug = (string) $request->route('slug');
+        
         $post = Post::where('slug', $slug)
             ->with(['user', 'translations', 'seo.translations', 'comments' => function ($query) {
                 $query->where('approved', true);
