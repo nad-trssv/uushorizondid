@@ -2,8 +2,19 @@
 
 @section('content')
 <div class="page-content bg-white">
+    <!-- Хлебные крошки -->
+    <div class="dz-breadcrumb-bnr">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="breadcrumb-row">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Главная</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Мероприятия</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
     <section class="content-inner-1">
-        <div class="container mt-5">
+        <div class="container">
             <div class="row justify-content-center loadmore-content">
                 @foreach($events as $index => $event)
                 @php
@@ -26,13 +37,14 @@
                     $fewSpots = $remainingSpots <= 3 && $remainingSpots > 0;
 
                     $colClass = ($index + 1) % 5 === 0 ? 'col-xl-12 col-lg-12' : 'col-xl-6 col-lg-8';
+                    $url = route('events.show', ['slug' => $slug]);
                 @endphp
 
                     <!-- Десктопная версия -->
                     <div class="{{ $colClass }} mb-4 d-none d-md-block">
                         <div class="dz-card style-1 blog-half overlay-shine dz-img-effect zoom m-b30">
                             <div class="dz-media">
-                                <a href="{{ route('home') }}">
+                                <a href="{{ $url }}">
                                     <img src="{{ $image }}" alt="{{ $title }}" 
                                          class="event-image" 
                                          onerror="this.onerror=null;this.src='/storage/placeholders/600x400.svg';">
@@ -41,7 +53,7 @@
                             <div class="dz-info d-flex flex-column">
 
                                 <h5 class="dz-title title-limit mt-1 mb-2">
-                                    <a href="{{ route('home') }}" class="event-title-link">{{ $title }}</a>
+                                    <a href="{{ $url }}" class="event-title-link">{{ $title }}</a>
                                 </h5>
                                 <p class="desc-limit flex-grow-1">{{ strip_tags($description) }}</p>
                                 <div class="dz-meta">
@@ -77,13 +89,13 @@
 
                                 <div class="read-btn mt-3">
                                     @if($eventPassed)
-                                        <a href="{{ route('home') }}#gallery" class="btn btn-gray w-100">Смотреть как прошло</a>
+                                        <a href="{{ $url }}#gallery" class="btn btn-gray w-100">Смотреть как прошло</a>
                                     @elseif(!$registrationOpen)
-                                        <a href="{{ route('home') }}" class="btn btn-gray w-100">Регистрация закрыта</a>
+                                        <a href="{{ $url }}" class="btn btn-gray w-100">Регистрация закрыта</a>
                                     @elseif(!$hasSpots)
-                                        <a href="{{ route('home') }}" class="btn btn-attention w-100">Мест нет</a>
+                                        <a href="{{ $url}}" class="btn btn-attention w-100">Мест нет</a>
                                     @else
-                                        <a href="{{ route('home') }}" class="btn btn-primary btn-hover-2 w-100">Записаться</a>
+                                        <a href="{{ $url }}" class="btn btn-primary btn-hover-2 w-100">Записаться</a>
                                     @endif
                                 </div>
                             </div>
@@ -93,7 +105,7 @@
                     <!-- Мобильная версия -->
                     <div class="col-12 d-md-none">
                         <div class="mobile-event-card">
-                            <a href="{{ route('home') }}" class="mobile-event-link {{ !$registrationOpen || $eventPassed || !$hasSpots ? 'disabled-link' : '' }}">
+                            <a href="{{ $url }}" class="mobile-event-link {{ !$registrationOpen || $eventPassed || !$hasSpots ? 'disabled-link' : '' }}">
                                 <div class="mobile-event-content">
                                     <div class="mobile-event-image">
                                         <img src="{{ $image }}" alt="{{ $title }}" 
@@ -131,13 +143,13 @@
                                             <!-- Нижняя основная кнопка (компактная) -->
                                             <div class="mobile-cta">
                                                 @if($eventPassed)
-                                                    <a href="{{ route('home') }}#gallery" class="btn-mobile btn-neutral w-100">Смотреть как прошло</a>
+                                                    <a href="{{ $url }}#gallery" class="btn-mobile btn-neutral w-100">Смотреть как прошло</a>
                                                 @elseif(!$registrationOpen)
                                                     <span class="btn-mobile btn-neutral w-100 disabled">Регистрация закрыта</span>
                                                 @elseif(!$hasSpots)
                                                     <span class="btn-mobile btn-attention w-100 disabled">Мест нет</span>
                                                 @else
-                                                    <a href="{{ route('home') }}" class="btn-mobile btn-primary w-100">Записаться</a>
+                                                    <a href="{{ $url }}" class="btn-mobile btn-primary w-100">Записаться</a>
                                                 @endif
                                             </div>
                                         </div>
@@ -420,7 +432,7 @@
 }
 .btn-mobile.disabled{ pointer-events:none; opacity:.7; }
 
-.btn-primary{ background:#2f7a43; color:#fff; border-color:#2a6f3d; } 
+.btn-primary{ background:var(--primary); color:#fff; border-color:var(--primary); } 
 .btn-neutral{ background:#f1f3f5; color:#3f3f46; border-color:#e5e7eb; } 
 .btn-attention{ background:#ffe3e3; color:#8a1c1c; border-color:#ffc9c9; }
 

@@ -1,20 +1,58 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-	<!-- Title -->
-	<title>Restaurant Website Templates | Swigo - Empowering Your Food Business | DexignZone</title>
 	
 	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignZone">
-	<meta name="robots" content="">
-	<meta name="keywords" content="restaurant, restaurant website templates, restaurant template, food, restro, hotel, bootstrap 5, bootstrap, html, frontend, swigo, responsive template, shop, cart, menu, taste, blog, service, cook, customers, website, hungry, shop cart, fast food, table booking, website templates for restaurants, food website templates">
-	<meta name="description" content="Boost your food business with Swigo's restaurant website templates. Our professionally designed templates cater specifically to the needs of restaurants, offering visually stunning and functional designs. Choose from a variety of food website templates that are perfect for showcasing your menu, promoting your services, and attracting hungry customers. Partner with DexignZone to create an impressive online presence for your restaurant. Start driving more traffic and growing your business today.">
-	<meta property="og:title" content="Swigo - Empowering Your Restaurant Website Templates | DexignZone">
-	<meta property="og:description" content="Boost your food business with Swigo's restaurant website templates. Our professionally designed templates cater specifically to the needs of restaurants, offering visually stunning and functional designs. Choose from a variety of food website templates that are perfect for showcasing your menu, promoting your services, and attracting hungry customers. Partner with DexignZone to create an impressive online presence for your restaurant. Start driving more traffic and growing your business today.">
-	<meta property="og:image" content="https://swigo.dexignzone.com/xhtml/social-home2.png">
+	<meta name="author" content="QuickCode OU">
 	<meta name="format-detection" content="telephone=no">
+    @php
+        $defaultTitle       = config('app.name', 'Uued Horisondid');
+        $defaultDescription = 'Официальный сайт — мероприятия, новости и записи.';
+        $defaultKeywords    = 'мероприятия, новости, обучение, Таллинн';
+        $defaultImage       = asset('assets/images/social-default.png');
+        $defaultRobots      = 'index,follow';
+        $defaultOgType      = 'website';
+        $defaultTwitterCard = 'summary_large_image';
+        $defaultCanonical   = request()->url();
+
+        $metaTitle       = trim($__env->yieldContent('meta_title', $__env->yieldContent('title', $defaultTitle)));
+        $metaDescription = trim($__env->yieldContent('meta_description', $defaultDescription));
+        $metaKeywords    = trim($__env->yieldContent('meta_keywords', $defaultKeywords));
+        $metaImage       = trim($__env->yieldContent('meta_image', $defaultImage));
+        $metaRobots      = trim($__env->yieldContent('meta_robots', $defaultRobots));
+        $ogType          = trim($__env->yieldContent('og_type', $defaultOgType));
+        $twitterCard     = trim($__env->yieldContent('twitter_card', $defaultTwitterCard));
+        $canonical       = trim($__env->yieldContent('canonical', $defaultCanonical));
+    @endphp
+
+    <title>{{ $metaTitle }}</title>
+
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta name="keywords" content="{{ $metaKeywords }}">
+    <meta name="robots" content="{{ $metaRobots }}">
+    <link rel="canonical" href="{{ $canonical }}">
+
+    {{-- Open Graph --}}
+    <meta property="og:type" content="{{ $ogType }}">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:image" content="{{ $metaImage }}">
+    <meta property="og:url" content="{{ $canonical }}">
+
+    {{-- Twitter --}}
+    <meta name="twitter:card" content="{{ $twitterCard }}">
+    <meta name="twitter:title" content="{{ $metaTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image" content="{{ $metaImage }}">
+
+    @hasSection('meta')
+        @yield('meta')
+    @endif
+
+    @stack('head')
+
 	
     <!-- Scripts -->
     @vite(['resources/init/front.css'])
@@ -32,7 +70,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,100;0,200;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-	
+	<link rel="stylesheet" href="{{ asset('assets/vendor/magnific-popup/magnific-popup.min.css') }}">
+
 </head>
 <body>
     <div id="app">

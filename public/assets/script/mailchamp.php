@@ -1,16 +1,4 @@
 <?php
-/*
-Template Name: Restaurant Website Templates | Swigo - Empowering Your Food Business | DexignZone
-
-Variable
-	
-	$apiKey : Mail Champ Api
-	$listID : List Id of mail champ
- 
-	$email : Subscription Email
-	$fname, $lname, $phone, $subject : You can use these variables when you would add these in your mail champ list form.
-	
-*/
 
 function pr($value)
 {

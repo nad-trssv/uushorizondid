@@ -1,24 +1,4 @@
 <?php
-/*
-Template Name: Restaurant Website Templates | Swigo - Empowering Your Food Business | DexignZone
-
-Variable
-	$recaptchaSecret : Recaptcha Secret Key
- 
-	$dzName : Contact Person Name
-	$dzEmail : Contact Person Email
-	$dzMessage : Contact Person Message
-	$dzRes : response holder
-	$dzOtherField : Form other additional fields
-	
-	
-	$dzMailSubject : Mail Subject.
-	$dzMailMessage : Mail Body
-	$dzMailHeader : Mail Header
-	$dzEmailReceiver : Contact receiver email address
-	$dzEmailFrom : Mail Form title
-	$dzEmailHeader : Mail headers
-*/
 /* require ReCaptcha class */
 require('recaptcha-master/src/autoload.php');
 

@@ -2,6 +2,18 @@
 
 @section('content')
 <div class="page-content bg-white">
+    <!-- Хлебные крошки -->
+    <div class="dz-breadcrumb-bnr">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="breadcrumb-row">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('events.index', [], false) }}">Events</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $tr['title'] ?? 'Без названия' }}</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
     <div class="content-inner overflow-hidden">
         <div class="min-container">
 

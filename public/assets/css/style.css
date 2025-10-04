@@ -22187,6 +22187,7 @@ ul a.rsswidget {
   border-radius: 10px;
   box-shadow: 7px 8px 7px rgba(34, 34, 34, 0.15);
   overflow: hidden;
+  height: 100%;
   background-color: #fff; }
   .dz-card.style-1 .dz-media {
     width: 100%;
@@ -26617,6 +26618,7 @@ pre {
   justify-content: space-between;
   align-items: center;  
   background-color: #f0f0f0;
+  margin-bottom: 100px;
 }
 
 .location-google{
@@ -26723,5 +26725,16 @@ pre {
   .pagination .page-item{
     margin: 0 4px;
   }
+}
+.wp-block-gallery.alignwide, .alignfull, .alignwide {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: calc(100% + 12.5rem + 0.313rem);
+  max-width: 80vw;
+  gap: 0.625rem;
+  margin: 0 auto !important;
+}
+.wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image){
+  margin: 0 !important;
 }
 /*# sourceMappingURL=style.css.map */
