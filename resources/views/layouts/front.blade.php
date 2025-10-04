@@ -164,6 +164,11 @@
                                                         <img src="{{ asset('assets/images/localization/gb.png') }}" alt="EN" style="width: 24px; margin-right: 5px;"> English
                                                     </a>
                                                 </li>
+                                                <li>
+                                                    <a href="javascript:void(0);">
+                                                        <img src="{{ asset('assets/images/localization/uk.png') }}" alt="UK" style="width: 18px; margin-right: 5px;"> Українська
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
