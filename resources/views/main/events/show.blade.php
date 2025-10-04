@@ -31,7 +31,6 @@
                 <!-- Заголовок -->
                 <div class="post-header ev-post-header">
                     <h1 class="dz-title ev-title">{{ $tr['title'] ?? 'Без названия' }}</h1>
-                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($tr['title']) }}&dates={{ $start->format('Ymd\THis\Z') }}/{{ $end->format('Ymd\THis\Z') }}&details={{ urlencode($metaDesc) }}&location={{ urlencode($tr['location'] ?? '') }}" target="_blank" class="btn btn-outline-primary btn-sm">Google Calendar</a>
 
                     <!-- Центрированная мета -->
                     <div class="dz-meta ev-meta ev-meta-center">
@@ -154,7 +153,20 @@
                             @endif
                         </div>
                     @endif
-
+                    @if($start && $end && !$eventPassed)
+                    @php
+                        $startUtc = $start->copy()->setTimezone('UTC')->format('Ymd\THis\Z');
+                        $endUtc = $end->copy()->setTimezone('UTC')->format('Ymd\THis\Z');
+                    @endphp
+                        <div class="text-center my-4">
+                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($tr['title'] . ' - Оплата наличными ' . number_format($event->price, 2) . ' €') }}&dates={{ $startUtc }}/{{ $endUtc }}&details={{ urlencode($metaDesc) }}&location={{ urlencode($tr['location'] ?? '') }}"
+                                target="_blank"
+                                class="ev-gcal-link">
+                                <i class="fas fa-calendar-plus me-2"></i> Добавить в Google Календарь
+                            </a>
+                        </div>
+                    @endif
+                
                     <!-- Полное описание -->
                     @if(!empty($tr['full_description']))
                         <div class="dz-post-text ev-bodytext">
@@ -196,13 +208,17 @@
         <h5 class="modal-title" id="registerModalLabel">Запись на мероприятие</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
       </div>
-      <form method="POST" action="#">
+      <form method="POST" action="{{ route('events.register') }}">
         @csrf
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Имя</label>
-            <input type="text" name="name" class="form-control" required placeholder="Ваше имя">
+            <input type="text" name="first_name" class="form-control" required placeholder="Ваше имя">
           </div>
+        <div class="mb-3">
+            <label class="form-label">Фамилия</label>
+            <input type="text" name="last_name" class="form-control" required placeholder="Ваша фамилия">
+        </div>
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" required placeholder="you@example.com">
@@ -311,6 +327,27 @@
 .ev-modal .modal-header{ border-bottom:1px solid var(--ev-border); }
 .ev-modal .modal-footer{ border-top:1px solid var(--ev-border); }
 .ev-modal .form-control{ border-radius:10px; }
+.ev-gcal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #EFF6FF;
+    color: #1D4ED8;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid #BFDBFE;
+    box-shadow: 0 4px 10px rgba(0,0,0,.03);
+    transition: background 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+.ev-gcal-link:hover {
+    background: #DBEAFE;
+    color: #1E40AF;
+    text-decoration: none;
+}
+
 </style>
 @endsection
 

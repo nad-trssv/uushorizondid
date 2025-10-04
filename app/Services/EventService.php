@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Event;
+use App\Models\EventParticipant;
 use App\Models\EventTranslation;
 use App\Models\EventSeo;
 use App\Models\EventSeoTranslation;
@@ -161,5 +162,24 @@ class EventService
             $event->delete();
             return true;
         });
+    }
+
+    public function registerParticipant($id, array $data)
+    {
+        $event = Event::findOrFail($id);
+        $data['status'] = 'confirmed';
+        $data['participants_count'] = ($event->participants_count ?? 0) + 1;
+        $event->update(['participants_count' => $data['participants_count']]);
+        $participantData= [
+            'event_id' => $event->id,
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'status' => $data['status'],
+            'phone' => $data['phone'],
+            'participants_count' => $data['participants_count'],
+        ];
+        EventParticipant::create($participantData);
+        return redirect()->back()->with('success', 'Вы успешно зарегистрированы на мероприятие.');
     }
 }

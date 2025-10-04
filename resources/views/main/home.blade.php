@@ -23,7 +23,7 @@
 						<div class="banner-inner overflow-hidden" data-swiper-parallax="-10" data-swiper-parallax-duration="0.5" style="background-image:url('{{ asset('assets/images/banner/banner1.png') }}'); background-size:cover;background-position: 90% center;">
 							<div class="container">
 								<div class="row align-items-center" data-swiper-parallax="-100">
-									<div class="col-xl-8 col-lg-8 col-md-8 px-4">
+									<div class="col-xl-8 col-lg-8 col-md-8 px-4" style="padding-right: 2.5rem !important;">
 										<div class="banner-content">
 											<span class="sub-title text-primary">Уютная атмосфера обучения</span>
 											<h1 class="title text-white">Языковое кафе в центре Таллинна</h1>
@@ -33,9 +33,9 @@
 													но и погружение в традиции, музыку, кухню и повседневную жизнь Эстонии.</span>
 											</p>
 											
-											<div class="banner-btn d-flex align-items-center">
-												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
+												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -72,7 +72,7 @@
 						<div class="banner-inner overflow-hidden" data-swiper-parallax="-10" data-swiper-parallax-duration="0.5" style="background-image:url('{{ asset('assets/images/banner/banner2.png') }}'); background-size:cover;background-position: 90% center;">
 							<div class="container">
 								<div class="row align-items-center" data-swiper-parallax="-100">
-									<div class="col-xl-8 col-lg-8 col-md-8 px-4">
+									<div class="col-xl-8 col-lg-8 col-md-8 px-4" style="padding-right: 2.5rem !important;">
 										<div class="banner-content">
 											<span class="sub-title text-primary">Учимся играя</span>
 											<h1 class="title text-white">Эстонский через интерактивные методы</h1>
@@ -80,9 +80,9 @@
 												Языковые карточки, ролевые игры, квизы и командные задания делают обучение увлекательным приключением.
 												<span class="d-none d-md-block"> Забудьте о скучных учебниках - изучайте эстонский через творчество, смех и живое взаимодействие.</span>
 											</p>
-											<div class="banner-btn d-flex align-items-center">
-												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
+												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -118,7 +118,7 @@
 						<div class="banner-inner overflow-hidden" data-swiper-parallax="-10" data-swiper-parallax-duration="0.5" style="background-image:url('{{ asset('assets/images/banner/banner3.jpg') }}'); background-size:cover;background-position: 90% center;">
 							<div class="container">
 								<div class="row align-items-center" data-swiper-parallax="-100">
-									<div class="col-xl-8 col-lg-8 col-md-8 px-4">
+									<div class="col-xl-8 col-lg-8 col-md-8 px-4" style="padding-right: 2.5rem !important;">
 										<div class="banner-content">
 											<span class="sub-title text-primary">Реальные навыки для жизни</span>
 											<h1 class="title text-white">Эстонский для работы и повседневности</h1>
@@ -128,9 +128,9 @@
 												<span class="d-none d-md-block">Изучайте именно те фразы и ситуации, 
 													которые пригодятся вам каждый день.</span>
 											</p>
-											<div class="banner-btn d-flex align-items-center">
-												<a href="contact-us.html" class="btn btn-primary btn-md shadow-primary m-r30 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="about-us.html" class="btn btn-outline-primary btn-md shadow-primary glass-btn "><span>Все мероприятия</span></a>
+											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
+												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -420,7 +420,7 @@
 					</div>
 				</div>
 				<div class="col-12 text-center m-t10">
-					<a href="our-menu-2.html" class="btn btn-md btn-primary btn-hover-1"><span>Все мероприятия</span></a>
+					<a href="{{ route('events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Все мероприятия</span></a>
 				</div>
 			</div>
 		</section>

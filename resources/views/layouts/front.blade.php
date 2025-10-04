@@ -55,7 +55,7 @@
 
 	
     <!-- Scripts -->
-    @vite(['resources/init/front.css'])
+    @vite(['resources/init/front.css', 'resources/init/alerts.css'])
 	<!-- Mobile Specific -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     
@@ -74,6 +74,7 @@
 </head>
 <body>
     <div id="app">
+        <div id="notificationContainer" class="notification-container"></div>
         <div class="page-wraper">
             <!-- Info Bar -->
             <div class="info-bar p-0" style="background-color: #f8f9fa;">
@@ -301,6 +302,56 @@
             
         </div>
     </div>
+    <script>
+        function showNotification(message, type = 'error') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icons = {
+                error: 'fa-exclamation-circle',
+                success: 'fa-check-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas ${icons[type]}"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-message">${message}</p>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Автоматическое скрытие через 5 секунд
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+        
+        // Показываем уведомления из session
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('error'))
+                showNotification('{{ session('error') }}', 'error');
+            @endif
+            
+            @if(session('success'))
+                showNotification('{{ session('success') }}', 'success');
+            @endif
+            
+            @if(session('warning'))
+                showNotification('{{ session('warning') }}', 'warning');
+            @endif
+        });
+    </script>
     <!-- JAVASCRIPT FILES ========================================= -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script><!-- JQUERY.MIN JS -->
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script><!-- BOOTSTRAP.MIN JS -->

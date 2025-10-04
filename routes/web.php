@@ -17,6 +17,10 @@ Route::post('/blog/{slug}/comment', [BlogController::class, 'storeComment'])
     ->name('blog.comment.store');
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/calendar', [EventController::class, 'calendar'])->name('events.calendar');
+Route::get('/events/feed',     [EventController::class, 'feed'])    ->name('events.feed');
+Route::post('/events/register', [EventController::class, 'register'])
+    ->name('events.register');
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
 
 

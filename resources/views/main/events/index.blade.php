@@ -21,6 +21,11 @@
     </div>
     <section class="content-inner-1">
         <div class="container">
+            <div class="d-flex justify-content-end mb-4">
+                <a href="{{ route('events.calendar') }}" class="btn btn-outline-primary w-auto">
+                    <i class="flaticon-calendar-date text-primary me-2"></i> Календарь мероприятий
+                </a>
+            </div>
             <div class="row justify-content-center loadmore-content">
                 @foreach($events as $index => $event)
                 @php

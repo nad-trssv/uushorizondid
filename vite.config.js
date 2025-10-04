@@ -12,6 +12,9 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/front/events-calendar.js'  ,
+                'resources/init/alerts.js',
+                'resources/init/alerts.css',
             ],
             refresh: true,
         }),
