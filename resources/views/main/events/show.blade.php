@@ -19,7 +19,7 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Главная</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('events.index') }}">Мероприятия</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $tr['title'] ?? 'Без названия' }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $event->getTitleAttribute() ?? 'Без названия' }}</li>
                 </ul>
             </nav>
         </div>
@@ -30,14 +30,14 @@
             <div class="blog-single dz-card ev-card my-4">
                 <!-- Заголовок -->
                 <div class="post-header ev-post-header">
-                    <h1 class="dz-title ev-title">{{ $tr['title'] ?? 'Без названия' }}</h1>
+                    <h1 class="dz-title ev-title">{{ $event->getTitleAttribute() ?? 'Без названия' }}</h1>
 
                     <!-- Центрированная мета -->
                     <div class="dz-meta ev-meta ev-meta-center">
                         <ul>
                             <li class="dz-date d-flex align-items-center">
                                 <i class="flaticon-calendar-date"></i>
-                                {{ $start ? $start->format('d M Y') : '' }}
+                                {{ $start ? \Carbon\Carbon::parse($start)->locale(app()->getLocale())->translatedFormat('d M Y') : '' }}
                                 @if($start && $end)
                                     &nbsp;•&nbsp; {{ $start->format('H:i') }} – {{ $end->format('H:i') }}
                                 @endif
@@ -118,36 +118,36 @@
 
                 <!-- Короткое описание -->
                 <div class="dz-info">
-                    @if(!empty($tr['short_description']))
+                    @if(!empty($event->getDescriptionAttribute()))
                         <div class="dz-post-text ev-lead">
-                            <p>{{ $tr['short_description'] }}</p>
+                            <p>{{ $event->getDescriptionAttribute() }}</p>
                         </div>
                     @endif
 
                     <!-- Инфо-блоки на светло-сером -->
-                    @if(!empty($tr['location']) || !empty($tr['requirements']) || !empty($tr['included']))
+                    @if(!empty($event->getRequirementsAttribute()) || !empty($event->getIncludedAttribute()) || !empty($event->getLocationAttribute()))
                         <div class="row g-3 my-3 ev-info-grid">
-                            @if(!empty($tr['location']))
+                            @if(!empty($event->getLocationAttribute()))
                                 <div class="col-md-4 col-12">
                                     <figure class="ev-info-card">
                                         <figcaption class="ev-info-title"><i class="fas fa-map-marker-alt"></i> Место</figcaption>
-                                        <div class="ev-info-body">{{ $tr['location'] }}</div>
+                                        <div class="ev-info-body">{{ $event->getLocationAttribute() }}</div>
                                     </figure>
                                 </div>
                             @endif
-                            @if(!empty($tr['requirements']))
+                            @if(!empty($event->getRequirementsAttribute()))
                                 <div class="col-md-4 col-12">
                                     <figure class="ev-info-card">
                                         <figcaption class="ev-info-title"><i class="fas fa-clipboard-check"></i> Требования</figcaption>
-                                        <div class="ev-info-body">{{ $tr['requirements'] }}</div>
+                                        <div class="ev-info-body">{{ $event->getRequirementsAttribute() }}</div>
                                     </figure>
                                 </div>
                             @endif
-                            @if(!empty($tr['included']))
+                            @if(!empty($event->getIncludedAttribute()))
                                 <div class="col-md-4 col-12">
                                     <figure class="ev-info-card">
                                         <figcaption class="ev-info-title"><i class="fas fa-check-circle"></i> Что включено</figcaption>
-                                        <div class="ev-info-body">{{ $tr['included'] }}</div>
+                                        <div class="ev-info-body">{{ $event->getIncludedAttribute() }}</div>
                                     </figure>
                                 </div>
                             @endif
@@ -159,7 +159,7 @@
                         $endUtc = $end->copy()->setTimezone('UTC')->format('Ymd\THis\Z');
                     @endphp
                         <div class="text-center my-4">
-                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($tr['title'] . ' - Оплата наличными ' . number_format($event->price, 2) . ' €') }}&dates={{ $startUtc }}/{{ $endUtc }}&details={{ urlencode($metaDesc) }}&location={{ urlencode($tr['location'] ?? '') }}"
+                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ urlencode($event->getTitleAttribute() . ' - Оплата наличными ' . number_format($event->price, 2) . ' €') }}&dates={{ $startUtc }}/{{ $endUtc }}&details={{ urlencode($event->getDescriptionAttribute()) }}&location={{ urlencode($event->getLocationAttribute() ?? '') }}"
                                 target="_blank"
                                 class="ev-gcal-link">
                                 <i class="fas fa-calendar-plus me-2"></i> Добавить в Google Календарь
@@ -168,9 +168,9 @@
                     @endif
                 
                     <!-- Полное описание -->
-                    @if(!empty($tr['full_description']))
+                    @if(!empty($event->getFullDescriptionAttribute()))
                         <div class="dz-post-text ev-bodytext">
-                            {!! nl2br(e($tr['full_description'])) !!}
+                            {!! nl2br(e($event->getFullDescriptionAttribute())) !!}
                         </div>
                     @endif
                 </div>

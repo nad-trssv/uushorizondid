@@ -31,10 +31,10 @@
                 @php
                     $locale = app()->getLocale();
                     $translation = collect($event->translations)->firstWhere('language_id', $locale) ?? collect($event->translations)->first();
-                    $title = $translation['title'] ?? 'Без названия';
-                    $description = $translation['short_description'] ?? '';
+                    $title = $event->getTitleAttribute() ?? 'Без названия';
+                    $description = $event->getDescriptionAttribute() ?? '';
                     $image = $event->image ? "/storage/{$event->image}" : '/placeholders/600x400.svg';
-                    $date = \Carbon\Carbon::parse($event->start_time)->format('d M Y');
+                    $date = \Carbon\Carbon::parse($event->start_time)->locale(app()->getLocale())->translatedFormat('d M Y');
                     $slug = $event->slug;
 
                     $now = \Carbon\Carbon::now();
