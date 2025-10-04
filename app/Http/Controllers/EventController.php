@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
 
 class EventController extends Controller
 {
@@ -153,7 +154,7 @@ class EventController extends Controller
                 'title' => $translation['title'] ?? 'Без названия',
                 'start' => $event->start_time->toIso8601String(),
                 'end' => $event->end_time->toIso8601String(),
-                'url' => route('events.show', $event->slug),
+                'url' => URL::locale_url(app()->getLocale(), 'events.show', ['slug' => $event->slug]),
                 'color' => $color,
                 'extendedProps' => [
                     'status' => $status,

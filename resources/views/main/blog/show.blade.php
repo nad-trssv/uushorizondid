@@ -13,9 +13,9 @@
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-row">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('blog.index', [], false) }}">Новости</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $tr['title'] ?? 'Без названия' }}</li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('front.menu.home') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('blog.index', [], false) }}">{{ __('front.menu.blog') }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $post->getTitleAttribute() }}</li>
                 </ul>
             </nav>
         </div>
@@ -45,7 +45,7 @@
             <div class="blog-single dz-card">
 
                 <div class="post-header">
-                    <h1 class="dz-title">{{ $post->title }}</h1>
+                    <h1 class="dz-title">{{ $post->getTitleAttribute() }}</h1>
                     <div class="dz-meta">
                         <ul>
                             <li class="dz-user">
@@ -57,7 +57,7 @@
                             <li class="dz-date">
                                 <a href="javascript:void(0);">
                                     <i class="flaticon-calendar-date"></i>
-                                    {{ optional($post->published_at)->format('d M Y') }}
+                                    {{ \Carbon\Carbon::parse($post->published_at)->locale(app()->getLocale())->translatedFormat('d M Y'); }}
                                 </a>
                             </li>
                             <li class="dz-comment">
@@ -81,11 +81,11 @@
                 <div class="dz-info">
                     <div class="dz-post-text">
                         <div class="section-head style-1">
-                            <h2 class="title">{{ $post->title }}</h2>
+                            <h2 class="title">{{ $post->getTitleAttribute() }}</h2>
                         </div>
                         <div class="text-conte">
                             {{-- описание поста (с переводом через аксессор) --}}
-                            {!! nl2br(e($post->description)) !!}
+                            {!! nl2br(e($post->getDescriptionAttribute())) !!}
                         </div>
                     </div>
                 </div>

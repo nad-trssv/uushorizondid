@@ -34,8 +34,8 @@
 											</p>
 											
 											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
-												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
+												  <a href="{{ URL::locale_url(app()->getLocale(), 'events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -81,8 +81,8 @@
 												<span class="d-none d-md-block"> Забудьте о скучных учебниках - изучайте эстонский через творчество, смех и живое взаимодействие.</span>
 											</p>
 											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
-												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
+												  <a href="{{ URL::locale_url(app()->getLocale(), 'events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -129,8 +129,8 @@
 													которые пригодятся вам каждый день.</span>
 											</p>
 											<div class="banner-btn d-flex flex-column flex-md-row align-items-center gap-1">
-												<a href="{{ route('events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
-												<a href="{{ route('events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
+												  <a href="{{ URL::locale_url(app()->getLocale(), 'events.calendar') }}" class="btn btn-primary btn-md shadow-primary m-md-r30 m-b10 m-md-b0 btn-hover-1"><span>Хочу участвовать</span></a>
+												<a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}" class="btn btn-outline-primary btn-md shadow-primary glass-btn"><span>Все мероприятия</span></a>
 											</div>
 										</div>
 									</div>
@@ -420,7 +420,7 @@
 					</div>
 				</div>
 				<div class="col-12 text-center m-t10">
-					<a href="{{ route('events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Все мероприятия</span></a>
+					<a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Все мероприятия</span></a>
 				</div>
 			</div>
 		</section>
@@ -542,7 +542,7 @@
 						</div>
 					</div>
 					<div class="col-12 text-center m-t10 d-md-none">
-						<a href="{{ route('events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Читать новости</span></a>
+						<a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}" class="btn btn-md btn-primary btn-hover-1"><span>Читать новости</span></a>
 					</div>
 				</div>
 			</div>

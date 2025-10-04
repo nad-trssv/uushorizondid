@@ -13,9 +13,8 @@
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-row">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('events.index', [], false) }}">Events</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ $tr['title'] ?? 'Без названия' }}</li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('front.menu.home') }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ __('front.menu.blog') }}</li>
                 </ul>
             </nav>
         </div>
@@ -37,7 +36,7 @@
                                         <li>
                                             <a href="javascript:void(0);">
                                                 <i class="flaticon-calendar-date"></i> 
-                                                {{ \Carbon\Carbon::parse($post->published_at)->format('d M Y') }}
+                                                {{ \Carbon\Carbon::parse($post->published_at)->locale(app()->getLocale())->translatedFormat('d M Y'); }}
                                             </a>
                                         </li>
                                         <li class="dz-comment">
@@ -49,9 +48,9 @@
                                     </ul>
                                 </div> 
                                 <h5 class="dz-title">
-                                    <a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a>
+                                    <a href="{{ route('blog.show', $post->slug) }}">{{ $post->getTitleAttribute() }}</a>
                                 </h5>
-                                <p class="flex-grow-1">{{ Str::limit($post->description, 120) }}</p>
+                                <p class="flex-grow-1">{{ Str::limit($post->getDescriptionAttribute(), 120) }}</p>
                                 <div class="mt-auto">
                                     <a href="{{ route('blog.show', $post->slug) }}" class="btn btn-primary btn-hover-2">Read More</a>
                                 </div>

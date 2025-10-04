@@ -14,8 +14,11 @@ trait HandlesLocale
      */
     protected function setAndGetLocale(Request $request): string
     {
+        return app()->getLocale();
+
+        
         $locale = $request->header('Accept-Language', 'en');
-        app()->setLocale('et');
+        app()->setLocale($locale);
         
         return $request->get('locale', $locale);
     }

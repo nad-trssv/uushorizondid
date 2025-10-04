@@ -26,6 +26,23 @@
         $twitterCard     = trim($__env->yieldContent('twitter_card', $defaultTwitterCard));
         $canonical       = trim($__env->yieldContent('canonical', $defaultCanonical));
     @endphp
+    @php
+        $supported = config('locales.supported', ['et','ru','en','uk']);
+        $default   = config('locales.default', 'et');
+
+        $alternates = [];
+        foreach ($supported as $l) {
+            $alternates[$l] = URL::locale_url($l);
+        }
+
+        // Каноникал: для default — без префикса; для остальных — с префиксом
+        $canonical = URL::locale_url(app()->getLocale());
+    @endphp
+
+    @foreach($alternates as $lang => $href)
+    <link rel="alternate" href="{{ $href }}" hreflang="{{ $lang }}">
+    @endforeach
+    <link rel="alternate" href="{{ URL::locale_url($default) }}" hreflang="x-default">
 
     <title>{{ $metaTitle }}</title>
 
@@ -101,7 +118,7 @@
                                 
                                 <!-- Website Logo -->
                                 <div class="logo-header mostion">
-                                    <a href="{{ url('/') }}" ><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
+                                    <a href="{{ URL::locale_url(app()->getLocale(), 'home') }}" ><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                                 </div>
                                 
                                 <!-- Nav Toggle Button -->
@@ -129,48 +146,43 @@
                                 <!-- Header Nav -->
                                 <div class="header-nav navbar-collapse collapse justify-content-end" id="navbarNavDropdown">
                                     <div class="logo-header">
-                                        <a href="{{ url('/') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
+                                        <a href="{{ URL::locale_url(app()->getLocale(), 'home') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                                     </div>
                                     <ul class="nav navbar-nav navbar navbar-left">
                                         <li>
-                                            <a href="{{ route('home') }}">Главная</a>
+                                            <a href="{{ URL::locale_url(app()->getLocale(), 'home') }}">{{ __('front.menu.home') }}</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('events.index') }}">Мероприятия</a>
+                                            <a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}">{{ __('front.menu.events') }}</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('blog.index') }}">Новости</a>
+                                            <a href="{{ URL::locale_url(app()->getLocale(), 'blog.index') }}">{{ __('front.menu.blog') }}</a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('contact') }}">Контакты</a>
+                                            <a href="{{ URL::locale_url(app()->getLocale(), 'contact') }}">{{ __('front.menu.contact') }}</a>
                                         </li>
+                                        @php
+                                            $locales = config('locales.supported');
+                                        @endphp
                                         <li class="sub-menu-down">
                                             <a href="javascript:void(0);">
-                                                <img src="{{ asset('assets/images/localization/ru.png') }}" alt="RU" style="width: 24px; margin-right: 5px;"> Русский
+                                                <img src="{{ asset('assets/images/localization/' . (app()->getLocale()==='uk'?'uk.png':(app()->getLocale()==='ru'?'ru.png':(app()->getLocale()==='en'?'gb.png':'et.png'))) ) }}"
+                                                    alt="{{ strtoupper(app()->getLocale()) }}" style="width:24px;margin-right:5px;">
+                                                {{ app()->getLocale()==='uk' ? 'Українська' : (app()->getLocale()==='ru' ? 'Русский' : (app()->getLocale()==='en' ? 'English' : 'Eesti')) }}
                                             </a>
                                             <ul class="sub-menu">
-                                                <li>
-                                                    <a href="javascript:void(0);">
-                                                        <img src="{{ asset('assets/images/localization/ru.png') }}" alt="RU" style="width: 24px; margin-right: 5px;"> Русский
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);">
-                                                        <img src="{{ asset('assets/images/localization/et.png') }}" alt="ET" style="width: 24px; margin-right: 5px;"> Eesti
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);">
-                                                        <img src="{{ asset('assets/images/localization/gb.png') }}" alt="EN" style="width: 24px; margin-right: 5px;"> English
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);">
-                                                        <img src="{{ asset('assets/images/localization/uk.png') }}" alt="UK" style="width: 18px; margin-right: 5px;"> Українська
-                                                    </a>
-                                                </li>
+                                                @foreach($locales as $loc)
+                                                    <li>
+                                                        <a href="{{ URL::locale_url($loc) }}">
+                                                            <img src="{{ asset('assets/images/localization/' . ($loc==='uk'?'uk.png':($loc==='ru'?'ru.png':($loc==='en'?'gb.png':'et.png'))) ) }}"
+                                                                alt="{{ strtoupper($loc) }}" style="width:24px;margin-right:5px;">
+                                                            {{ $loc === 'uk' ? 'Українська' : ($loc === 'ru' ? 'Русский' : ($loc === 'en' ? 'English' : 'Eesti')) }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
                                             </ul>
                                         </li>
+
                                     </ul>
                                     <div class="dz-social-icon">
                                         <ul>
@@ -180,6 +192,8 @@
                                         </ul>
                                     </div>	
                                 </div>
+                                
+
                             </div>
                         </div>
                     </div>
@@ -192,7 +206,7 @@
             <div class="contact-sidebar">
                 <div class="contact-box1">
                     <div class="logo-contact logo-header">
-                        <a href="{{ url('/') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
+                        <a href="{{ URL::locale_url(app()->getLocale(), 'home') }}"><img src="{{ asset('assets/images/logopng.png') }}" alt="logo"></a>
                     </div>
                     <div class="m-b50 contact-text">
                         <div class="dz-title">
@@ -243,7 +257,7 @@
                   <div class="row g-3 align-items-end">
                     <!-- ЛОГО -->
                     <div class="col-12 col-md-4 text-center text-md-start">
-                      <a href="{{ url('/') }}" class="uh-brand d-inline-flex align-items-center gap-2">
+                      <a href="{{ URL::locale_url(app()->getLocale(), 'home') }}" class="uh-brand d-inline-flex align-items-center gap-2">
                         <img src="{{ asset('assets/images/logopng.png') }}" alt="Uued Horisondid" style="height:72px" loading="lazy">
                       </a>
                     </div>
@@ -251,10 +265,10 @@
                     <!-- МЕНЮ -->
                     <div class="col-12 col-md-4">
                       <ul class="uh-nav list-unstyled d-flex justify-content-center flex-wrap gap-2 gap-md-3 mb-0">
-                        <li><a href="{{ route('home') }}">Главная</a></li>
-                        <li><a href="{{ route('events.index') }}">Мероприятия</a></li>
-                        <li><a href="{{ route('blog.index') }}">Новости</a></li>
-                        <li><a href="{{ route('contact') }}">Контакты</a></li>
+                        <li><a href="{{ URL::locale_url(app()->getLocale(), 'home') }}">{{ __('front.menu.home') }}</a></li>
+                        <li><a href="{{ URL::locale_url(app()->getLocale(), 'events.index') }}">{{ __('front.menu.events') }}</a></li>
+                        <li><a href="{{ URL::locale_url(app()->getLocale(), 'blog.index') }}">{{ __('front.menu.blog') }}</a></li>
+                        <li><a href="{{ URL::locale_url(app()->getLocale(), 'contact') }}">{{ __('front.menu.contact') }}</a></li>
                       </ul>
                     </div>
               
