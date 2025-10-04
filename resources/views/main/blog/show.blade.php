@@ -1,5 +1,11 @@
 @extends('layouts.front')
 
+@section('title', $pageTitle)
+@section('meta_title', $pageTitle)
+@section('meta_description', $metaDesc)
+@section('og_type', 'article')
+@section('canonical', request()->url())
+
 @section('content')
 <div class="page-content bg-white">
     <!-- Хлебные крошки -->
@@ -7,8 +13,8 @@
         <div class="container">
             <nav aria-label="breadcrumb" class="breadcrumb-row">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('events.index', [], false) }}">Events</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('blog.index', [], false) }}">Новости</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $tr['title'] ?? 'Без названия' }}</li>
                 </ul>
             </nav>

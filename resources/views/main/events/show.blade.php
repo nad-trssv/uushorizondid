@@ -3,12 +3,10 @@
 @section('title', $pageTitle)
 @section('meta_title', $pageTitle)
 @section('meta_description', $metaDesc)
-@section('meta_image', $mainImage)
 @section('og_type', 'article')
 @section('canonical', request()->url())
 
 @push('head')
-    {{-- CSS Magnific Popup --}}
     <link rel="stylesheet" href="{{ asset('assets/vendor/magnific-popup/magnific-popup.css') }}">
 @endpush
 
@@ -210,7 +208,7 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Телефон</label>
-            <input type="tel" name="phone" class="form-control" required placeholder="+372 ...">
+            <input type="tel" name="phone" class="form-control" required placeholder="+372">
           </div>
           <input type="hidden" name="event_id" value="{{ $event->id ?? '' }}">
         </div>

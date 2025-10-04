@@ -7,6 +7,7 @@ use App\Services\PostService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
 use App\Models\Post;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -29,8 +30,9 @@ class BlogController extends Controller
         }
     }
 
-    public function show($slug)
+    public function show($slug, Request $request)
     {
+        $this->setAndGetLocale($request);
         $post = Post::where('slug', $slug)
             ->with(['user', 'translations', 'seo.translations', 'comments' => function ($query) {
                 $query->where('approved', true);
@@ -38,7 +40,11 @@ class BlogController extends Controller
             ->where('status', 'published')
             ->firstOrFail();
 
-        return view('main.blog.show', compact('post'));
+        // SEO
+        $pageTitle = trim(($tr['title'] ?? $post->title).' — '.config('app.name'));
+        $metaDesc  = Str::limit(strip_tags($tr['short_description'] ?? $tr['full_description'] ?? ''), 160);
+
+        return view('main.blog.show', compact('post', 'pageTitle', 'metaDesc'));
     }
 
     public function storeComment(Request $request, $slug)

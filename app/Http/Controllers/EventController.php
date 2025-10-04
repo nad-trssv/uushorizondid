@@ -62,7 +62,7 @@ class EventController extends Controller
         $eventPassed = $end ? $now->gt($end) : false;
 
         // SEO
-        $pageTitle = trim(($tr['title'] ?? $event->slug).' — '.config('app.name'));
+        $pageTitle = trim(($tr['title'] ?? $event->title).' — '.config('app.name'));
         $metaDesc  = Str::limit(strip_tags($tr['short_description'] ?? $tr['full_description'] ?? ''), 160);
         $mainImage = $event->image
             ? (preg_match('/^https?:\/\//i', $event->image) ? $event->image : asset('storage/'.$event->image))

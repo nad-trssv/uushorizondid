@@ -1,5 +1,11 @@
 @extends('layouts.front')
 
+@section('title', __('seo.events.page_title'))
+@section('meta_title', __('seo.events.meta_title'))
+@section('meta_description', __('seo.events.meta_description'))
+@section('og_type', 'article')
+@section('canonical', request()->url())
+
 @section('content')
 <div class="page-content bg-white">
     <!-- Хлебные крошки -->

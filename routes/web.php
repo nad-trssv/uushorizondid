@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 //     return view('home');
 // });
 Route::get('/', [IndexController::class, 'index'])->name('home');
+Route::get('/contact', [IndexController::class, 'contact'])->name('contact');
+
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{slug}/comment', [BlogController::class, 'storeComment'])
@@ -16,6 +18,7 @@ Route::post('/blog/{slug}/comment', [BlogController::class, 'storeComment'])
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{slug}', [EventController::class, 'show'])->name('events.show');
+
 
 
 // admin panel

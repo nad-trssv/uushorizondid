@@ -19982,9 +19982,9 @@ ul a.rsswidget {
   z-index: 1;
   overflow: hidden;
   --slider-left-spacing: 80px; }
-  .main-bnr-three.top-space {
+  /* .main-bnr-three.top-space {
     transform: translateY(95px);
-    margin-bottom: 95px; }
+    margin-bottom: 95px; } */
     @media only screen and (max-width: 1280px) {
       .main-bnr-three.top-space {
         transform: translateY(75px);
@@ -26736,5 +26736,8 @@ pre {
 }
 .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image){
   margin: 0 !important;
+}
+.icon-bx-wraper.style-5:hover .link-hover-white{
+  color: #fff !important;
 }
 /*# sourceMappingURL=style.css.map */
