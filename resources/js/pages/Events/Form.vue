@@ -100,14 +100,12 @@
                 <!-- Full description -->
                 <div class="border rounded-lg p-4">
                   <label class="text-sm font-medium text-gray-700 mb-2 block">Полное описание</label>
-                  <n-input
-                    v-model:value="ensureTrans(lang.code).full_description"
-                    type="textarea"
-                    :rows="6"
-                    placeholder="Подробное описание"
+                  <RichEditor
+                    v-model="ensureTrans(lang.code).full_description"
+                    :placeholder="'Введите текст новости...'"
+                    :height="400"
                   />
                 </div>
-
                 <!-- Location / Requirements / Included -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div class="border rounded-lg p-4">
@@ -473,13 +471,14 @@ import {
 } from 'naive-ui';
 import Swal from 'sweetalert2';
 import { ru, enUS, et, uk, lv } from 'date-fns/locale';
+import RichEditor from '@/components/elements/RichEditor.vue';
 
 export default {
   name: 'EventForm',
   components: {
     NCard, NButton, NInput, NSelect, NTag, NAlert, NDatePicker,
     NSwitch, NInputNumber, NDataTable, NTabs, NTabPane, NUpload,
-    NTimePicker, NConfigProvider
+    NTimePicker, NConfigProvider, RichEditor,
   },
   props: {
     id: { type: [String, Number], default: null }

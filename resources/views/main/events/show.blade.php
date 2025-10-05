@@ -170,7 +170,7 @@
                     <!-- Полное описание -->
                     @if(!empty($event->getFullDescriptionAttribute()))
                         <div class="dz-post-text ev-bodytext">
-                            {!! nl2br(e($event->getFullDescriptionAttribute())) !!}
+                            {!! $event->getFullDescriptionAttribute() !!}
                         </div>
                     @endif
                 </div>
