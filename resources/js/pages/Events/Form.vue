@@ -445,6 +445,10 @@
           </div>
         </div>
         <div class="flex gap-3">
+          <n-button v-if="isEdit" type="info" size="small" @click="showEventInFront()">
+            <template #icon><i class="fas fa-eye"></i></template>
+            Показать на сайте
+          </n-button>
           <n-button @click="onSave" type="primary" size="small" :loading="loading">
             <template #icon><i class="fas fa-save"></i></template>
             Сохранить
@@ -470,7 +474,7 @@ import {
   NTimePicker, NConfigProvider
 } from 'naive-ui';
 import Swal from 'sweetalert2';
-import { ru, enUS, et, uk, lv } from 'date-fns/locale';
+import { ru, enUS, et, uk, lv, sl } from 'date-fns/locale';
 import RichEditor from '@/components/elements/RichEditor.vue';
 
 export default {
@@ -603,6 +607,12 @@ export default {
     endTimeMs()   { this.syncDateTimeToLocalEvent(); },
   },
   methods: {
+    showEventInFront() {
+      if (!this.isEdit) return;
+      const slug = this.localEvent.slug || '';
+      const url = `/events/${slug}`;
+      window.open(url, '_blank');
+    },
     initializeNewEvent() {
       if (this.routeId) return;
 

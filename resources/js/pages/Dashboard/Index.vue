@@ -1,769 +1,1276 @@
 <template>
   <div class="dashboard-container">
-    <!-- Welcome Card -->
-    <n-card class="welcome-card" content-style="padding: 24px;">
-      <div class="welcome-content">
-        <div class="welcome-text">
-          <h1 class="welcome-title">{{ $t('msg.hello') }}</h1>
-          <n-text class="welcome-subtitle">{{ $t('msg.subhello') }}</n-text>
-        </div>
-        <button class="download-button">
-          <i class="fas fa-download button-icon"></i>
-          {{ $t('msg.download_report') }}
-        </button>
-      </div>
-    </n-card>
-
-    <!-- Quick Actions Section (выносим в отдельный блок) -->
-    <n-card class="quick-actions-card" hoverable>
-      <h3 class="quick-actions-title">{{ $t('msg.quick_actions') }}</h3>
-      <div class="quick-actions-grid">
-        <router-link :to="{ name: 'admin.services' }" class="no-underline">
-          <n-button block ghost size="large" class="action-button">
-            <template #icon>
-              <i class="fas fa-list"></i>
-            </template>
-            {{ $t('msg.all_services') }}
-          </n-button>
-        </router-link>
-        
-        <router-link :to="{ name: 'admin.services.create' }" class="no-underline">
-          <n-button block ghost size="large" class="action-button">
-            <template #icon>
-              <i class="fas fa-plus"></i>
-            </template>
-            {{ $t('msg.add_service') }}
-          </n-button>
-        </router-link>
-        
-        <router-link :to="{ name: 'admin.calendar' }" class="no-underline">
-          <n-button block text color="white" size="large" class="action-button bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
-              :style="{
-                height: '40px',
-            }">
-            <template #icon>
-              <i class="fas fa-calendar-alt"></i>
-            </template>
-            {{ $t('msg.menu.calendar') }}
-          </n-button>
-        </router-link>
-        
-        <router-link :to="{ name: 'admin.categories' }" class="no-underline">
-          <n-button block ghost size="large" class="action-button">
-            <template #icon>
-              <i class="fas fa-tags"></i>
-            </template>
-            {{ $t('msg.menu.categories') }}
-          </n-button>
-        </router-link>
-      </div>
-    </n-card>
-
-    <!-- Services Section -->
-    <n-card class="services-card" content-style="padding: 0;">
-      <div class="section-header">
-        <div class="section-title">
-          <i class="fas fa-spa section-icon"></i>
-          <h2>{{ $t('msg.services_stats') }}</h2>
-        </div>
-        <router-link :to="{ name: 'admin.services.create' }" class="no-underline">
-          <button class="add-button">
-            <i class="fas fa-plus button-icon"></i>
-            {{ $t('msg.new_service') }}
-          </button>
-        </router-link>
-      </div>
-
-      <div class="section-content">
-        <!-- Services Summary Cards -->
-        <div class="stats-grid">
-          <n-card class="stat-card" hoverable>
-            <div class="stat-content">
-              <div class="stat-main">
-                <div class="stat-value">{{ servicesStats.total_count || 0 }}</div>
-                <h3 class="stat-title">{{ $t('msg.total_services') }}</h3>
-              </div>
-              <i class="fas fa-list-alt stat-icon"></i>
-            </div>
-            <n-text class="stat-footer">{{ $t('msg.all_time') }}</n-text>
-          </n-card>
-          
-          <n-card class="stat-card" hoverable>
-            <div class="stat-content">
-              <div class="stat-main">
-                <div class="stat-value">{{ servicesStats.active_count || 0 }}</div>
-                <h3 class="stat-title">{{ $t('msg.active') }}</h3>
-              </div>
-              <i class="fas fa-check-circle stat-icon active-icon"></i>
-            </div>
-            <n-text class="stat-footer">
-              {{ Math.round((servicesStats.active_count / servicesStats.total_count) * 100) || 0 }}% {{ $t('msg.of_total') }}
-            </n-text>
-          </n-card>
-          
-          <n-card class="stat-card" hoverable>
-            <div class="stat-content">
-              <div class="stat-main">
-                <div class="stat-value">{{ servicesStats.price_avg ? servicesStats.price_avg.toFixed(2) : '0.00' }}</div>
-                <h3 class="stat-title">{{ $t('msg.average_price') }}</h3>
-              </div>
-              <i class="fas fa-euro-sign stat-icon price-icon"></i>
-            </div>
-            <n-text class="stat-footer">
-              {{ $t('msg.price_range') }}: {{ servicesStats.price_min || 0 }} - {{ servicesStats.price_max || 0 }}
-            </n-text>
-          </n-card>
-          
-          <n-card class="stat-card" hoverable>
-            <div class="stat-content">
-              <div class="stat-main">
-                <div class="stat-value">{{ servicesStats.duration_avg || 0 }}</div>
-                <h3 class="stat-title">{{ $t('msg.duration') }}</h3>
-              </div>
-              <i class="fas fa-clock stat-icon duration-icon"></i>
-            </div>
-            <n-text class="stat-footer">
-              {{ $t('msg.price_range') }}: {{ servicesStats.duration_min || 0 }} - {{ servicesStats.duration_max || 0 }} {{ $t('msg.minutes') }}
-            </n-text>
-          </n-card>
-        </div>
-
-        <!-- Additional Services Stats -->
-        <div class="detailed-stats-grid">
-          <n-card class="detailed-card" hoverable>
-            <h3 class="detailed-title">{{ $t('msg.time_distribution') }}</h3>
-            <div class="time-distribution">
-              <div class="time-item">
-                <div class="time-label">
-                  <i class="fas fa-sun morning-icon"></i>
-                  <span>{{ $t('msg.morning') }}:</span>
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <n-card class="welcome-card">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div class="flex-1">
+            <h1 class="welcome-title">
+              Добро пожаловать, <span class="gradient-text">{{ userName }}</span>! 👋
+            </h1>
+            <p class="welcome-subtitle">
+              Вот что происходит в вашей системе сегодня, {{ currentDate }}
+            </p>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon blog">
+                  <i class="fas fa-newspaper"></i>
                 </div>
-                <n-tag type="warning" size="medium" round>
-                  {{ servicesStats.morning_count || 0 }} ({{ Math.round((servicesStats.morning_count / servicesStats.total_count) * 100) || 0 }}%)
-                </n-tag>
-              </div>
-              <div class="time-item">
-                <div class="time-label">
-                  <i class="fas fa-sun afternoon-icon"></i>
-                  <span>{{ $t('msg.afternoon') }}:</span>
+                <div class="stat-content">
+                  <div class="stat-number">{{ blogStats.total_count || 0 }}</div>
+                  <div class="stat-label text-white">Статей в блоге</div>
                 </div>
-                <n-tag type="info" size="medium" round>
-                  {{ servicesStats.afternoon_count || 0 }} ({{ Math.round((servicesStats.afternoon_count / servicesStats.total_count) * 100) || 0 }}%)
-                </n-tag>
               </div>
-              <div class="time-item">
-                <div class="time-label">
-                  <i class="fas fa-clock fixed-time-icon"></i>
-                  <span>{{ $t('msg.fixed_time') }}:</span>
+              
+              <div class="stat-item">
+                <div class="stat-icon events">
+                  <i class="fas fa-calendar-alt"></i>
                 </div>
-                <n-tag type="success" size="medium" round>
-                  {{ servicesStats.has_fixed_time_count || 0 }}
-                </n-tag>
-              </div>
-            </div>
-          </n-card>
-          
-          <n-card class="detailed-card" hoverable>
-            <h3 class="detailed-title">{{ $t('msg.service_status') }}</h3>
-            <div class="status-chart">
-              <div class="status-item">
-                <div class="status-info">
-                  <n-badge dot type="success" />
-                  <span>{{ $t('msg.active') }}</span>
+                <div class="stat-content">
+                  <div class="stat-number">{{ eventsStats.total_count || 0 }}</div>
+                  <div class="stat-label">Всего мероприятий</div>
                 </div>
-                <n-progress 
-                  type="line" 
-                  :percentage="Math.round((servicesStats.active_count / servicesStats.total_count) * 100) || 0" 
-                  status="success"
-                  :height="8"
-                  :border-radius="4"
-                  :show-indicator="false"
-                />
               </div>
-              <div class="status-item">
-                <div class="status-info">
-                  <n-badge dot type="error" />
-                  <span>{{ $t('msg.inactive') }}</span>
+              
+              <div class="stat-item">
+                <div class="stat-icon comments">
+                  <i class="fas fa-comments"></i>
                 </div>
-                <n-progress 
-                  type="line" 
-                  :percentage="Math.round((servicesStats.inactive_count / servicesStats.total_count) * 100) || 0" 
-                  status="error"
-                  :height="8"
-                  :border-radius="4"
-                  :show-indicator="false"
-                />
+                <div class="stat-content">
+                  <div class="stat-number">{{ blogStats.total_comments || 0 }}</div>
+                  <div class="stat-label">Комментариев</div>
+                </div>
               </div>
-            </div>
-          </n-card>
-        </div>
 
-        <!-- Recent Services -->
-        <n-card class="recent-services-card" hoverable>
-          <div class="recent-header">
-            <h3 class="recent-title">{{ $t('msg.recent_services') }}</h3>
-            <router-link :to="{ name: 'admin.services' }" class="no-underline">
-              <n-button text type="primary" class="view-all">
-                {{ $t('msg.view_all') }}
-                <template #icon>
-                  <i class="fas fa-arrow-right"></i>
-                </template>
-              </n-button>
-            </router-link>
+              <div class="stat-item">
+                <div class="stat-icon views">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-number">{{ formatCompactNumber(totalViews) }}</div>
+                  <div class="stat-label">Всего просмотров</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <n-data-table
-            :columns="recentServicesColumns"
-            :data="recentServices"
-            :bordered="false"
-            :loading="loadingRecentServices"
-            class="recent-table"
-            :row-props="getRowProps"
-          />
+          
+          <div class="welcome-illustration">
+            <div class="illustration-container">
+              <i class="fas fa-chart-line main-icon"></i>
+              <div class="floating-elements">
+                <i class="fas fa-newspaper element-1"></i>
+                <i class="fas fa-calendar element-2"></i>
+                <i class="fas fa-users element-3"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </n-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+      <n-card title="Быстрые действия" size="small">
+        <div class="quick-actions-grid">
+          <n-button 
+            class="quick-action-btn" 
+            type="primary" 
+            @click="$router.push({ name: 'admin.blog.create' })"
+          >
+            <template #icon>
+              <i class="fas fa-edit"></i>
+            </template>
+            Новая статья
+          </n-button>
+          
+          <n-button 
+            class="quick-action-btn" 
+            type="info" 
+            @click="$router.push({ name: 'admin.events.create' })"
+          >
+            <template #icon>
+              <i class="fas fa-calendar-plus"></i>
+            </template>
+            Новое событие
+          </n-button>
+          
+          <n-button 
+            class="quick-action-btn" 
+            type="success" 
+            @click="$router.push({ name: 'admin.blog.stats' })"
+          >
+            <template #icon>
+              <i class="fas fa-chart-bar"></i>
+            </template>
+            Статистика новостей
+          </n-button>
+
+          <n-button 
+            class="quick-action-btn" 
+            type="warning" 
+            @click="$router.push({ name: 'admin.events.stats' })"
+          >
+            <template #icon>
+              <i class="fas fa-chart-pie"></i>
+            </template>
+            Статистика мероприятий
+          </n-button>
+        </div>
+      </n-card>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Statistics Charts -->
+        <div class="charts-section">
+          <n-card title="Динамика по месяцам" size="small">
+            <div class="charts-grid">
+              <!-- Blog Posts Chart -->
+              <div class="chart-container">
+                <h3 class="chart-title">Статьи</h3>
+                <apexchart 
+                  v-if="blogChart.series[0].data.length > 0"
+                  height="200" 
+                  type="line" 
+                  :options="blogChart.options" 
+                  :series="blogChart.series"
+                />
+                <div v-else class="chart-placeholder">
+                  <i class="fas fa-chart-line"></i>
+                  <p>Нет данных за последние месяцы</p>
+                </div>
+              </div>
+
+              <!-- Events Chart -->
+              <div class="chart-container">
+                <h3 class="chart-title">Мероприятия</h3>
+                <apexchart 
+                  v-if="eventsChart.series[0].data.length > 0"
+                  height="200" 
+                  type="line" 
+                  :options="eventsChart.options" 
+                  :series="eventsChart.series"
+                />
+                <div v-else class="chart-placeholder">
+                  <i class="fas fa-chart-line"></i>
+                  <p>Нет данных за последние месяцы</p>
+                </div>
+              </div>
+            </div>
+          </n-card>
+        </div>
+
+        <!-- Statistics Overview -->
+        <n-card title="Общая статистика" size="small">
+          <div class="stats-overview">
+            <div class="stat-card">
+              <div class="stat-card-icon blog">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-card-value">{{ blogStats.by_status?.published || 0 }}</div>
+                <div class="stat-card-label">Опубликовано статей</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon events">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-card-value">{{ formatCompactNumber(eventsStats.total_participants || 0) }}</div>
+                <div class="stat-card-label">Участников мероприятий</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon rating">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-card-value">{{ blogStats.average_rating || 0 }}</div>
+                <div class="stat-card-label">Средний рейтинг</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon recent">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-card-value">{{ blogStats.recent_posts || 0 }}</div>
+                <div class="stat-card-label">Статей за 30 дней</div>
+              </div>
+            </div>
+          </div>
+        </n-card>
+        <div class="my-4"></div>
+        <!-- Recent Blog Posts -->
+        <n-card title="Последние статьи" size="small">
+          <n-list v-if="recentPosts.length > 0">
+            <n-list-item v-for="post in recentPosts" :key="post.id">
+              <div class="post-item">
+                <div class="post-image">
+                  <img 
+                    :src="getPostImage(post)" 
+                    :alt="getPostTitle(post)"
+                    @error="onImageError"
+                  />
+                </div>
+                <div class="post-content">
+                  <div class="post-title">{{ getPostTitle(post) }}</div>
+                  <div class="post-meta">
+                    <n-tag size="small" :type="post.status === 'published' ? 'success' : 'default'">
+                      {{ post.status === 'published' ? 'Опубликовано' : 'Черновик' }}
+                    </n-tag>
+                    <span class="post-date">{{ formatDate(post.created_at) }}</span>
+                    <span class="post-views" v-if="post.views">
+                      <i class="fas fa-eye"></i> {{ formatCompactNumber(post.views) }}
+                    </span>
+                  </div>
+                </div>
+                <n-button 
+                  size="small" 
+                  text 
+                  @click="$router.push({ name: 'admin.blog.edit', params: { id: post.id } })"
+                >
+                  <i class="fas fa-edit"></i>
+                </n-button>
+              </div>
+            </n-list-item>
+          </n-list>
+          <div v-else class="text-center py-4 text-gray-400">
+            <i class="fas fa-newspaper text-4xl mb-2"></i>
+            <p>Нет статей</p>
+          </div>
+          
+          <template #footer>
+            <n-button 
+              block 
+              type="primary" 
+              ghost 
+              @click="$router.push({ name: 'admin.blog.list' })"
+            >
+              Все статьи
+            </n-button>
+          </template>
         </n-card>
       </div>
-    </n-card>
+
+      <!-- Right Column -->
+      <div class="right-column">
+
+        <!-- Today's and Upcoming Events -->
+        <n-card title="Ближайшие мероприятия" size="small">
+          <!-- Today's Events -->
+          <div v-if="todaysEvents.length > 0" class="events-section">
+            <h4 class="events-subtitle">Сегодня</h4>
+            <n-list>
+              <n-list-item v-for="event in todaysEvents" :key="event.id">
+                <div class="event-item">
+                  <div class="event-date today">
+                    <div class="event-day">{{ formatEventDay(event.start_time) }}</div>
+                    <div class="event-month">{{ formatEventMonth(event.start_time) }}</div>
+                  </div>
+                  <div class="event-content">
+                    <div class="event-title">{{ getEventTitle(event) }}</div>
+                    <div class="event-time">
+                      <i class="fas fa-clock"></i>
+                      {{ formatEventTime(event.start_time) }}
+                    </div>
+                    <div class="event-participants" v-if="event.confirmed_participants_count">
+                      <i class="fas fa-user-check"></i>
+                      {{ formatCompactNumber(event.confirmed_participants_count) }}
+                    </div>
+                  </div>
+                  <n-button 
+                    size="small" 
+                    text 
+                    @click="$router.push({ name: 'admin.events.edit', params: { id: event.id } })"
+                  >
+                    <i class="fas fa-arrow-right"></i>
+                  </n-button>
+                </div>
+              </n-list-item>
+            </n-list>
+          </div>
+
+          <!-- Upcoming Events -->
+          <div v-if="upcomingEvents.length > 0" class="events-section">
+            <h4 class="events-subtitle" :class="{ 'mt-4': todaysEvents.length > 0 }">Ближайшие</h4>
+            <n-list>
+              <n-list-item v-for="event in upcomingEvents" :key="event.id">
+                <div class="event-item">
+                  <div class="event-date">
+                    <div class="event-day">{{ formatEventDay(event.start_time) }}</div>
+                    <div class="event-month">{{ formatEventMonth(event.start_time) }}</div>
+                  </div>
+                  <div class="event-content">
+                    <div class="event-title">{{ getEventTitle(event) }}</div>
+                    <div class="event-time">
+                      <i class="fas fa-clock"></i>
+                      {{ formatEventTime(event.start_time) }}
+                    </div>
+                    <div class="event-participants" v-if="event.confirmed_participants_count">
+                      <i class="fas fa-user-check"></i>
+                      {{ formatCompactNumber(event.confirmed_participants_count) }}
+                    </div>
+                  </div>
+                  <n-button 
+                    size="small" 
+                    text 
+                    @click="$router.push({ name: 'admin.events.edit', params: { id: event.id } })"
+                  >
+                    <i class="fas fa-arrow-right"></i>
+                  </n-button>
+                </div>
+              </n-list-item>
+            </n-list>
+          </div>
+
+          <div v-if="todaysEvents.length === 0 && upcomingEvents.length === 0" class="text-center py-4 text-gray-400">
+            <i class="fas fa-calendar-times text-4xl mb-2"></i>
+            <p>Нет предстоящих событий</p>
+          </div>
+          
+          <template #footer>
+            <n-button 
+              block 
+              type="primary" 
+              ghost 
+              @click="$router.push({ name: 'admin.events.list' })"
+            >
+              Все события
+            </n-button>
+          </template>
+        </n-card>
+
+        <div class="my-4"></div>
+        <!-- Popular Content -->
+        <n-card title="Популярный контент" size="small">
+          <div class="popular-content">
+            <div v-if="blogStats.most_viewed_post" class="popular-item clickable" @click="goToPost(blogStats.most_viewed_post.id)">
+              <div class="popular-icon">
+                <i class="fas fa-fire text-red-500"></i>
+              </div>
+              <div class="popular-details">
+                <div class="popular-title">Самая просматриваемая статья</div>
+                <div class="popular-name">{{ getPostTitle(blogStats.most_viewed_post) }}</div>
+                <div class="popular-meta">
+                  <i class="fas fa-eye"></i> {{ formatCompactNumber(blogStats.most_viewed_post.views || 0) }} просмотров
+                </div>
+              </div>
+              <i class="fas fa-external-link-alt popular-link"></i>
+            </div>
+
+            <div v-if="eventsStats.most_viewed_event" class="popular-item clickable" @click="goToEvent(eventsStats.most_viewed_event.id)">
+              <div class="popular-icon">
+                <i class="fas fa-eye text-purple-500"></i>
+              </div>
+              <div class="popular-details">
+                <div class="popular-title">Самое просматриваемое событие</div>
+                <div class="popular-name">{{ getEventTitle(eventsStats.most_viewed_event) }}</div>
+                <div class="popular-meta">
+                  <i class="fas fa-eye"></i> {{ formatCompactNumber(safe(eventsStats.most_viewed_event.views)) }} просмотров
+                </div>
+              </div>
+              <i class="fas fa-external-link-alt popular-link"></i>
+            </div>
+
+            <div v-if="!blogStats.most_viewed_post && !eventsStats.most_viewed_event" class="text-center py-4 text-gray-400">
+              <i class="fas fa-chart-line text-2xl mb-2"></i>
+              <p>Нет данных о популярном контенте</p>
+            </div>
+          </div>
+        </n-card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { NCard, NText, NButton, NTag, NBadge, NProgress, NDataTable } from 'naive-ui';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { h } from 'vue';
+import { NCard, NButton, NList, NListItem, NTag } from 'naive-ui'
+import VueApexCharts from 'vue3-apexcharts'
 
 export default {
-  name: 'Dashboard',
+  name: 'DashboardIndex',
   components: {
     NCard,
-    NText,
     NButton,
+    NList,
+    NListItem,
     NTag,
-    NBadge,
-    NProgress,
-    NDataTable
+    apexchart: VueApexCharts
   },
   data() {
     return {
-      servicesStats: {},
-      recentServices: [],
-      loadingRecentServices: false
-    };
+      recentPosts: [],
+      upcomingEvents: [],
+      todaysEvents: [],
+      loading: false,
+      blogChart: {
+        series: [{
+          name: 'Статьи',
+          data: []
+        }],
+        options: {
+          chart: {
+            height: 200,
+            type: 'line',
+            zoom: {
+              enabled: false
+            },
+            toolbar: {
+              show: false
+            }
+          },
+          colors: ['#667eea'],
+          stroke: {
+            curve: 'smooth',
+            width: 3
+          },
+          markers: {
+            size: 4,
+          },
+          xaxis: {
+            categories: []
+          },
+          yaxis: {
+            labels: {
+              formatter: (val) => Math.round(val)
+            }
+          },
+          tooltip: {
+            y: {
+              formatter: (val) => `${val} статей`
+            }
+          }
+        }
+      },
+      eventsChart: {
+        series: [{
+          name: 'Мероприятия',
+          data: []
+        }],
+        options: {
+          chart: {
+            height: 200,
+            type: 'line',
+            zoom: {
+              enabled: false
+            },
+            toolbar: {
+              show: false
+            }
+          },
+          colors: ['#48dbfb'],
+          stroke: {
+            curve: 'smooth',
+            width: 3
+          },
+          markers: {
+            size: 4,
+            colors: ['#48dbfb']
+          },
+          xaxis: {
+            categories: []
+          },
+          yaxis: {
+            labels: {
+              formatter: (val) => Math.round(val)
+            }
+          },
+          tooltip: {
+            y: {
+              formatter: (val) => `${val} мероприятий`
+            }
+          }
+        }
+      }
+    }
   },
   computed: {
-    currentMonth() {
-      return new Date().toLocaleString('default', { month: 'long', year: 'numeric' })
+    userName() {
+      return this.$store.getters['auth/authInfo']?.name || 'Администратор'
     },
-    recentServicesColumns() {
-      const { t } = useI18n();
-      return [
-        {
-          title: t('msg.label.title'),
-          key: 'name',
-          render: (row) => h('div', { 
-            class: 'flex items-center gap-2 hover:text-indigo-600 cursor-pointer',
-            onClick: () => this.$router.push({ name: 'admin.services.edit', params: { id: row.id } })
-          }, [
-            row.name || t('msg.label.unnamed'),
-            row.price_can_change && h(NTag, {
-              type: 'warning',
-              size: 'small',
-              round: true,
-              bordered: false
-            }, () => t('msg.price_can_change'))
-          ])
-        },
-        {
-          title: t('msg.label.category'),
-          key: 'category_name',
-          render: (row) => row.category_name || t('msg.label.uncategorized')
-        },
-        {
-          title: t('msg.label.price'),
-          key: 'price',
-          render: (row) => `${row.price} €`
-        },
-        {
-          title: t('msg.label.status'),
-          key: 'status',
-          render: (row) => h(NTag, {
-            type: row.status ? 'success' : 'error',
-            bordered: false,
-            round: true
-          }, {
-            default: () => h('div', { class: 'flex items-center gap-1' }, [
-              h('i', {
-                class: row.status ? 'fas fa-check-circle' : 'fas fa-times-circle',
-                style: { fontSize: '14px' }
-              }),
-              h('span', row.status ? t('msg.active') : t('msg.inactive'))
-            ])
-          })
-        }
-      ];
+    currentDate() {
+      return new Date().toLocaleDateString('ru-RU', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    },
+    lastUpdate() {
+      return new Date().toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    },
+    blogStats() {
+      return this.$store.getters['posts/stats'] || {}
+    },
+    eventsStats() {
+      return this.$store.getters['events/stats'] || {}
+    },
+    totalViews() {
+      return (this.blogStats.total_views || 0) + (this.eventsStats.total_views || 0)
     }
   },
   methods: {
-    getRowProps(row) {
-      return {
-        style: 'cursor: pointer; transition: background-color 0.2s ease;',
-        onMouseenter: (e) => { e.currentTarget.style.backgroundColor = 'var(--hover-color)' },
-        onMouseleave: (e) => { e.currentTarget.style.backgroundColor = '' }
-      };
-    },
-    async fetchServicesStats() {
-      try {
-        const store = useStore();
-        const response = await store.dispatch('services/lists', {
-          page: 1,
-          pageSize: 1,
-          statsOnly: true
-        });
-        
-        this.servicesStats = response.data.stats || {};
-      } catch (error) {
-        console.error('Error fetching services stats:', error);
+    // Методы из Blog/Stats.vue
+    getPostTitle(post) {
+      if (post.title && post.title.trim()) {
+        return post.title;
       }
+      
+      if (post.translations && post.translations.length > 0) {
+        const defaultTranslation = post.translations.find(translation => translation.default === true);
+        if (defaultTranslation && defaultTranslation.title && defaultTranslation.title.trim()) {
+          return defaultTranslation.title;
+        }
+        
+        const translationWithTitle = post.translations.find(translation => 
+          translation.title && translation.title.trim()
+        );
+        if (translationWithTitle) {
+          return translationWithTitle.title;
+        }
+      }
+      
+      return 'Без заголовка';
     },
     
-    async fetchRecentServices() {
-      this.loadingRecentServices = true;
+    getPostImage(post) {
+      if (post.image) {
+        return /^https?:\/\//i.test(post.image) ? post.image : `/storage/${post.image}`;
+      }
+      return '/storage/placeholders/600x400.svg';
+    },
+
+    // Методы из Events/Stats.vue
+    getEventTitle(event) {
+      return event?.title || event?.translation?.title || event?.translations?.[0]?.title || event?.slug || `Событие #${event.id}`;
+    },
+
+    safe(v) {
+      return Number(v || 0);
+    },
+
+    previewSrc(path) {
+      if (!path) return '/storage/placeholders/600x400.svg';
+      return /^https?:\/\//i.test(path) ? path : `/storage/${path}`;
+    },
+
+    onImageError(e) {
+      e.target.src = '/storage/placeholders/600x400.svg';
+    },
+
+    // Форматирование чисел с сокращениями (тыс., млн)
+    formatCompactNumber(number) {
+      if (number >= 1000000) {
+        return (number / 1000000).toFixed(1).replace(/\.0$/, '') + ' млн';
+      }
+      if (number >= 1000) {
+        return (number / 1000).toFixed(1).replace(/\.0$/, '') + ' тыс';
+      }
+      return number.toString();
+    },
+
+    // Форматирование дат
+    formatDate(dateString) {
+      if (!dateString) return ''
+      return new Date(dateString).toLocaleDateString('ru-RU')
+    },
+
+    formatEventDay(dateString) {
+      if (!dateString) return ''
+      return new Date(dateString).getDate()
+    },
+
+    formatEventMonth(dateString) {
+      if (!dateString) return ''
+      return new Date(dateString).toLocaleDateString('ru-RU', { month: 'short' })
+    },
+
+    formatEventTime(dateString) {
+      if (!dateString) return ''
+      return new Date(dateString).toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    },
+
+    goToWebsite() {
+      window.open('/', '_blank')
+    },
+
+    // Навигация по популярному контенту
+    goToPost(postId) {
+      this.$router.push({ name: 'admin.blog.edit', params: { id: postId } });
+    },
+
+    goToEvent(eventId) {
+      this.$router.push({ name: 'admin.events.edit', params: { id: eventId } });
+    },
+
+    // Генерация данных для графиков с правильными месяцами
+    generateChartData() {
+      const months = [];
+      const blogData = [];
+      const eventsData = [];
+      
+      const currentDate = new Date();
+      
+      // Генерируем последние 6 месяцев
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+        const monthName = date.toLocaleDateString('ru-RU', { month: 'short' });
+        months.push(monthName);
+        
+        // Моковые данные - в реальном приложении замените на данные из API
+        blogData.push(Math.floor(Math.random() * 30) + 10);
+        eventsData.push(Math.floor(Math.random() * 15) + 5);
+      }
+
+      this.blogChart.series[0].data = blogData;
+      this.blogChart.options.xaxis.categories = months;
+
+      this.eventsChart.series[0].data = eventsData;
+      this.eventsChart.options.xaxis.categories = months;
+    },
+
+    // Разделение событий на сегодняшние и ближайшие
+    separateEvents(events) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const todays = [];
+      const upcoming = [];
+      
+      events.forEach(event => {
+        const eventDate = new Date(event.start_time);
+        eventDate.setHours(0, 0, 0, 0);
+        
+        if (eventDate.getTime() === today.getTime()) {
+          todays.push(event);
+        } else if (eventDate >= today) {
+          upcoming.push(event);
+        }
+      });
+      
+      // Сортируем по дате и берем только 3 ближайших
+      upcoming.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+      
+      return {
+        todaysEvents: todays,
+        upcomingEvents: upcoming.slice(0, 3) // Только 3 ближайших
+      };
+    },
+
+    // Загрузка данных
+    async fetchDashboardData() {
+      this.loading = true;
       try {
-        const store = useStore();
-        const response = await store.dispatch('services/lists', {
-          page: 1,
-          pageSize: 5,
-          sortField: 'created_at',
-          sortOrder: 'desc'
+        // Загружаем статистику блога
+        await this.$store.dispatch('posts/stats', { page: 1, pageSize: 10 });
+        
+        // Загружаем статистику мероприятий
+        await this.$store.dispatch('events/stats');
+
+        // Загружаем последние статьи
+        const postsResponse = await this.$store.dispatch('posts/lists', { 
+          page: 1, 
+          per_page: 5, 
+          order_by: 'created_at', 
+          order: 'desc' 
         });
         
-        this.recentServices = response.data.paginated.data || [];
+        if (postsResponse && postsResponse.data) {
+          const postsData = postsResponse.data.posts || {};
+          this.recentPosts = postsData.data || [];
+        } else {
+          this.recentPosts = [];
+        }
+
+        // Загружаем все будущие события
+        const today = new Date().toISOString().split('T')[0];
+        const eventsResponse = await this.$store.dispatch('events/lists', { 
+          page: 1, 
+          per_page: 50, // Больше событий чтобы охватить ближайшие
+          order_by: 'start_time', 
+          order: 'asc',
+          date_from: today
+        });
+        
+        if (eventsResponse && eventsResponse.data) {
+          const eventsData = eventsResponse.data.events || {};
+          const allEvents = eventsData.data || [];
+          
+          // Разделяем события на сегодняшние и ближайшие
+          const { todaysEvents, upcomingEvents } = this.separateEvents(allEvents);
+          this.todaysEvents = todaysEvents;
+          this.upcomingEvents = upcomingEvents;
+        } else {
+          this.todaysEvents = [];
+          this.upcomingEvents = [];
+        }
+
+        // Генерируем данные для графиков
+        this.generateChartData();
+
       } catch (error) {
-        console.error('Error fetching recent services:', error);
+        console.error('Ошибка загрузки данных дашборда:', error);
+        this.recentPosts = [];
+        this.todaysEvents = [];
+        this.upcomingEvents = [];
       } finally {
-        this.loadingRecentServices = false;
+        this.loading = false;
       }
     }
   },
-  mounted() {
-    this.fetchServicesStats();
-    this.fetchRecentServices();
+  async mounted() {
+    await this.fetchDashboardData();
   }
-};
+}
 </script>
 
 <style scoped>
 .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  space-y: 6;
 }
 
-/* Welcome Card */
+/* Welcome Section */
+.welcome-section {
+  margin-bottom: 24px;
+}
+
 .welcome-card {
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-contrast));
-  color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
 }
 
-.welcome-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-@media (min-width: 768px) {
-  .welcome-content {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+:deep(.welcome-card .n-card__content) {
+  padding: 30px;
 }
 
 .welcome-title {
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  margin: 0;
   color: white;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .welcome-subtitle {
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-}
-
-.download-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  border-radius: 8px;
-  background: white;
-  color: var(--primary-color);
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.download-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.button-icon {
-  margin-right: 8px;
-}
-
-/* Services Section */
-.services-card {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.section-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 20px 24px;
-  background-color: white;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-@media (min-width: 768px) {
-  .section-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.section-icon {
-  color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.add-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: white;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.add-button:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
-.section-content {
-  padding: 24px;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
   margin-bottom: 24px;
 }
 
-@media (min-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.quick-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
 }
 
-@media (min-width: 1024px) {
-  .stats-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.stat-card {
-  border-radius: 10px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.stat-content {
+.stat-item {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.stat-main {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
 }
 
 .stat-icon {
-  font-size: 1.75rem;
-  color: var(--primary-color);
-  margin-top: 8px;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
 }
 
-.active-icon {
-  color: #10b981;
+.stat-icon.blog {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
 }
 
-.price-icon {
-  color: #3b82f6;
+.stat-icon.events {
+  background: linear-gradient(135deg, #48dbfb, #0abde3);
 }
 
-.duration-icon {
-  color: #8b5cf6;
+.stat-icon.comments {
+  background: linear-gradient(135deg, #1dd1a1, #10ac84);
 }
 
-.stat-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #4b5563;
-  margin: 8px 0 0;
+.stat-icon.views {
+  background: linear-gradient(135deg, #a55eea, #8854d0);
 }
 
-.stat-footer {
-  font-size: 0.875rem;
-  color: #6b7280;
+.stat-content {
+  color: white;
 }
 
-/* Detailed Stats */
-.detailed-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+.stat-number {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  word-break: break-all;
 }
 
-@media (min-width: 1024px) {
-  .detailed-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: white;
 }
 
-.detailed-card {
-  border-radius: 10px;
+.welcome-illustration {
+  flex-shrink: 0;
+}
+
+.illustration-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-icon {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
+}
+
+.floating-elements {
+  position: absolute;
+  width: 100%;
   height: 100%;
 }
 
-.detailed-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 16px;
+.floating-elements i {
+  position: absolute;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  animation: float 3s ease-in-out infinite;
 }
 
-.time-distribution {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.element-1 {
+  top: 10%;
+  left: 20%;
+  animation-delay: 0s;
 }
 
-.time-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.element-2 {
+  top: 20%;
+  right: 10%;
+  animation-delay: 1s;
 }
 
-.time-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
+.element-3 {
+  bottom: 30%;
+  left: 10%;
+  animation-delay: 2s;
 }
 
-.morning-icon {
-  color: #f59e0b;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-.afternoon-icon {
-  color: #f97316;
-}
-
-.fixed-time-icon {
-  color: #fbbf24;
-}
-
-.status-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 8px 0;
-}
-
-.status-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.status-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
-}
-
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 12px;
-}
-
-@media (min-width: 768px) {
-  .quick-actions {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.action-button {
-  transition: transform 0.2s ease;
-}
-
-.action-button:hover {
-  transform: translateY(-2px);
-}
-
-/* Recent Services */
-.recent-services-card {
-  border-radius: 10px;
-}
-
-.recent-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.recent-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0;
-}
-
-.view-all {
-  font-weight: 600;
-}
-
-.recent-table {
-  --n-border-color: transparent;
-}
-
-.recent-table :deep(.n-data-table-tr):hover {
-  background-color: rgba(99, 102, 241, 0.05);
-}
-
-.recent-table :deep(.n-data-table-th) {
-  background-color: #f9fafb;
-  font-weight: 600;
-}
-
-.recent-table :deep(.n-data-table-td) {
-  padding: 12px 16px;
-}
-
-.no-underline {
-  text-decoration: none;
-}
-.quick-actions-card {
-  border-radius: 10px;
+/* Quick Actions */
+.quick-actions-section {
   margin-bottom: 24px;
-}
-
-.quick-actions-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 16px;
 }
 
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
 }
 
-@media (min-width: 768px) {
-  .quick-actions-grid {
-    grid-template-columns: repeat(2, 1fr);
+.quick-action-btn {
+  height: 60px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .main-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (min-width: 1024px) {
-  .quick-actions-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+/* Charts Section */
+.charts-section {
+  margin-bottom: 24px;
 }
 
-/* Categories Stats */
-.categories-stats {
-  display: flex;
-  flex-direction: column;
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.category-item {
+.chart-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.chart-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #333;
+}
+
+.chart-placeholder {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  color: #8c8c8c;
 }
 
-.category-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.category-count {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-.service_action__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.chart-placeholder i {
+  font-size: 2rem;
   margin-bottom: 8px;
 }
 
-.service_action__title {
-  font-size: 14px;
+.chart-placeholder p {
+  font-size: 0.8rem;
+}
+
+/* Posts */
+.post-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.post-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-content {
+  flex: 1;
+  min-width: 0; /* Предотвращает выход за рамки */
+  flex-wrap: wrap;
+}
+
+.post-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+}
+
+.post-views {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Stats Overview */
+.stats-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.stat-card-icon.blog {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+.stat-card-icon.events {
+  background: linear-gradient(135deg, #48dbfb, #0abde3);
+}
+
+.stat-card-icon.rating {
+  background: linear-gradient(135deg, #feca57, #ff9ff3);
+}
+
+.stat-card-icon.recent {
+  background: linear-gradient(135deg, #1dd1a1, #10ac84);
+}
+
+.stat-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card-label {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Events Section */
+.events-section {
+  margin-bottom: 16px;
+}
+
+.events-subtitle {
+  font-size: 0.9rem;
   font-weight: 600;
-  margin: 0;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.events-subtitle.mt-4 {
+  margin-top: 16px;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+}
+
+.event-date {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.event-date.today {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+}
+
+.event-date.today .event-day,
+.event-date.today .event-month {
+  color: white;
+}
+
+.event-day {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #333;
+}
+
+.event-month {
+  font-size: 0.7rem;
+  color: #8c8c8c;
+  text-transform: uppercase;
+}
+
+.event-content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.event-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-time {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-participants {
+  font-size: 0.8rem;
+  color: #52c41a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Popular Content */
+.popular-content {
+  space-y: 3;
+}
+
+.popular-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.popular-item.clickable {
+  cursor: pointer;
+}
+
+.popular-item.clickable:hover {
+  background: #f8f9fa;
+  border-color: #d9d9d9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popular-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.popular-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.popular-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.popular-name {
+  font-size: 0.8rem;
+  color: #8c8c8c;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.popular-meta {
+  font-size: 0.7rem;
+  color: #52c41a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.popular-link {
+  color: #8c8c8c;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.popular-item.clickable:hover .popular-link {
+  opacity: 1;
 }
 </style>
