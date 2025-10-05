@@ -211,36 +211,6 @@ export default {
           iconClass: 'fas fa-calendar-alt text-indigo-500',
         },
         {
-          label: this.$t('msg.menu.services'),
-          key: 'admin.services.parent',
-          iconClass: 'fas fa-boxes text-indigo-500',
-          children: [
-            {
-              label: this.$t('msg.menu.services'),
-              key: 'admin.services.list',  
-            },
-            {
-              label: this.$t('msg.menu.service_create'),
-              key: 'admin.services.create',
-            }
-          ],
-        },
-        {
-          label: this.$t('msg.menu.categories'),
-          key: 'admin.categories.parent',
-          iconClass: 'fas fa-tags text-indigo-500',
-          children: [
-            {
-              label: this.$t('msg.menu.categories'),
-              key: 'admin.categories.list',
-            },
-            {
-              label: this.$t('msg.menu.category_create'),
-              key: 'admin.categories.create',
-            }
-          ],
-        },
-        {
           label: this.$t('msg.menu.blog'),
           key: 'admin.blog.parent',
           iconClass: 'fas fa-newspaper text-indigo-500',

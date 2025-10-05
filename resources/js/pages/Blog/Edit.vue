@@ -88,11 +88,10 @@
                 <!-- Description -->
                 <div class="border rounded-lg p-4">
                   <label class="text-sm font-medium text-gray-700 mb-2 block">Текст новости</label>
-                  <n-input
-                    v-model:value="ensureTrans(lang.code).description"
-                    type="textarea"
-                    :rows="10"
-                    placeholder="Текст новости (можно вставлять HTML)"
+                  <RichEditor
+                    v-model="ensureTrans(lang.code).description"
+                    :placeholder="'Введите текст новости...'"
+                    :height="400"
                   />
                 </div>
               </div>
@@ -300,6 +299,7 @@
 </template>
 
 <script>
+import RichEditor from '@/components/elements/RichEditor.vue';
 import {
   NCard, NButton, NInput, NTag, NDatePicker,
   NSwitch, NDataTable, NTabs, NTabPane, NUpload,
@@ -313,7 +313,7 @@ export default {
   components: {
     NCard, NButton, NInput, NTag, NDatePicker,
     NSwitch, NDataTable, NTabs, NTabPane, NUpload,
-    NTimePicker, NConfigProvider
+    NTimePicker, NConfigProvider, RichEditor
   },
   props: {
     id: { type: [String, Number], default: null }

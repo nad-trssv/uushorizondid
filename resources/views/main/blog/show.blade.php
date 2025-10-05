@@ -85,7 +85,7 @@
                         </div>
                         <div class="text-conte">
                             {{-- описание поста (с переводом через аксессор) --}}
-                            {!! nl2br(e($post->getDescriptionAttribute())) !!}
+                            {!! $post->getDescriptionAttribute() !!}
                         </div>
                     </div>
                 </div>

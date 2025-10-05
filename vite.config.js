@@ -35,7 +35,11 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-      include: ['naive-ui',
+      include: [
+        'naive-ui',
+        '@vueup/vue-quill',
+        'quill',
+        'quill-blot-formatter',
       '@fullcalendar/vue3',
       '@fullcalendar/daygrid',
       '@fullcalendar/timegrid',

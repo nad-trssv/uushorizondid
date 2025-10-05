@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->foreignId('language_id')->constrained()->onDelete('cascade');
             $table->string('title')->nullable();
+            $table->string('shortdescription')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         

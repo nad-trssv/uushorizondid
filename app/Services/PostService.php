@@ -50,6 +50,11 @@ class PostService {
                 $data['slug'] = $data['slug'].'-'.mt_rand(100000, 999999);
             }
 
+            // Set the user_id to the currently authenticated user if not provided
+            if (empty($data['user_id']) && auth()->check()) {
+                $data['user_id'] = auth()->id();
+            }
+
             $postFields = Arr::only($data, ['slug','status','image','published_at','user_id']);
             $post = Post::create($postFields);
 

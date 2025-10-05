@@ -154,7 +154,7 @@
             </h2>
 
             <p class="text-sm text-gray-600 mb-4 description-clamp flex-1">
-              {{ post.displayDescription }}
+                {{ post.displayDescription.replace(/<\/?[^>]+(>|$)/g, '') }}
             </p>
 
             <div class="flex justify-between items-center pt-3 mt-auto border-t border-gray-100">
