@@ -71,7 +71,6 @@ class AuthController extends Controller
     {
         $user = auth('api')->user();
         $user->load('role');
-        dump('user');
         return response()->json($user);
     }
 

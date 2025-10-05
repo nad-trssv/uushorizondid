@@ -290,6 +290,10 @@
           </div>
         </div>
         <div class="flex gap-3">
+          <n-button v-if="isEdit" type="info" size="small" @click="showPostInFront">
+            <template #icon><i class="fas fa-external-link-alt"></i></template>
+            Показать на сайте
+          </n-button>
           <n-button @click="onSave" type="primary" size="small" :loading="loading">
             <template #icon><i class="fas fa-save"></i></template>
             Сохранить
@@ -448,6 +452,12 @@ export default {
   },
 
   methods: {
+    showPostInFront() {
+      if (!this.isEdit) return;
+      const slug = this.localPost.slug || '';
+      const url = `/blog/${slug}`;
+      window.open(url, '_blank');
+    },
     resetForm() {
       this.localPost = this.getDefaultPost();
       this.translationsByCode = {};

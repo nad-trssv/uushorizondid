@@ -114,7 +114,7 @@
           </template>
         </li>
       </ul>
-      <div 
+      <!-- <div 
         class="mt-4 mx-2 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-indigo-100"
         :class="{ 'hidden': isCollapsed }"
       >
@@ -127,7 +127,7 @@
         >
           {{ $t('msg.upgrade_button') }}
         </button>
-      </div>
+      </div> -->
     </nav>
     
     <!-- Footer Section -->

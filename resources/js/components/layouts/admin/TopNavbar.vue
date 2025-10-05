@@ -38,7 +38,7 @@
         </n-dropdown>
         
         <!-- Notifications dropdown -->
-        <n-dropdown
+        <!-- <n-dropdown
           trigger="click"
           placement="bottom-end"
           :options="notificationOptions"
@@ -50,7 +50,7 @@
               </template>
             </n-button>
           </n-badge>
-        </n-dropdown>
+        </n-dropdown> -->
         
         <!-- Show My Website link -->
         <n-button quaternary @click="goToWebsite">
@@ -138,17 +138,17 @@ export default {
     },
     profileOptions() {
       return [
-        {
-          label: this.$t('msg.menu.profile'),
-          key: 'profile',
-          icon: () => h('i', { class: 'fas fa-user mr-2' })
-        },
-        {
-          label: this.$t('msg.menu.settings'),
-          key: 'settings',
-          icon: () => h('i', { class: 'fas fa-cog mr-2' })
-        },
-        { type: 'divider' },
+        // {
+        //   label: this.$t('msg.menu.profile'),
+        //   key: 'profile',
+        //   icon: () => h('i', { class: 'fas fa-user mr-2' })
+        // },
+        // {
+        //   label: this.$t('msg.menu.settings'),
+        //   key: 'settings',
+        //   icon: () => h('i', { class: 'fas fa-cog mr-2' })
+        // },
+        // { type: 'divider' },
         {
           label: this.$t('msg.menu.logout'),
           key: 'logout',
