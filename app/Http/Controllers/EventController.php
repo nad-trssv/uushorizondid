@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\EventService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
+use App\Http\Controllers\Api\V1\Traits\HandlesFrontLocale as HandlesLocale;
 use Illuminate\Support\Str;
 use App\Models\Event;
 use App\Models\EventParticipant;

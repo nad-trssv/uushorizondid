@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PostResource;
 use App\Services\PostService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\V1\Traits\HandlesLocale;
+use App\Http\Controllers\Api\V1\Traits\HandlesFrontLocale as HandlesLocale;
 use App\Models\Post;
 use Illuminate\Support\Str;
 
