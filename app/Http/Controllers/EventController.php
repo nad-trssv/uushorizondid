@@ -36,6 +36,9 @@ class EventController extends Controller
         $this->setAndGetLocale($request);
         $locale = app()->getLocale();
         $slug = (string) $request->route('slug');
+        if (!Event::where('slug', $slug)->exists()) {
+            return redirect('/')->with('error', 'Мероприятие не найдено.');
+        }
 
         // Берём опубликованное мероприятие по slug
         $event = Event::with(['translations', 'gallery', 'participants'])

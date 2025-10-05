@@ -34,6 +34,9 @@ class BlogController extends Controller
     {
         $this->setAndGetLocale($request);
         $slug = (string) $request->route('slug');
+        if (!Post::where('slug', $slug)->exists()) {
+            return redirect('/')->with('error', 'Мероприятие не найдено.');
+        }
         
         $post = Post::where('slug', $slug)
             ->with(['user', 'translations', 'seo.translations', 'comments' => function ($query) {
