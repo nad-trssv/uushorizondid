@@ -115,7 +115,7 @@
     <div v-if="processedPosts.length">
       <!-- GRID -->
       <div v-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="post in processedPosts" :key="post.id" class="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105 flex flex-col h-[460px] relative group">
+        <div v-for="post in processedPosts" :key="post.id" class="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105 flex flex-col h-[420px] relative group">
           <div class="absolute top-3 right-3 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1 shadow-md z-10 border border-white/30">
             <i class="fas fa-star text-yellow-500 text-sm"></i>
             <span class="text-sm font-bold text-gray-800">{{ fmtRating(post.averageRating) }}</span>
@@ -432,12 +432,12 @@ export default {
       return t?.title || post?.slug || `#${post?.id}`;
     },
     getPostDescription(post) {
-      if (post?.description?.trim()) return post.description;
+      if (post?.short_description?.trim()) return post.short_description;
       const trs = Array.isArray(post?.translations) ? post.translations : [];
-      let t = trs.find(x => x.default && x.description);
-      if (t?.description) return t.description;
-      t = trs.find(x => x.description);
-      return t?.description || 'Описание отсутствует';
+      let t = trs.find(x => x.default && x.short_description);
+      if (t?.short_description) return t.short_description;
+      t = trs.find(x => x.short_description);
+      return t?.short_description || 'Описание отсутствует';
     },
     formatDate(s) {
       if (!s) return '';

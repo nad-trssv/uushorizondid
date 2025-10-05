@@ -60,7 +60,7 @@ class PostService {
 
             // translations
             foreach ($data['translations'] ?? [] as $t) {
-                PostTranslation::create(array_merge(Arr::only($t, ['language_id','title','description']), [
+                PostTranslation::create(array_merge(Arr::only($t, ['language_id','title','description','short_description']), [
                     'post_id' => $post->id
                 ]));
             }
@@ -89,7 +89,7 @@ class PostService {
             // translations upsert
             foreach ($data['translations'] ?? [] as $t) {
                 $keys = ['post_id' => $post->id, 'language_id' => $t['language_id']];
-                $vals = Arr::only($t, ['title','description']);
+                $vals = Arr::only($t, ['title','description', 'short_description']);
                 PostTranslation::updateOrCreate($keys, $vals);
             }
 

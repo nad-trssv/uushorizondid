@@ -26,6 +26,7 @@ class PostResource extends JsonResource
 
             'title' => $translation?->title,
             'description' => $translation?->description,
+            'short_description' => $translation?->short_description,
             'image' => $this->image,
 
             'seo' => $this->seo?->translations->map(fn($seoTranslation) => [
@@ -51,6 +52,7 @@ class PostResource extends JsonResource
                 'default' => $t->language->code === config('app.fallback_locale'),
                 'title' => $t->title,
                 'description' => $t->description,
+                'short_description' => $t->short_description,
             ]),
             'comments_count' => $this->commentsCount(),
             'comments' => $this->comments()->get()->map(fn($comment) => [

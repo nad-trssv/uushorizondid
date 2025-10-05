@@ -84,6 +84,16 @@
                     {{ firstError(`translations.${i}.title`) }}
                   </p>
                 </div>
+                <!-- Short Description -->
+                <div class="border rounded-lg p-4">
+                  <label class="text-sm font-medium text-gray-700 mb-2 block">Краткое описание</label>
+                  <n-input
+                    v-model:value="ensureTrans(lang.code).short_description"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="Введите краткое описание новости"
+                  />
+                </div>
 
                 <!-- Description -->
                 <div class="border rounded-lg p-4">
@@ -534,6 +544,7 @@ export default {
             language: code,
             title: t.title || '',
             description: t.description || '',
+            short_description: t.short_description || ''
           };
         });
       }
@@ -561,6 +572,7 @@ export default {
           language: code,
           title: '',
           description: '',
+          short_description: '',
         };
       }
       return this.translationsByCode[code];

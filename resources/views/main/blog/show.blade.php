@@ -85,6 +85,10 @@
                         </div>
                         <div class="text-conte">
                             {{-- описание поста (с переводом через аксессор) --}}
+                            {!! $post->getShortDescriptionAttribute() !!}
+                        </div>
+                        <div class="text-conte">
+                            {{-- описание поста (с переводом через аксессор) --}}
                             {!! $post->getDescriptionAttribute() !!}
                         </div>
                     </div>

@@ -50,7 +50,7 @@
                                 <h5 class="dz-title">
                                     <a href="{{ route('blog.show', $post->slug) }}">{{ $post->getTitleAttribute() }}</a>
                                 </h5>
-                                <p class="flex-grow-1">{!! Str::limit($post->getDescriptionAttribute(), 120) !!}</p>
+                                <p class="flex-grow-1">{!! Str::limit($post->getShortDescriptionAttribute(), 120) !!}</p>
                                 <div class="mt-auto">
                                     <a href="{{ route('blog.show', $post->slug) }}" class="btn btn-primary btn-hover-2">Read More</a>
                                 </div>

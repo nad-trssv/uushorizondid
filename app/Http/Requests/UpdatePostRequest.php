@@ -24,6 +24,7 @@ class UpdatePostRequest extends FormRequest
             'translations.*.language_id' => ['required', 'integer', 'exists:languages,id'],
             'translations.*.title'       => ['nullable', 'string', 'max:255'],
             'translations.*.description' => ['nullable', 'string'],
+            'translations.*.short_description'     => ['nullable', 'string'],
 
             'seo' => ['required', 'array', 'min:1'],
             'seo.*.language_id'      => ['required', 'integer', 'exists:languages,id'],

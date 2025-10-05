@@ -64,6 +64,13 @@ class Post extends Model
         return optional($this->translations->firstWhere('language.code', $lang))->description ?? optional($this->translations->firstWhere('language.code', $defaultLang))->description;
     }
 
+    public function getShortDescriptionAttribute()
+    {
+        $lang = app()->getLocale();
+        $defaultLang = Language::where('is_default', true)->value('code');
+        return optional($this->translations->firstWhere('language.code', $lang))->short_description ?? optional($this->translations->firstWhere('language.code', $defaultLang))->short_description;
+    }
+
     public function comments_count()
     {
         return $this->comments()->count();
