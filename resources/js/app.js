@@ -25,6 +25,9 @@ const i18n = createI18n({
 });
 
 import Index from './components/Index.vue';
+import RichEditor from './components/elements/RichEditor.vue';
+
+app.component('rich-editor', RichEditor);
 app.component('index-component', Index);
 app.component('n-config-provider', NConfigProvider); 
 app.use(swal);

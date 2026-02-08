@@ -5,6 +5,8 @@ import { categories } from "./modules/categories";
 import { settings } from "./modules/settings";
 import { users } from "./modules/users";
 import { appointments } from "./modules/appointments";
+import { posts } from "./modules/posts";
+import { events } from "./modules/events";
 
 export default new createStore({
     state: {},
@@ -16,6 +18,8 @@ export default new createStore({
         services,
         categories,
         users,
-        appointments
+        appointments,
+        posts,
+        events
     },
 });

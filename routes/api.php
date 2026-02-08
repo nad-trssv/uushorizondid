@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SiteSettingController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\WorkTimeExceptionController;
+use App\Http\Controllers\Api\V1\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -71,10 +72,17 @@ Route::group(['prefix' => 'v1'], function () {
             });
             Route::group(['prefix' => 'events'], function () {
                 Route::get('/', [EventController::class, 'index']);
-                Route::get('/{id}', [EventController::class, 'show']);
+                Route::get('/stats', [EventController::class, 'stats']);
                 Route::post('/', [EventController::class, 'store']);
-                Route::put('/{id}', [EventController::class, 'update']);
-                Route::delete('/{id}', [EventController::class, 'destroy']);
+                Route::get('/calendar', [EventController::class, 'calendarEvents']);
+                Route::post('/upload-image', [EventController::class, 'uploadImage']);
+                Route::get('/{event}', [EventController::class, 'show']);
+                Route::put('/{event}', [EventController::class, 'update']);
+                Route::delete('/{event}', [EventController::class, 'destroy']);
+
+                Route::post('/{event}/gallery', [EventController::class, 'uploadGallery']);              
+                Route::put('/{event}/gallery/{gallery}', [EventController::class, 'updateGallery']); 
+                Route::delete('/{event}/gallery/{gallery}', [EventController::class, 'destroyGallery']); 
             });
             Route::group(['prefix' => 'appointments'], function () {
                 Route::get('/all', [AppointmentsController::class, 'index'])
@@ -87,6 +95,21 @@ Route::group(['prefix' => 'v1'], function () {
             Route::group(['prefix' => 'users'], function () {
                 Route::get('/masters', [UserController::class, 'masters'])
                     ->name('api.users.masters');
+            });
+            Route::group(['prefix' => 'posts'], function () {
+                Route::get('/', [PostController::class, 'index'])
+                    ->name('api.posts.index');
+                Route::get('/stats', [PostController::class, 'stats'])
+                    ->name('api.posts.stats');
+                Route::get('/{post}', [PostController::class, 'show'])
+                    ->name('api.posts.show');
+                Route::post('/upload-image', [PostController::class, 'uploadImage']);
+                Route::post('/', [PostController::class, 'store'])
+                    ->name('api.posts.store');
+                Route::put('/{post}', [PostController::class, 'update'])
+                    ->name('api.posts.update');
+                Route::delete('/{post}', [PostController::class, 'destroy'])
+                    ->name('api.posts.destroy');
             });
         });
     });

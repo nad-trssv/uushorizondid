@@ -32,6 +32,7 @@ export default {
       return new Promise((resolve, reject) => {
         api.post('/auth/me')
           .then(response => {
+            
             const user = response.data;
             commit('setAuthInfo', user);
             resolve(user);

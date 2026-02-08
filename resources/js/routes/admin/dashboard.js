@@ -132,6 +132,101 @@ export default [
                         },
                     },
                 ]
+            },
+            {
+                path: 'blog',
+                name: 'admin.blog',
+                redirect: {name: 'admin.blog.list'},  
+                meta: {
+                    auth: true,
+                    breadcrumb: 'blog',
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'admin.blog.stats',
+                        component: () => import('../../pages/Blog/Stats.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_stats',
+                        },  
+                    },
+                    {
+                        path: 'list',
+                        name: 'admin.blog.list',
+                        component: () => import('../../pages/Blog/List.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_list',
+                        },
+                    },
+                    {
+                        path: ':id',
+                        name: 'admin.blog.edit',
+                        component: () => import('../../pages/Blog/Edit.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_edit',
+                        },
+                    },
+                    {
+                        path: 'create',
+                        name: 'admin.blog.create',
+                        component: () => import('../../pages/Blog/Edit.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_create',
+                        },
+                    },
+                ]
+            },
+            {
+                path: 'events',
+                name: 'admin.events',
+                redirect: {name: 'admin.events.list'},
+                meta: {
+                    auth: true,
+                    breadcrumb: 'events',
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'admin.events.list',
+                        component: () => import('../../pages/Events/Index.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: '',
+                        },
+                    },
+                    {
+                        path: 'stats',
+                        name: 'admin.events.stats',
+                        component: () => import('../../pages/Events/Stats.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'blog_stats',
+                        },
+                    },
+                    {
+                        path: 'create',
+                        name: 'admin.events.create',
+                        component: () => import('../../pages/Events/Form.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'event_create',
+                        },
+                    },
+                    {
+                        path: ':id',
+                        name: 'admin.events.edit',
+                        component: () => import('../../pages/Events/Form.vue'),
+                        meta: {
+                            auth: true,
+                            breadcrumb: 'event_edit',
+                        },
+                        props: true,
+                    }
+                ]
             }
         ]
     },

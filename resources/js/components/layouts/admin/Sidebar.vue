@@ -114,7 +114,7 @@
           </template>
         </li>
       </ul>
-      <div 
+      <!-- <div 
         class="mt-4 mx-2 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-indigo-100"
         :class="{ 'hidden': isCollapsed }"
       >
@@ -127,7 +127,7 @@
         >
           {{ $t('msg.upgrade_button') }}
         </button>
-      </div>
+      </div> -->
     </nav>
     
     <!-- Footer Section -->
@@ -211,32 +211,40 @@ export default {
           iconClass: 'fas fa-calendar-alt text-indigo-500',
         },
         {
-          label: this.$t('msg.menu.services'),
-          key: 'admin.services.parent',
-          iconClass: 'fas fa-boxes text-indigo-500',
+          label: this.$t('msg.menu.blog'),
+          key: 'admin.blog.parent',
+          iconClass: 'fas fa-newspaper text-indigo-500',
           children: [
             {
-              label: this.$t('msg.menu.services'),
-              key: 'admin.services.list',  
+              label: this.$t('msg.menu.blog_stats'),
+              key: 'admin.blog.stats',
             },
             {
-              label: this.$t('msg.menu.service_create'),
-              key: 'admin.services.create',
+              label: this.$t('msg.menu.blog_list'),
+              key: 'admin.blog.list',
+            },
+            {
+              label: this.$t('msg.menu.blog_create'),
+              key: 'admin.blog.create',
             }
           ],
         },
         {
-          label: this.$t('msg.menu.categories'),
-          key: 'admin.categories.parent',
-          iconClass: 'fas fa-tags text-indigo-500',
+          label: this.$t('msg.menu.events'),
+          key: 'admin.events.parent',
+          iconClass: 'fas fa-calendar-check text-indigo-500',
           children: [
             {
-              label: this.$t('msg.menu.categories'),
-              key: 'admin.categories.list',
+              label: this.$t('msg.menu.blog_stats'),
+              key: 'admin.events.stats',
             },
             {
-              label: this.$t('msg.menu.category_create'),
-              key: 'admin.categories.create',
+              label: this.$t('msg.menu.events'),
+              key: 'admin.events.list',
+            },
+            {
+              label: this.$t('msg.menu.event_create'),
+              key: 'admin.events.create',
             }
           ],
         },

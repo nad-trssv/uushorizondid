@@ -24,4 +24,13 @@ class SiteSettingService
     {
         return $this->repository->updateGroup($group, $data);
     }
+
+    public function getLanguages()
+    {
+        return $this->repository->getLanguages();
+    }
+    public function currlang()
+    {
+        return $this->repository->currlang();
+    }
 }

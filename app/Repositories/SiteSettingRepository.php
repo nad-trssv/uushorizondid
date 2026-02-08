@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Language;
 use App\Models\SiteSetting;
 
 class SiteSettingRepository
@@ -28,5 +29,17 @@ class SiteSettingRepository
             );
         }
         return $this->getByGroup($group);
+    }
+
+    public function getLanguages()
+    {
+        return Language::all();
+    }
+
+    public function currlang()
+    {
+        $lang = app()->getLocale();
+        $language = Language::where('code', $lang)->first();
+        return $language;
     }
 }

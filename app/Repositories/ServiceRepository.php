@@ -140,6 +140,7 @@ class ServiceRepository
                   ->limit(1);
         }, 'translationsAll', 'serviceMasters'])->findOrFail($id);
     }
+    
     public function getStat()
     {
         $stats = [];

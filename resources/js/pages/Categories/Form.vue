@@ -264,6 +264,8 @@
       },
       availableLanguages() {
         const languages = this.$store.getters['settings/availableLanguages'] || {};
+        console.log('languages', languages);
+        
         return Object.values(languages).filter(lang => lang.enabled);
       },
       categoryOptions() {

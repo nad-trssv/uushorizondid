@@ -10,4 +10,14 @@ class IndexController extends Controller
     {
         return view('main.index');
     }
+
+    public function index()
+    {
+        return view('main.home');
+    }
+    
+    public function contact()
+    {
+        return view('main.contact');
+    }
 }
